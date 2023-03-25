@@ -11,7 +11,7 @@
       $:  %0
           published=(map path html=@t)
           history=_branch:linedb
-          comments=(mip path line:ldb comment) :: TODO should probably be listified so that we can have a thread of comments
+          comments=(map path ((mop line:ldb comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
       ==
     +$  card  card:agent:gall
     --
@@ -23,7 +23,7 @@
         def   ~(. (default-agent this %|) bowl)
     ++  on-init
       ^-  (quip card _this)
-      `this(history (add-commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
+      `this(history (commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
     ++  on-save  !>(state)
     ++  on-load
       |=  =vase 
@@ -80,8 +80,33 @@
     =.  history.state
       =/  =snapshot:ldb     latest-snap:history
       =/  new=snapshot:ldb  (~(put by snapshot) [path md]:act)
-      (add-commit:history.state src.bowl new)
-    
+      (commit:history.state src.bowl new)
+    =/  =diff:ldb  (latest-diff:history path.act)
+    ~&  >  diff
+    ?~  got=(~(get by comments) path.act)  `state
+    =/  coms  (tap:((on line:ldb comment) lth) u.got) :: =(list [line:ldb comment])
+    ~&  >  coms
+    =.  coms
+      =|  offset=@ud
+      =|  (list line:ldb comment)
+      |- :: TODO still have to edit the line numbers per comment
+      ?~  diff  coms
+      ?-    -.i.diff
+      ::
+          %&  $(diff t.diff, offset (add offset p.i.diff))  
+      ::
+          %|
+        ?:  &(=(^ p.i.diff) =(~ q.i.diff))             :: delete
+          $(offset (sub offset (lent p.i.diff)))       :: TODO sub underflow
+        ?:  &(=(~ p.i.diff) =(^ q.i.diff))             :: insert
+          $(offset (add offset (lent q.i.diff)))
+        ?:  &(=(^ p.i.diff) =(^ q.i.diff))             :: edit
+          =+  a=(lent p.i.diff)
+          =+  b=(lent q.i.diff)
+          ?:  (gth a b)  $(offset (sub offset (sub a b)))
+            $(offset (add offset (sub b a)))
+      ::
+      ==
     `state
   ::
       %comment
@@ -100,12 +125,11 @@
     =+  snapshot:(got:snap-on:ldb snaps.history head:history)
     ``noun+!>((turn ~(tap by -) head))
   ::
-      [%x %latest ^]
-    ``noun+!>((get-version:history t.t.path head:history))
+      [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
   ::
-      [%x %v @ ^]
-    =*  version    (slav %ud i.t.t.path)
+      [%x %i @ ^]
+    =*  index      (slav %ud i.t.t.path)
     =*  file-name  t.t.t.path
-    ``noun+!>((get-version:history file-name version))
+    ``noun+!>((get-file:history file-name index))
   ==
 --
