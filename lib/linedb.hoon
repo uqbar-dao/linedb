@@ -18,8 +18,8 @@
       %^  put:snap-on  snaps  +(head)
       :+  author
         new-snap
-      ?:  =(0 head)  (build-diff ~ new-snap)
-      (build-diff latest-snap new-snap)
+      *(map path diff)
+      :: (build-diff latest-snap new-snap)
     ==
   ::
   ++  set-head
@@ -30,16 +30,17 @@
   ::
   ::  read arms
   ::
-  ++  get-commit     |=(i=index (got:snap-on snaps i))
-  ++  get-diffs      |=(i=index diffs:(got:snap-on snaps i))
-  ++  get-snap       |=(i=index snapshot:(got:snap-on snaps i))
-  ++  get-diff       |=([i=index f=file-name] (~(got by (get-diffs i)) f))
-  ++  get-file       |=([f=file-name i=index] (of-wain (~(got by (get-snap i)) f)))
-  ++  latest-commit  (got:snap-on snaps head)
-  ++  latest-diffs   diffs:(got:snap-on snaps head)
-  ++  latest-snap    snapshot:(got:snap-on snaps head)
-  ++  latest-diff    |=(f=file-name (get-diff head f))
-  ++  latest-file    |=(f=file-name (of-wain (~(got by latest-snap) f)))
+  ++  get-commit  |=(i=index ?~(got=(get:snap-on snaps i) *^commit u.got))
+  ++  get-diffs   |=(i=index diffs:(get-commit i))
+  ++  get-snap    |=(i=index snapshot:(get-commit i))
+  ++  get-diff    |=([i=index p=path] (~(gut by (get-diffs i)) p *diff))
+  ++  get-file    |=([p=path i=index] (of-wain (~(gut by (get-snap i)) p ~)))
+  ::
+  ++  latest-commit  (get-commit head)
+  ++  latest-diffs   (get-diffs head)
+  ++  latest-snap    (get-snap head)
+  ++  latest-diff    |=(p=path (get-diff head p))
+  ++  latest-file    |=(p=path (get-file p head))
   ::
   :: for squashing commit N with commit N+1. To squash N commits you must call this N times
   :: copy +join from mar/txt/hoon (minimal edits)

@@ -1,7 +1,8 @@
 /-  *screed, *linedb
-/+  dbug, default-agent, linedb, *mip, screed-lib=screed
+/+  dbug, default-agent, linedb, *mip, screed-lib=screed, verb
 ::
 %-  agent:dbug
+%+  verb  &
 ^-  agent:gall
 =>  |%
     +$  versioned-state
@@ -9,10 +10,10 @@
       ==
     +$  state-0
       $:  %0
-          published=(map file-name html=@t)
+          published=(map path html=@t)
           history=_branch:linedb
-          comments=(map file-name ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
-          :: permissions=(mip file-name ship permission) :: TODO social graph?
+          comments=(map path ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
+          :: permissions=(map path (pair permission (map ship permission))) :: TODO social graph?
       ==
     +$  card  card:agent:gall
     --
@@ -24,7 +25,8 @@
         def   ~(. (default-agent this %|) bowl)
     ++  on-init
       ^-  (quip card _this)
-      `this(history (commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
+      `this
+      :: `this(history (commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
     ++  on-save  !>(state)
     ++  on-load
       |=  =vase 
@@ -79,13 +81,16 @@
   ::
       %publish
     ?>  =(src our):bowl
-    :_  state(published (~(put by published) [file-name html]:act))
-    [%pass /bind %arvo %e %connect `file-name.act dap.bowl]~
+    :_  state(published (~(put by published) [path html]:act))
+    [%pass /bind %arvo %e %connect `path.act dap.bowl]~
   ::
       %commit-file
     ?>  =(src our):bowl :: TODO group blogs
     =.  history.state :: maybe build this into ldb?
-      =/  old=snapshot  latest-snap:history
+      =/  old=snapshot
+        ?:  =(0 head.history)
+          *(map path file)
+        latest-snap:history
       =/  new=snapshot  (~(put by old) [path md]:act)
       (commit:history.state src.bowl new)
     ::  if there are no comments, return
@@ -109,14 +114,14 @@
     =:  author.comment.act     src.bowl
         timestamp.comment.act  now.bowl
       ==
-    =/  comment-set  (~(got by comments) file-name.act)
+    =/  comment-set  (~(got by comments) path.act)
     =.  comment-set  (put:comment-on comment-set [line comment]:act)
-    =.  comments     (~(put by comments) file-name.act comment-set)
+    =.  comments     (~(put by comments) path.act comment-set)
     `state
   ::
       %change-permissions
     `state
-    :: `state(permissions (~(put bi permissions) [file-name ship permission]:act))
+    :: `state(permissions (~(put bi permissions) [path ship permission]:act))
   ==
 ++  handle-scry
   |=  =path
@@ -125,15 +130,14 @@
   ::
       [%x %head ~]   ``noun+!>(head:history)
       [%x %files ~]
-    ~&  >  latest-snap:branch:history
-    ``noun+!>((turn ~(tap by latest-snap:branch:history) head))
+    ``noun+!>((turn ~(tap by latest-snap:history) head))
   ::
       [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
   ::
       [%x %i @ ^]
     =*  index      (slav %ud i.t.t.path)
-    =*  file-name  t.t.t.path
-    ``noun+!>((get-file:history file-name index))
+    =*  path  t.t.t.path
+    ``noun+!>((get-file:history path index))
   ::
       [%x %history ~]  ``noun+!>(history) :: for testing only
   ==
