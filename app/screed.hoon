@@ -1,5 +1,5 @@
 /-  *screed, *linedb
-/+  dbug, default-agent, linedb, *mip
+/+  dbug, default-agent, linedb, *mip, screed-lib=screed
 ::
 %-  agent:dbug
 ^-  agent:gall
@@ -9,9 +9,10 @@
       ==
     +$  state-0
       $:  %0
-          published=(map path html=@t)
+          published=(map file-name html=@t)
           history=_branch:linedb
-          comments=(map path ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
+          comments=(map file-name ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
+          :: permissions=(mip file-name ship permission) :: TODO social graph?
       ==
     +$  card  card:agent:gall
     --
@@ -65,18 +66,24 @@
 ++  http-req
   |=  [rid=@tas req=inbound-request:eyre]
   ^-  (quip card _state)
-  `state
+  :_  state
+  %^    http-response-cards:screed-lib
+      rid
+    [200 ['Content-Type' 'text/plain; charset=utf-8']~]
+  =-  `(as-octs:mimes:html -)
+  (latest-file:history (rash url.request.req stap))
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  ?>  =(src our):bowl :: TODO for group blogs
   ?-    -.act
   ::
       %publish
-    :_  state(published (~(put by published) [path html]:act))
-    [%pass /bind %arvo %e %connect `path.act dap.bowl]~
+    ?>  =(src our):bowl
+    :_  state(published (~(put by published) [file-name html]:act))
+    [%pass /bind %arvo %e %connect `file-name.act dap.bowl]~
   ::
       %commit-file
+    ?>  =(src our):bowl :: TODO group blogs
     =.  history.state :: maybe build this into ldb?
       =/  old=snapshot  latest-snap:history
       =/  new=snapshot  (~(put by old) [path md]:act)
@@ -84,16 +91,16 @@
     ::  if there are no comments, return
     ?~  got=(~(get by comments) path.act)  `state
     ::  if we have comments, adjust their lines
-    =/  =diff  (latest-diff:history path.act)
-    =/  line-mapping  (line-mapping:linedb diff)
+    =/  =diff     (latest-diff:history path.act)
+    =/  line-map  (line-mapping:linedb diff)
     =.  comments
       %+  ~(put by comments)  path.act
-      %+  gas:comm-on  *((mop line comment) lth)
+      %+  gas:comment-on  *((mop line comment) lth)
       ^-  (list [line comment])
-      %+  murn  (tap:((on line comment) lth) u.got)
+      %+  murn  (tap:comment-on u.got)
       |=  [key=line val=comment]
       ^-  (unit [_key _val])
-      =+  got=(~(get by line-mapping) key)
+      =+  got=(~(get by line-map) key)
       ?~(got ~ `[u.got val])
     `state
   ::
@@ -102,18 +109,24 @@
     =:  author.comment.act     src.bowl
         timestamp.comment.act  now.bowl
       ==
-    `state(comments (~(put bi comments) [path line comment]:act))
+    =/  comment-set  (~(got by comments) file-name.act)
+    =.  comment-set  (put:comment-on comment-set [line comment]:act)
+    =.  comments     (~(put by comments) file-name.act comment-set)
+    `state
   ::
+      %change-permissions
+    `state
+    :: `state(permissions (~(put bi permissions) [file-name ship permission]:act))
   ==
 ++  handle-scry
   |=  =path
   ^-  (unit (unit cage))
-  ?+    path  `~
+  ?+    path  ~
   ::
       [%x %head ~]   ``noun+!>(head:history)
       [%x %files ~]
-    =+  snapshot:(got:snap-on snaps.history head:history)
-    ``noun+!>((turn ~(tap by -) head))
+    ~&  >  latest-snap:branch:history
+    ``noun+!>((turn ~(tap by latest-snap:branch:history) head))
   ::
       [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
   ::
@@ -121,5 +134,7 @@
     =*  index      (slav %ud i.t.t.path)
     =*  file-name  t.t.t.path
     ``noun+!>((get-file:history file-name index))
+  ::
+      [%x %history ~]  ``noun+!>(history) :: for testing only
   ==
 --

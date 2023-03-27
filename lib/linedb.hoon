@@ -12,14 +12,14 @@
   ++  commit
     |=  [author=ship new-snap=snapshot]
     ^+  branch
-    =*  commit
+    %=    +>.$
+        head   +(head)
+        snaps
+      %^  put:snap-on  snaps  +(head)
       :+  author
         new-snap
       ?:  =(0 head)  (build-diff ~ new-snap)
       (build-diff latest-snap new-snap)
-    %=  +>.$
-      head   +(head)
-      snaps  (put:snap-on snaps +(head) commit)
     ==
   ::
   ++  set-head
@@ -31,13 +31,13 @@
   ::  read arms
   ::
   ++  get-commit     |=(i=index (got:snap-on snaps i))
-  ++  get-snap       |=(i=index snapshot:(got:snap-on snaps i))
   ++  get-diffs      |=(i=index diffs:(got:snap-on snaps i))
+  ++  get-snap       |=(i=index snapshot:(got:snap-on snaps i))
   ++  get-diff       |=([i=index f=file-name] (~(got by (get-diffs i)) f))
   ++  get-file       |=([f=file-name i=index] (of-wain (~(got by (get-snap i)) f)))
   ++  latest-commit  (got:snap-on snaps head)
-  ++  latest-snap    snapshot:(got:snap-on snaps head)
   ++  latest-diffs   diffs:(got:snap-on snaps head)
+  ++  latest-snap    snapshot:(got:snap-on snaps head)
   ++  latest-diff    |=(f=file-name (get-diff head f))
   ++  latest-file    |=(f=file-name (of-wain (~(got by latest-snap) f)))
   ::
