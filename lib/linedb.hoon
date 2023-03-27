@@ -34,7 +34,7 @@
   ++  get-diffs   |=(i=index diffs:(get-commit i))
   ++  get-snap    |=(i=index snapshot:(get-commit i))
   ++  get-diff    |=([i=index p=path] (~(gut by (get-diffs i)) p *diff))
-  ++  get-file    |=([p=path i=index] (of-wain (~(gut by (get-snap i)) p ~)))
+  ++  get-file    |=([i=index p=path] (of-wain (~(gut by (get-snap i)) p ~)))
   ::
   ++  latest-commit  (get-commit head)
   ++  latest-diffs   (get-diffs head)
@@ -44,7 +44,7 @@
   ::
   :: for squashing commit N with commit N+1. To squash N commits you must call this N times
   :: copy +join from mar/txt/hoon (minimal edits)
-  ++  squash  'todo'
+  ++  squash  'TODO'
   --
 ++  build-diff
   |=  [old=snapshot new=snapshot]
