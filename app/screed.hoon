@@ -1,4 +1,4 @@
-/-  *screed, ldb=linedb
+/-  *screed, *linedb
 /+  dbug, default-agent, linedb, *mip
 ::
 %-  agent:dbug
@@ -11,7 +11,7 @@
       $:  %0
           published=(map path html=@t)
           history=_branch:linedb
-          comments=(map path ((mop line:ldb comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
+          comments=(map path ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
       ==
     +$  card  card:agent:gall
     --
@@ -71,49 +71,39 @@
   ^-  (quip card _state)
   ?>  =(src our):bowl :: TODO for group blogs
   ?-    -.act
+  ::
       %publish
     :_  state(published (~(put by published) [path html]:act))
     [%pass /bind %arvo %e %connect `path.act dap.bowl]~
   ::
       %commit-file
-    :: TODO any comments have to be adjusted. See "Operational Transform"
-    =.  history.state
-      =/  =snapshot:ldb     latest-snap:history
-      =/  new=snapshot:ldb  (~(put by snapshot) [path md]:act)
+    =.  history.state :: maybe build this into ldb?
+      =/  old=snapshot  latest-snap:history
+      =/  new=snapshot  (~(put by old) [path md]:act)
       (commit:history.state src.bowl new)
-    =/  =diff:ldb  (latest-diff:history path.act)
-    ~&  >  diff
+    ::  if there are no comments, return
     ?~  got=(~(get by comments) path.act)  `state
-    =/  coms  (tap:((on line:ldb comment) lth) u.got) :: =(list [line:ldb comment])
-    ~&  >  coms
-    =.  coms
-      =|  offset=@ud
-      =|  (list line:ldb comment)
-      |- :: TODO still have to edit the line numbers per comment
-      ?~  diff  coms
-      ?-    -.i.diff
-      ::
-          %&  $(diff t.diff, offset (add offset p.i.diff))  
-      ::
-          %|
-        ?:  &(=(^ p.i.diff) =(~ q.i.diff))             :: delete
-          $(offset (sub offset (lent p.i.diff)))       :: TODO sub underflow
-        ?:  &(=(~ p.i.diff) =(^ q.i.diff))             :: insert
-          $(offset (add offset (lent q.i.diff)))
-        ?:  &(=(^ p.i.diff) =(^ q.i.diff))             :: edit
-          =+  a=(lent p.i.diff)
-          =+  b=(lent q.i.diff)
-          ?:  (gth a b)  $(offset (sub offset (sub a b)))
-            $(offset (add offset (sub b a)))
-      ::
-      ==
+    ::  if we have comments, adjust their lines
+    =/  =diff  (latest-diff:history path.act)
+    =/  line-mapping  (line-mapping:linedb diff)
+    =.  comments
+      %+  ~(put by comments)  path.act
+      %+  gas:comm-on  *((mop line comment) lth)
+      ^-  (list [line comment])
+      %+  murn  (tap:((on line comment) lth) u.got)
+      |=  [key=line val=comment]
+      ^-  (unit [_key _val])
+      =+  got=(~(get by line-mapping) key)
+      ?~(got ~ `[u.got val])
     `state
   ::
       %comment
+    ::  TODO verify signature
     =:  author.comment.act     src.bowl
         timestamp.comment.act  now.bowl
       ==
     `state(comments (~(put bi comments) [path line comment]:act))
+  ::
   ==
 ++  handle-scry
   |=  =path
@@ -122,7 +112,7 @@
   ::
       [%x %head ~]   ``noun+!>(head:history)
       [%x %files ~]
-    =+  snapshot:(got:snap-on:ldb snaps.history head:history)
+    =+  snapshot:(got:snap-on snaps.history head:history)
     ``noun+!>((turn ~(tap by -) head))
   ::
       [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))

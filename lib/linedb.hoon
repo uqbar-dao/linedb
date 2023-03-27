@@ -41,20 +41,51 @@
   ++  latest-diff    |=(f=file-name (get-diff head f))
   ++  latest-file    |=(f=file-name (of-wain (~(got by latest-snap) f)))
   ::
-  ::  helpers
-  ::
-  ++  build-diff
-    |=  [old=snapshot new=snapshot]
-    ^-  (map path diff)
-    %-  ~(urn by (~(uni by old) new))
-    |=  [=path *]
-    ^-  diff
-    =/  a=file  ?~(got=(~(get by old) path) *file u.got)
-    =/  b=file  ?~(got=(~(get by new) path) *file u.got)
-    (lusk:differ a b (loss:differ a b))
-  ::
   :: for squashing commit N with commit N+1. To squash N commits you must call this N times
   :: copy +join from mar/txt/hoon (minimal edits)
   ++  squash  'todo'
   --
+++  build-diff
+  |=  [old=snapshot new=snapshot]
+  ^-  (map path diff)
+  %-  ~(urn by (~(uni by old) new))
+  |=  [=path *]
+  ^-  diff
+  =/  a=file  ?~(got=(~(get by old) path) *file u.got)
+  =/  b=file  ?~(got=(~(get by new) path) *file u.got)
+  (lusk:differ a b (loss:differ a b))
+::
+++  line-mapping
+  ::  TODO this function doesn't produce a map for any edited lines
+  ::  we need a more advanced diff algo if we want to do that
+  ::  one that can analyze individual lines
+  |=  =diff
+  ^-  (map line line)
+  =|  iold=@ud
+  =|  inew=@ud
+  =|  new-lines=(list (pair line line))
+  |-
+  ?~  diff  (~(gas by *(map line line)) new-lines)
+  ?-  -.i.diff
+    %&  %=    $
+            iold  (add iold p.i.diff)
+            inew  (add inew p.i.diff)
+            diff  t.diff
+            new-lines
+          |-
+          ?:  =(0 p.i.diff)  new-lines
+          %=  $
+            new-lines  [[+(iold) +(inew)] new-lines]
+            p.i.diff   (dec p.i.diff)
+            iold       +(iold)
+            inew       +(inew)
+          ==
+        ==
+  ::
+    %|  %=  $
+          iold  (add iold (lent p.i.diff))
+          inew  (add inew (lent q.i.diff))
+          diff  t.diff
+        ==
+  ==
 --
