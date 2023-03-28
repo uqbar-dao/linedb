@@ -8,20 +8,27 @@
 ::  to add a commit to a branch, simply call +add-commit:branch
 ::  with your files
 ::
-+$  index      @ud
-+$  line       @ud
-+$  file       wain :: TODO ordered map gives you more structural sharing
-+$  diff       (urge:clay cord)
-+$  snapshot   (map path file)
++$  index     @ud
++$  line      @ud
++$  file      (mop line cord)
++$  diff      (urge:clay cord)
++$  snapshot  (map path file)
 +$  commit
-  $:  author=ship
+  $:  hash=@ux
+      author=ship
+      message=@t
+      time=@da
       =snapshot
       diffs=(map path diff)
   ==
 +$  branch
-  $:  snaps=((mop index commit) lth)
-      head=index
+  $:  commits=(list commit)
+      hash-index=(map hash commit)
+      head=hash
   ==
 ::
 ++  snap-on  ((on index commit) lth)
+++  file-on  ((on line cord) lth)
+::
+++  mop-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
 --
