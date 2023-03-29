@@ -116,24 +116,21 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~
-      [%x %head ~]   ``noun+!>(head:history)
-  ::
-      [%x %comments ^]
-    =-  ``noun+!>(-)
-    ~(tap by comments:(~(gut by post-metadata) t.t.path *metadata))
-  ::
-      [%x %posts ~]
-    =-  ``noun+!>(-)
-    %+  turn  ~(tap by post-metadata)
-    |=([=^path =metadata] [path [title published]:metadata])
-  ::
       [%x %post ^]
-    :: TODO also get the markdown
-    =-  ``noun+!>(-)
+    =-  ``screed-update+!>(post+-)
     =+  meta=(~(gut by post-metadata) t.t.path *metadata)
     :^    path
         title.meta
       published.meta
     (latest-file:history t.t.path)
+  ::
+      [%x %posts ~]
+    =-  ``screed-update+!>(posts+-)
+    %+  turn  ~(tap by post-metadata)
+    |=([=^path =metadata] [path [title published]:metadata])
+  ::
+      [%x %comments ^]
+    =-  ``screed-update+!>(comments+-)
+    ~(tap by comments:(~(gut by post-metadata) t.t.path *metadata))
   ==
 --
