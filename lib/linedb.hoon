@@ -10,14 +10,13 @@
   ::  write arms
   ::
   ++  add-commit
-    |=  [author=ship msg=@t time=@da new-snap=snapshot]
+    |=  [author=ship time=@da new-snap=snapshot]
     ^+  branch
     =+  head-hash=(sham new-snap)
     =/  new-commit=commit
       :*  head-hash
           head
           author
-          msg
           time
           new-snap
           (build-diff latest-snap new-snap)
@@ -72,4 +71,37 @@
   :: copy +join from mar/txt/hoon (minimal edits)
   ++  squash  'todo'
   --
+++  line-mapping
+  ::  TODO this function doesn't produce a map for any edited lines
+  ::  we need a more advanced diff algo if we want to do that
+  ::  one that can analyze individual lines
+  |=  =diff
+  ^-  (map line line)
+  =|  iold=@ud
+  =|  inew=@ud
+  =|  new-lines=(list (pair line line))
+  |-
+  ?~  diff  (~(gas by *(map line line)) new-lines)
+  ?-  -.i.diff
+    %&  %=    $
+            iold  (add iold p.i.diff)
+            inew  (add inew p.i.diff)
+            diff  t.diff
+            new-lines
+          |-
+          ?:  =(0 p.i.diff)  new-lines
+          %=  $
+            new-lines  [[+(iold) +(inew)] new-lines]
+            p.i.diff   (dec p.i.diff)
+            iold       +(iold)
+            inew       +(inew)
+          ==
+        ==
+  ::
+    %|  %=  $
+          iold  (add iold (lent p.i.diff))
+          inew  (add inew (lent q.i.diff))
+          diff  t.diff
+        ==
+  ==
 --

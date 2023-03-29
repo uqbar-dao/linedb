@@ -8,7 +8,7 @@
   ==
 ::
 +$  action
-  $%  [%save-file =path title=@t md=wain] :: should commit and edit metadata
+  $%  [%save-file =path title=@t md=@t] :: should commit and edit metadata
       [%comment =path =line content=@t]
   ==
 +$  comment

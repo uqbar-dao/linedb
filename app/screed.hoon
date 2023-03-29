@@ -10,7 +10,7 @@
       ==
     +$  state-0
       $:  %0
-          post-metadata=(map path =metadata)
+          post-metadata=(map path metadata)
           history=_branch:linedb
       ==
     +$  card  card:agent:gall
@@ -74,20 +74,23 @@
   ^-  (quip card _state)
   ?-    -.act
       %save-file
-    ?>  =(src our):bowl :: TODO group blogs
     =.  history.state
-      %+  commit:history  src.bowl
-      (~(put by latest-snap:history) [path md]:act)
+      %^  add-commit:history  src.bowl  now.bowl
+      (~(put by latest-snap:history) path.act (cord-to-file md.act))
+    =.  post-metadata
+      (~(put by post-metadata) path.act [title.act now.bowl ~])
     ::  if there are no comments, return
-    ?~  got=(~(get by comments) path.act)  `state
-    ::  if we have comments, adjust their lines
+    =/  old-coms  comments:(~(got by post-metadata) path.act)
+    :: ::  if we have comments, adjust their lines
     =/  =diff     (latest-diff:history path.act)
     =/  line-map  (line-mapping:linedb diff)
-    =.  comments
-      %+  ~(put by comments)  path.act
+    =.  post-metadata
+      %+  ~(jab by post-metadata)  path.act
+      |=  [title=@t date=@da comments=((mop line comment) lth)]
+      :+  title  date
       %+  gas:comment-on  *((mop line comment) lth)
       ^-  (list [line comment])
-      %+  murn  (tap:comment-on u.got)
+      %+  murn  (tap:comment-on old-coms)
       |=  [key=line val=comment]
       ^-  (unit [_key _val])
       =+  got=(~(get by line-map) key)
@@ -97,12 +100,14 @@
       %comment
     =.  post-metadata
       %+  ~(jab by post-metadata)  path.act
-      |=  comments=((mop line comment) lth)
-      (put:comment-on line.act [src.bowl now.bowl content.act])
+      |=  [title=@t date=@da comments=((mop line comment) lth)]
+      :+  title  date
+      %^  put:comment-on  comments  line.act
+      [src.bowl now.bowl content.act] 
     `state
   ::
-      %change-permissions
-    `state
+    ::   %change-permissions
+    :: `state
   ==
 ++  handle-scry
   |=  =path
