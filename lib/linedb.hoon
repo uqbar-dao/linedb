@@ -72,9 +72,7 @@
   ++  squash  'todo'
   --
 ++  line-mapping
-  ::  TODO this function doesn't produce a map for any edited lines
-  ::  we need a more advanced diff algo if we want to do that
-  ::  one that can analyze individual lines
+  ::  TODO we need a more advanced diff algo if we want individual lines edited
   |=  =diff
   ^-  (map line line)
   =|  iold=@ud

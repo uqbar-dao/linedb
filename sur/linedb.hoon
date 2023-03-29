@@ -23,7 +23,6 @@
       diffs=(map path diff)
   ==
 ::
-++  snap-on  ((on index commit) lth)
 ++  file-on  ((on line cord) lth)
 ::
 ++  file-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))

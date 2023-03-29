@@ -1,21 +1,26 @@
 /-  *linedb
+/+  *mip
 |%
 +$  metadata
   $:  title=@t
       published=@da
-      comments=((mop line comment) lth) :: TODO not sure if this needs to be a mop
-      :: permissions
+      comments=(map @da comment)
+      :: global-permissions=permissions
+      :: user-permissions=(map @p permissions)
   ==
++$  permissions
+  $~  %none
+  ?(%none %read %comment %write)
 ::
 +$  action
   $%  [%save-file =path title=@t md=@t] :: should commit and edit metadata
-      [%comment =path =line content=@t]
+      [%add-comment =path =line content=@t]
+      [%delete-comment =path id=@da]
   ==
 +$  comment
-  $:  author=@p
-      timestamp=@da
+  $:  =line
+      author=@p
       content=@t
-      :: sig=* :: TODO
   ==
 ++  comment-on  ((on line comment) lth)
 --

@@ -79,59 +79,58 @@
       (~(put by latest-snap:history) path.act (cord-to-file md.act))
     =.  post-metadata
       (~(put by post-metadata) path.act [title.act now.bowl ~])
-    ::  if there are no comments, return
-    =/  old-coms  comments:(~(got by post-metadata) path.act)
-    :: ::  if we have comments, adjust their lines
-    =/  =diff     (latest-diff:history path.act)
-    =/  line-map  (line-mapping:linedb diff)
+    :: if we have comments, adjust their lines 
+    =/  line-map  (line-mapping:linedb (latest-diff:history path.act))
     =.  post-metadata
       %+  ~(jab by post-metadata)  path.act
-      |=  [title=@t date=@da comments=((mop line comment) lth)]
+      |=  [title=@t date=@da comments=(map @da comment)]
       :+  title  date
-      %+  gas:comment-on  *((mop line comment) lth)
-      ^-  (list [line comment])
-      %+  murn  (tap:comment-on old-coms)
-      |=  [key=line val=comment]
+      %-  ~(gas by *(map @da comment))
+      ^-  (list [@da comment])
+      %+  murn  ~(tap by comments:(~(got by post-metadata) path.act))
+      |=  [key=@da val=comment]
       ^-  (unit [_key _val])
-      =+  got=(~(get by line-map) key)
-      ?~(got ~ `[u.got val])
+      =+  lin=(~(get by line-map) line.val)
+      ?~(lin ~ `[key val(line u.lin)])
     `state
   ::
-      %comment
+      %add-comment
     =.  post-metadata
       %+  ~(jab by post-metadata)  path.act
-      |=  [title=@t date=@da comments=((mop line comment) lth)]
+      |=  [title=@t date=@da comments=(map @da comment)]
       :+  title  date
-      %^  put:comment-on  comments  line.act
-      [src.bowl now.bowl content.act] 
+      %+  ~(put by comments)  now.bowl
+      [line.act src.bowl content.act] 
     `state
   ::
-    ::   %change-permissions
-    :: `state
+      %delete-comment
+    =.  post-metadata
+      %+  ~(jab by post-metadata)  path.act
+      |=  [title=@t date=@da comments=(map @da comment)]
+      :+  title  date
+      (~(del by comments) id.act)
+    `state
+  ::
   ==
 ++  handle-scry
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~
       [%x %head ~]   ``noun+!>(head:history)
-  ::     [%x %files ~]  ``noun+!>((turn ~(tap by latest-snap:history) head))
-  :: ::
-  ::     [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
-  :: ::
-  ::     [%x %history ~]  ``noun+!>(history) :: for testing only
-  :: ::
-  ::     [%x %comments ^]
-  ::   =*  path  t.t.path
-  ::   ``noun+!>((tap:comment-on comments:(~(gut by post-metadata) path *post))) :: TODO json
-  :: ::
-  ::     [%x %posts ~]
-  ::   =-  ``noun+!>(-)
-  ::   (turn ~(tap by post-metadata) |=([=path =post] [path [title published]:post]))
-  :: ::
-  ::     [%x %post ^]
-  ::   =-  ``noun+!>(-)
-  ::   (~(gut by post-metadata) t.t.path *post)
-  :: ::
+  ::
+      [%x %comments ^]
+    =-  ``noun+!>(-)
+    ~(tap by comments:(~(gut by post-metadata) t.t.path *metadata))
+  ::
+      [%x %posts ~]
+    =-  ``noun+!>(-)
+    %+  turn  ~(tap by post-metadata)
+    |=([=^path =metadata] [path [title published]:metadata])
+  ::
+      [%x %post ^]
+    :: TODO also get the markdown
+    =-  ``noun+!>(-)
+    (~(gut by post-metadata) t.t.path *metadata)
   ::     [%x %v @ %post ^]
   ::   =*  index  (slav %ud i.t.t.path)
   ::   =*  path   t.t.t.t.path
