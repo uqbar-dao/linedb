@@ -1,7 +1,6 @@
 /-  *linedb
-/+  linedb
 |%
-+$  post-metadata
++$  metadata
   $:  title=@t
       published=@da
       comments=((mop line comment) lth) :: TODO not sure if this needs to be a mop
@@ -10,7 +9,7 @@
 ::
 +$  action
   $%  [%save-file =path title=@t md=wain] :: should commit and edit metadata
-      [%comment =path =line =comment]
+      [%comment =path =line content=@t]
   ==
 +$  comment
   $:  author=@p

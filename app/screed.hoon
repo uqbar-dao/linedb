@@ -6,11 +6,11 @@
 ^-  agent:gall
 =>  |%
     +$  versioned-state
-      $%  state-0  
+      $%  state-0
       ==
     +$  state-0
       $:  %0
-          published=(map path =post)
+          post-metadata=(map path =metadata)
           history=_branch:linedb
       ==
     +$  card  card:agent:gall
@@ -75,13 +75,9 @@
   ?-    -.act
       %save-file
     ?>  =(src our):bowl :: TODO group blogs
-    =.  history.state :: maybe build this into ldb?
-      =/  old=snapshot
-        ?:  =(0 head.history)
-          *(map path file)
-        latest-snap:history
-      =/  new=snapshot  (~(put by old) [path md]:act)
-      (commit:history.state src.bowl new)
+    =.  history.state
+      %+  commit:history  src.bowl
+      (~(put by latest-snap:history) [path md]:act)
     ::  if there are no comments, return
     ?~  got=(~(get by comments) path.act)  `state
     ::  if we have comments, adjust their lines
@@ -99,18 +95,14 @@
     `state
   ::
       %comment
-    ::  TODO verify signature
-    =:  author.comment.act     src.bowl
-        timestamp.comment.act  now.bowl
-      ==
-    =/  comment-set  (~(got by comments) path.act)
-    =.  comment-set  (put:comment-on comment-set [line comment]:act)
-    =.  comments     (~(put by comments) path.act comment-set)
+    =.  post-metadata
+      %+  ~(jab by post-metadata)  path.act
+      |=  comments=((mop line comment) lth)
+      (put:comment-on line.act [src.bowl now.bowl content.act])
     `state
   ::
       %change-permissions
     `state
-    :: `state(permissions (~(put bi permissions) [path ship permission]:act))
   ==
 ++  handle-scry
   |=  =path
