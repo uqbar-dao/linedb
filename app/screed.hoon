@@ -130,10 +130,10 @@
       [%x %post ^]
     :: TODO also get the markdown
     =-  ``noun+!>(-)
-    (~(gut by post-metadata) t.t.path *metadata)
-  ::     [%x %v @ %post ^]
-  ::   =*  index  (slav %ud i.t.t.path)
-  ::   =*  path   t.t.t.t.path
-  ::   ``noun+!>((get-file:history path index))
+    =+  meta=(~(gut by post-metadata) t.t.path *metadata)
+    :^    path
+        title.meta
+      published.meta
+    (latest-file:history t.t.path)
   ==
 --

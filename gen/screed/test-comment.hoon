@@ -1,4 +1,4 @@
 :-  %say
 |=  [* [line=@ud ~] ~]
 :-  %screed-action
-[%comment /blog/1 line ~zod ~ *@da 'my-comment']
+[%add-comment /blog/1 line 'my-comment']
