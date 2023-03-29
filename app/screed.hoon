@@ -109,27 +109,27 @@
   ^-  (unit (unit cage))
   ?+    path  ~
       [%x %head ~]   ``noun+!>(head:history)
-      [%x %files ~]  ``noun+!>((turn ~(tap by latest-snap:history) head))
-  ::
-      [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
-  ::
-      [%x %history ~]  ``noun+!>(history) :: for testing only
-  ::
-      [%x %comments ^]
-    =*  path  t.t.path
-    ``noun+!>((tap:comment-on comments:(~(gut by posts) path *post))) :: TODO json
-  ::
-      [%x %posts ~]
-    =-  ``noun+!>(-)
-    (turn ~(tap by posts) |=([=path =post] [path [title published]:post]))
-  ::
-      [%x %post ^]
-    =-  ``noun+!>(-)
-    (~(gut by posts) t.t.path *post)
-  ::
-      [%x %v @ %post ^]
-    =*  index  (slav %ud i.t.t.path)
-    =*  path   t.t.t.t.path
-    ``noun+!>((get-file:history path index))
+  ::     [%x %files ~]  ``noun+!>((turn ~(tap by latest-snap:history) head))
+  :: ::
+  ::     [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
+  :: ::
+  ::     [%x %history ~]  ``noun+!>(history) :: for testing only
+  :: ::
+  ::     [%x %comments ^]
+  ::   =*  path  t.t.path
+  ::   ``noun+!>((tap:comment-on comments:(~(gut by post-metadata) path *post))) :: TODO json
+  :: ::
+  ::     [%x %posts ~]
+  ::   =-  ``noun+!>(-)
+  ::   (turn ~(tap by post-metadata) |=([=path =post] [path [title published]:post]))
+  :: ::
+  ::     [%x %post ^]
+  ::   =-  ``noun+!>(-)
+  ::   (~(gut by post-metadata) t.t.path *post)
+  :: ::
+  ::     [%x %v @ %post ^]
+  ::   =*  index  (slav %ud i.t.t.path)
+  ::   =*  path   t.t.t.t.path
+  ::   ``noun+!>((get-file:history path index))
   ==
 --

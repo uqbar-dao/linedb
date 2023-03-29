@@ -4,42 +4,55 @@
 =,  differ
 |%
 ++  branch
-  =|  [snaps=((mop index commit) lth) head=index]
+  =|  [head=hash commits=(list commit) hash-index=(map hash commit)]
   |%
   ::
   ::  write arms
   ::
-  ++  commit
-    |=  [author=ship new-snap=snapshot]
+  ++  add-commit
+    |=  [author=ship msg=@t time=@da new-snap=snapshot]
     ^+  branch
-    =*  commit
-      :+  author
-        new-snap
-      ?:  =(0 head)  (build-diff ~ new-snap)
-      (build-diff latest-snap new-snap)
+    =+  head-hash=(sham new-snap)
+    =/  new-commit=commit
+      :*  head-hash
+          head
+          author
+          msg
+          time
+          new-snap
+          (build-diff latest-snap new-snap)
+      ==
     %=  +>.$
-      head   +(head)
-      snaps  (put:snap-on snaps +(head) commit)
+      head         head-hash
+      commits     [new-commit commits]
+      hash-index  (~(put by hash-index) head-hash new-commit)
     ==
   ::
   ++  set-head
-    |=  new-head=@ud
+    |=  =hash
     ^+  branch
-    ?>  (has:snap-on snaps new-head)
-    +>.$(head new-head)
+    ?>  (~(has by hash-index) hash)
+    %=    +>.$
+        head  hash
+        commits
+      |-
+      ?~  commits  !!  :: should never happen
+      ?:  =(hash.i.commits hash)  commits
+      $(commits t.commits)
+    ==
   ::
   ::  read arms
   ::
-  ++  get-commit     |=(i=index (got:snap-on snaps i))
-  ++  get-snap       |=(i=index snapshot:(got:snap-on snaps i))
-  ++  get-diffs      |=(i=index diffs:(got:snap-on snaps index))
-  ++  get-diff       |=([i=index f=file-name] (~(got by (get-diffs i)) f))
-  ++  get-file       |=([f=file-name i=index] (of-wain (~(got by (get-snap i)) f)))
-  ++  latest-commit  (got:snap-on snaps head)
-  ++  latest-snap    snapshot:(got:snap-on snaps head)
-  ++  latest-diffs   diffs:(got:snap-on snaps head)
-  ++  latest-diff    |=(f=file-name (get-diff head f))
-  ++  latest-file    |=(f=file-name (of-wain (~(got by latest-snap) f)))
+  ++  get-commit     |=(h=hash (~(gut by hash-index) h *commit))
+  ++  get-snap       |=(h=hash snapshot:(get-commit h))
+  ++  get-diffs      |=(h=hash diffs:(get-commit h))
+  ++  get-diff       |=([h=hash p=path] (~(got by (get-diffs h)) p))
+  ++  get-file       |=([h=hash p=path] (file-to-wain (~(got by (get-snap h)) p)))
+  ++  latest-commit  ?^(commits i.commits *commit)
+  ++  latest-snap    snapshot:latest-commit
+  ++  latest-diffs   diffs:latest-commit
+  ++  latest-diff    |=(p=path (~(gut by latest-diffs) p *diff))
+  ++  latest-file    |=(p=path (file-to-cord (~(gut by latest-snap) p *file)))
   ::
   ::  helpers
   ::
@@ -49,8 +62,8 @@
     %-  ~(urn by (~(uni by old) new))
     |=  [=path *]
     ^-  diff
-    =/  a=file  ?~(got=(~(get by old) path) *file u.got)
-    =/  b=file  ?~(got=(~(get by new) path) *file u.got)
+    =+  a=(file-to-wain (~(gut by old) path *file))
+    =+  b=(file-to-wain (~(gut by new) path *file))
     (lusk:differ a b (loss:differ a b))
   ::
   :: ++  fetch all diffs for a file - IMPORTANT

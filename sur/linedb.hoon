@@ -10,25 +10,23 @@
 ::
 +$  index     @ud
 +$  line      @ud
-+$  file      (mop line cord)
++$  hash      @uvH
++$  file      ((mop line cord) lth)
 +$  diff      (urge:clay cord)
 +$  snapshot  (map path file)
 +$  commit
-  $:  hash=@ux
+  $:  =hash
+      parent=hash
       author=ship
       message=@t
       time=@da
       =snapshot
       diffs=(map path diff)
   ==
-+$  branch
-  $:  commits=(list commit)
-      hash-index=(map hash commit)
-      head=hash
-  ==
 ::
 ++  snap-on  ((on index commit) lth)
 ++  file-on  ((on line cord) lth)
 ::
-++  mop-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
+++  file-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
+++  file-to-cord  |=(=file (of-wain:format (file-to-wain file)))
 --
