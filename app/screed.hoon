@@ -10,10 +10,8 @@
       ==
     +$  state-0
       $:  %0
-          published=(map path html=@t)
+          published=(map path =post)
           history=_branch:linedb
-          comments=(map path ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
-          :: permissions=(map path (pair permission (map ship permission))) :: TODO social graph?
       ==
     +$  card  card:agent:gall
     --
@@ -23,10 +21,7 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
-    ++  on-init
-      ^-  (quip card _this)
-      `this
-      :: `this(history (commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
+    ++  on-init  on-init:def
     ++  on-save  !>(state)
     ++  on-load
       |=  =vase 
@@ -140,5 +135,9 @@
     ``noun+!>((get-file:history path index))
   ::
       [%x %history ~]  ``noun+!>(history) :: for testing only
+  ::
+      [%x %comments ^]
+    =*  path  t.t.path
+    ``noun+!>((tap:comment-on comments:(~(gut by posts) path *post))) :: TODO better
   ==
 --

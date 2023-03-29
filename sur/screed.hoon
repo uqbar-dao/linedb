@@ -1,13 +1,16 @@
 /-  *linedb
 |%
-+$  action
-  $%  [%publish =file-name html=@t]
-      [%commit-file =path md=wain]
-      [%comment =file-name =line =comment]
-      [%change-permissions =file-name =ship =permission]
++$  post
+  $:  title=@t
+      md=wain
+      comments=((mop line comment) lth)
   ==
-+$  permission
-  $~(%none ?(%none %read %comment %edit))
+::
++$  action
+  $%  [%publish =path html=@t]
+      [%commit-file =path md=wain]
+      [%comment =path =line =comment]
+  ==
 +$  comment
   $:  author=@p
       sig=* :: TODO
