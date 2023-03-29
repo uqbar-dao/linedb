@@ -6,7 +6,7 @@
 ^-  agent:gall
 =>  |%
     +$  versioned-state
-      $%  state-0
+      $%  state-0  
       ==
     +$  state-0
       $:  %0
@@ -73,13 +73,7 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
-  ::
-      %publish
-    ?>  =(src our):bowl
-    :_  state(published (~(put by published) [path html]:act))
-    [%pass /bind %arvo %e %connect `path.act dap.bowl]~
-  ::
-      %commit-file
+      %save-file
     ?>  =(src our):bowl :: TODO group blogs
     =.  history.state :: maybe build this into ldb?
       =/  old=snapshot
@@ -122,22 +116,28 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~
-  ::
       [%x %head ~]   ``noun+!>(head:history)
-      [%x %files ~]
-    ``noun+!>((turn ~(tap by latest-snap:history) head))
+      [%x %files ~]  ``noun+!>((turn ~(tap by latest-snap:history) head))
   ::
       [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
-  ::
-      [%x %i @ ^]
-    =*  index      (slav %ud i.t.t.path)
-    =*  path  t.t.t.path
-    ``noun+!>((get-file:history path index))
   ::
       [%x %history ~]  ``noun+!>(history) :: for testing only
   ::
       [%x %comments ^]
     =*  path  t.t.path
-    ``noun+!>((tap:comment-on comments:(~(gut by posts) path *post))) :: TODO better
+    ``noun+!>((tap:comment-on comments:(~(gut by posts) path *post))) :: TODO json
+  ::
+      [%x %posts ~]
+    =-  ``noun+!>(-)
+    (turn ~(tap by posts) |=([=path =post] [path [title published]:post]))
+  ::
+      [%x %post ^]
+    =-  ``noun+!>(-)
+    (~(gut by posts) t.t.path *post)
+  ::
+      [%x %v @ %post ^]
+    =*  index  (slav %ud i.t.t.path)
+    =*  path   t.t.t.t.path
+    ``noun+!>((get-file:history path index))
   ==
 --

@@ -42,6 +42,8 @@
   ++  latest-diff    |=(p=path (get-diff head p))
   ++  latest-file    |=(p=path (get-file p head))
   ::
+  :: ++  fetch all diffs for a file - IMPORTANT
+  ::
   :: for squashing commit N with commit N+1. To squash N commits you must call this N times
   :: copy +join from mar/txt/hoon (minimal edits)
   ++  squash  'todo'
