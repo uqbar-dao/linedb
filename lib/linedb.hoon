@@ -53,6 +53,8 @@
     =/  b=file  ?~(got=(~(get by new) path) *file u.got)
     (lusk:differ a b (loss:differ a b))
   ::
+  :: ++  fetch all diffs for a file - IMPORTANT
+  ::
   :: for squashing commit N with commit N+1. To squash N commits you must call this N times
   :: copy +join from mar/txt/hoon (minimal edits)
   ++  squash  'todo'

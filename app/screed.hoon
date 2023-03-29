@@ -6,14 +6,12 @@
 ^-  agent:gall
 =>  |%
     +$  versioned-state
-      $%  state-0
+      $%  state-0  
       ==
     +$  state-0
       $:  %0
-          published=(map path html=@t)
+          published=(map path =post)
           history=_branch:linedb
-          comments=(map path ((mop line comment) lth)) :: TODO should probably be listified so that we can have a thread of comments
-          :: permissions=(map path (pair permission (map ship permission))) :: TODO social graph?
       ==
     +$  card  card:agent:gall
     --
@@ -23,10 +21,7 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
-    ++  on-init
-      ^-  (quip card _this)
-      `this
-      :: `this(history (commit:history our.bowl ~)) :: TODO this starts at v 1 which is a little weird instead of 0
+    ++  on-init  on-init:def
     ++  on-save  !>(state)
     ++  on-load
       |=  =vase 
@@ -78,13 +73,7 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
-  ::
-      %publish
-    ?>  =(src our):bowl
-    :_  state(published (~(put by published) [path html]:act))
-    [%pass /bind %arvo %e %connect `path.act dap.bowl]~
-  ::
-      %commit-file
+      %save-file
     ?>  =(src our):bowl :: TODO group blogs
     =.  history.state :: maybe build this into ldb?
       =/  old=snapshot
@@ -127,18 +116,28 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~
-  ::
       [%x %head ~]   ``noun+!>(head:history)
-      [%x %files ~]
-    ``noun+!>((turn ~(tap by latest-snap:history) head))
+      [%x %files ~]  ``noun+!>((turn ~(tap by latest-snap:history) head))
   ::
       [%x %latest ^]  ``noun+!>((latest-file:history t.t.path))
   ::
-      [%x %i @ ^]
-    =*  index      (slav %ud i.t.t.path)
-    =*  path  t.t.t.path
-    ``noun+!>((get-file:history path index))
-  ::
       [%x %history ~]  ``noun+!>(history) :: for testing only
+  ::
+      [%x %comments ^]
+    =*  path  t.t.path
+    ``noun+!>((tap:comment-on comments:(~(gut by posts) path *post))) :: TODO json
+  ::
+      [%x %posts ~]
+    =-  ``noun+!>(-)
+    (turn ~(tap by posts) |=([=path =post] [path [title published]:post]))
+  ::
+      [%x %post ^]
+    =-  ``noun+!>(-)
+    (~(gut by posts) t.t.path *post)
+  ::
+      [%x %v @ %post ^]
+    =*  index  (slav %ud i.t.t.path)
+    =*  path   t.t.t.t.path
+    ``noun+!>((get-file:history path index))
   ==
 --

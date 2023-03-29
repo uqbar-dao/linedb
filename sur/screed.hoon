@@ -1,18 +1,22 @@
 /-  *linedb
+/+  linedb
 |%
-+$  action
-  $%  [%publish =file-name html=@t]
-      [%commit-file =path md=wain]
-      [%comment =file-name =line =comment]
-      [%change-permissions =file-name =ship =permission]
++$  post-metadata
+  $:  title=@t
+      published=@da
+      comments=((mop line comment) lth) :: TODO not sure if this needs to be a mop
+      :: permissions
   ==
-+$  permission
-  $~(%none ?(%none %read %comment %edit))
+::
++$  action
+  $%  [%save-file =path title=@t md=wain] :: should commit and edit metadata
+      [%comment =path =line =comment]
+  ==
 +$  comment
   $:  author=@p
-      sig=* :: TODO
       timestamp=@da
       content=@t
+      :: sig=* :: TODO
   ==
 ++  comment-on  ((on line comment) lth)
 --
