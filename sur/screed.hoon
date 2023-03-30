@@ -24,11 +24,13 @@
   $%  [%save-file =path title=@t md=@t] :: should commit and edit metadata
       [%add-comment =path =line content=@t]
       [%delete-comment =path id=@da]
+      [%request-post =path]
+      [%respond-post =path =metadata file=@t]
   ==
 ::
 +$  update
   $%  [%post =path title=@t published=@da md=@t]
-      [%posts posts=(list [=path title=@t published=@da])]
+      [%posts posts=(list [=path author=ship title=@t published=@da])]
       [%comments comments=(list [time=@da line=@ud author=@p content=@t])]
   ==
 ::

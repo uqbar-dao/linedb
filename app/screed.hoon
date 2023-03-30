@@ -67,7 +67,7 @@
       rid
     [200 ['Content-Type' 'text/plain; charset=utf-8']~]
   `(as-octs:mimes:html (latest-file:local url))
-
+::
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
@@ -114,6 +114,25 @@
       m(comments (~(del by comments.m) id.act))
     `state
   ::
+      %request-post
+    :_  state
+    :_  ~
+    :^  %pass  /  %agent
+    :^  [src dap]:bowl  %poke  %screed-action
+    !>  :-  %respond-post
+    :+  path.act  (~(gut by local-metadata) path.act *metadata)
+    (latest-file:local path.act)
+  ::
+      %respond-post
+    =/  remote  (~(gut by remotes) src.bowl *_branch:linedb)
+    =.  remote
+      %^    add-commit:remote
+          src.bowl
+        now.bowl
+    (~(put by latest-snap:local) path.act (cord-to-file file.act))
+    =.  remotes
+      (~(put by remotes) src.bowl remote)
+    `state
   ==
 ++  handle-scry
   |=  =path
@@ -130,7 +149,13 @@
       [%x %posts ~]
     =-  ``screed-update+!>(posts+-)
     %+  turn  ~(tap by local-metadata)
-    |=([=^path =metadata] [path [title published]:metadata])
+    |=([=^path =metadata] [path our.bowl [title published]:metadata])
+  ::
+      [%x %remote-posts ~]
+    =-  ``noun+!>(posts+-)
+    %+  turn  ~(tap bi remote-metadata)
+    |=  [=ship =^path =metadata]
+    [path ship [title published]:metadata]
   ::
       [%x %comments ^]
     =-  ``screed-update+!>(comments+-)

@@ -27,9 +27,10 @@
         %posts
       :-  %a
       %+  turn  posts.update
-      |=  [pax=^path title=@t published=@da]
+      |=  [pax=^path author=@p title=@t published=@da]
       %-  pairs
       :~  path+(path:enjs:format pax)
+          author+(ship:enjs:format author)
           title+s+title
           published+(sect published)
       ==
