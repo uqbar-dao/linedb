@@ -2,11 +2,12 @@
 /+  *mip
 |%
 +$  metadata
-  $:  title=@t
+  $:  author=@p
+      title=@t
       published=@da
       comments=(map @da comment)
-      :: global-permissions=permissions
-      :: user-permissions=(map @p permissions)
+      global-permissions=permissions
+      user-permissions=(map @p permissions)
   ==
 ::
 +$  permissions

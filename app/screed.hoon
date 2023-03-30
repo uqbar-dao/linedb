@@ -10,8 +10,10 @@
       ==
     +$  state-0
       $:  %0
-          post-metadata=(map path metadata)
-          history=_branch:linedb
+          local=_branch:linedb
+          remotes=(map ship _branch:linedb)
+          local-metadata=(map path metadata)
+          remote-metadata=(mip ship path metadata)
       ==
     +$  card  card:agent:gall
     --
@@ -34,60 +36,82 @@
     ++  on-poke
       |=  [=mark =vase]
       =^  cards  state
-        ?+  mark  (on-poke:def mark vase)
-          %screed-action        (handle-action:hc !<(act=action vase))
+        ?+    mark  (on-poke:def mark vase)
+            %handle-http-request
+          (http-req:hc !<([@tas inbound-request:eyre] vase))
+            %screed-action
+          (handle-action:hc !<(action vase))
         ==
       [cards this]
     ::
     ++  on-agent  on-agent:def
-    ++  on-watch  on-watch:def
-    ++  on-peek  handle-scry:hc
-    ++  on-arvo   on-arvo:def
+    ++  on-watch  |=(=path ?>(?=([%http-response *] path) `this))
+    ++  on-peek   handle-scry:hc
+    ++  on-arvo
+      |=  [=wire =sign-arvo]
+      ^-  (quip card _this)
+      ?+  wire  (on-arvo:def wire sign-arvo)
+        [%bind ~]  ?>(?=([%eyre %bound %.y *] sign-arvo) `this)
+      ==
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
 ::
 |_  bowl=bowl:gall
+++  http-req
+  |=  [rid=@tas req=inbound-request:eyre]
+  ^-  (quip card _state)
+  =+  url=(rash url.request.req stap)
+  :_  state
+  %^    http-response-cards:screed-lib
+      rid
+    [200 ['Content-Type' 'text/plain; charset=utf-8']~]
+  `(as-octs:mimes:html (latest-file:local url))
+
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
       %save-file
-    =.  history.state
-      %^  add-commit:history  src.bowl  now.bowl
-      (~(put by latest-snap:history) path.act (cord-to-file md.act))
-    =.  post-metadata
-      (~(put by post-metadata) path.act [title.act now.bowl ~])
+    =.  local.state
+      %^  add-commit:local  src.bowl  now.bowl
+      (~(put by latest-snap:local) path.act (cord-to-file md.act))
+    =.  local-metadata
+      %+  ~(put by local-metadata)  path.act
+      [src.bowl title.act now.bowl ~ %none ~]
     :: if we have comments, adjust their lines 
-    =/  line-map  (line-mapping:linedb (latest-diff:history path.act))
-    =.  post-metadata
-      %+  ~(jab by post-metadata)  path.act
-      |=  [title=@t date=@da comments=(map @da comment)]
-      :+  title  date
-      %-  ~(gas by *(map @da comment))
-      ^-  (list [@da comment])
-      %+  murn  ~(tap by comments:(~(got by post-metadata) path.act))
-      |=  [key=@da val=comment]
-      ^-  (unit [_key _val])
-      =+  lin=(~(get by line-map) line.val)
-      ?~(lin ~ `[key val(line u.lin)])
-    `state
+    =/  line-map  (line-mapping:linedb (latest-diff:local path.act))
+    =.  local-metadata
+      %+  ~(jab by local-metadata)  path.act
+      |=  =metadata
+      %=    metadata
+          comments
+        %-  ~(gas by *(map @da comment))
+        ^-  (list [@da comment])
+        %+  murn  ~(tap by comments:(~(got by local-metadata) path.act))
+        |=  [key=@da val=comment]
+        ^-  (unit [_key _val])
+        =+  lin=(~(get by line-map) line.val)
+        ?~(lin ~ `[key val(line u.lin)])
+      ==
+    :_  state
+    [%pass /bind %arvo %e %connect `path.act dap.bowl]~
   ::
       %add-comment
-    =.  post-metadata
-      %+  ~(jab by post-metadata)  path.act
-      |=  [title=@t date=@da comments=(map @da comment)]
-      :+  title  date
-      %+  ~(put by comments)  now.bowl
-      [line.act src.bowl content.act] 
+    =.  local-metadata
+      %+  ~(jab by local-metadata)  path.act
+      |=  m=metadata
+      %=    m
+          comments
+        (~(put by comments.m) now.bowl [line.act src.bowl content.act])
+      ==
     `state
   ::
       %delete-comment
-    =.  post-metadata
-      %+  ~(jab by post-metadata)  path.act
-      |=  [title=@t date=@da comments=(map @da comment)]
-      :+  title  date
-      (~(del by comments) id.act)
+    =.  local-metadata
+      %+  ~(jab by local-metadata)  path.act
+      |=  m=metadata
+      m(comments (~(del by comments.m) id.act))
     `state
   ::
   ==
@@ -97,19 +121,19 @@
   ?+    path  ~
       [%x %post ^]
     =-  ``screed-update+!>(post+-)
-    =+  meta=(~(gut by post-metadata) t.t.path *metadata)
+    =+  meta=(~(gut by local-metadata) t.t.path *metadata)
     :^    path
         title.meta
       published.meta
-    (latest-file:history t.t.path)
+    (latest-file:local t.t.path)
   ::
       [%x %posts ~]
     =-  ``screed-update+!>(posts+-)
-    %+  turn  ~(tap by post-metadata)
+    %+  turn  ~(tap by local-metadata)
     |=([=^path =metadata] [path [title published]:metadata])
   ::
       [%x %comments ^]
     =-  ``screed-update+!>(comments+-)
-    ~(tap by comments:(~(gut by post-metadata) t.t.path *metadata))
+    ~(tap by comments:(~(gut by local-metadata) t.t.path *metadata))
   ==
 --
