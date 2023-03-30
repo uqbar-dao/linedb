@@ -1,4 +1,5 @@
 /-  screed
+/+  screed-lib=screed
 |_  =update:screed
 ::
 ++  grab
@@ -9,7 +10,7 @@
 ++  grow
   |%
   ++  noun  update
-  :: ++  json  (update:enjs:pyro-lib update)
+  ++  json  (update:enjs:screed-lib update)
   --
 ::
 ++  grad  %noun

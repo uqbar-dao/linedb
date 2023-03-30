@@ -27,8 +27,8 @@
 ::
 +$  update
   $%  [%post =path title=@t published=@da md=@t]
-      [%posts (list [=path title=@t published=@da])]
-      [%comments (list [time=@da line=@ud author=@p content=@t])]
+      [%posts posts=(list [=path title=@t published=@da])]
+      [%comments comments=(list [time=@da line=@ud author=@p content=@t])]
   ==
 ::
 ++  comment-on  ((on line comment) lth)
