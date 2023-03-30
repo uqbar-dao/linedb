@@ -35,40 +35,19 @@
       |=  [=mark =vase]
       =^  cards  state
         ?+  mark  (on-poke:def mark vase)
-          %handle-http-request  (http-req:hc !<([@tas inbound-request:eyre] vase))
           %screed-action        (handle-action:hc !<(act=action vase))
         ==
       [cards this]
     ::
     ++  on-agent  on-agent:def
-    ++  on-watch
-      |=  =path
-      ^-  (quip card _this)
-      ?>  ?=([%http-response *] path)
-      `this
-    ::
+    ++  on-watch  on-watch:def
     ++  on-peek  handle-scry:hc
-    ::
-    ++  on-arvo
-      |=  [=wire =sign-arvo]
-      ^-  (quip card _this)
-      ?+  wire  (on-arvo:def wire sign-arvo)
-        [%bind ~]  ?>(?=([%eyre %bound %.y *] sign-arvo) `this)
-      ==
+    ++  on-arvo   on-arvo:def
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
 ::
 |_  bowl=bowl:gall
-++  http-req
-  |=  [rid=@tas req=inbound-request:eyre]
-  ^-  (quip card _state)
-  :_  state
-  %^    http-response-cards:screed-lib
-      rid
-    [200 ['Content-Type' 'text/plain; charset=utf-8']~]
-  =-  `(as-octs:mimes:html -)
-  (latest-file:history (rash url.request.req stap))
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
