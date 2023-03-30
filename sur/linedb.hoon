@@ -22,6 +22,24 @@
       =snapshot
       diffs=(map path diff)
   ==
++$  branch
+  $:  head=hash
+      commits=(list commit)
+      hash-index=(map hash commit)
+  ==
++$  repo-metadata
+  $:  upstream=ship
+      active-branch=@tas
+  ==
++$  repo  (pair repo-metadata (map @tas branch))
+::
++$  action
+  $%  [%commit repo=@tas =snapshot]
+      [%branch repo=@tas name=@tas]
+      [%checkout repo=@tas branch=@tas]
+      [%merge repo=@tas branch=@tas]
+      :: [%fetch =ship repo=@tas branch=_%master]
+  ==
 ::
 ++  file-on  ((on line cord) lth)
 ::
