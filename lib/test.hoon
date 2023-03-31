@@ -26,19 +26,17 @@
 ++  test
   =|  =branch
   =.  branch  (~(add-commit b:ldb branch) *@p *@da snap-1)
-  =/  hash-1  head.branch
   =.  branch  (~(add-commit b:ldb branch) *@p *@da snap-2)
+  =/  hash-1  head.branch
   =.  branch  (~(add-commit b:ldb branch) *@p *@da snap-3)
   =.  branch  (~(add-commit b:ldb branch) *@p *@da snap-4)
   =/  hash-2  head.branch
-  ~&  >  hash-1
   ~&  >  hash-2
+  ~&  >  hash-1
   ~&  >  ~(log b:ldb branch)
-  ~&  >  ~(par b:ldb branch)
   :: ~&  >  ~(head-diffs b:ldb branch)
   =.  branch  (~(squash b:ldb branch) hash-1 hash-2)
   ~&  >>  ~(log b:ldb branch)
-  ~&  >>  ~(par b:ldb branch)
   :: ~&  >>  ~(head-diffs b:ldb branch)
   5
 ++  asdf

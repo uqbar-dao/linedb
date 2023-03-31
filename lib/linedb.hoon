@@ -38,21 +38,30 @@
   ++  squash :: TODO this code is really ugly
     |=  [from=hash to=hash]
     ^+  branch
-    =/  coms  (flop commits.branch)
-    =|  newb=(list commit)
-    =|  froc=(unit commit)
-    =|  toc=(unit commit)
+    =|  edited=(list commit)
+    =|  base=(unit commit)
+    =|  continue=?
+    =/  commits  (flop commits.branch)
     |-
-    ?~  coms  branch(commits newb)
-    ?:  =(from hash.i.coms)
-      $(coms t.coms, froc `i.coms)
-    ?:  =(to hash.i.coms)
-      ?~  froc  ~|("hashes are out of order" !!)
-      =+  new-diffs=(diff-snaps:d snap.u.froc snap.i.coms)
-      $(coms t.coms, newb [i.coms(diffs new-diffs, parent ?^(newb parent.i.newb *hash)) newb], toc `i.coms)
-    ?:  &(?=(^ froc) ?=(~ toc))
-      $(coms t.coms)
-    $(coms t.coms, newb [i.coms newb])
+    ?~  commits  branch(commits edited)
+    ?:  =(from hash.i.commits)
+      $(commits t.commits, base `i.commits)
+    ?:  =(to hash.i.commits)
+      ?~  base
+        ~|("%linedb: squash: out of order, no changes made" branch)
+      %=    $
+          continue  %.n
+          commits   t.commits
+          edited
+        :_  edited
+        %=  i.commits
+          diffs   (diff-snaps:d snap.u.base snap.i.commits)
+          parent  ?^(edited hash.i.edited *hash)
+        ==
+      ==
+    ?:  &(?=(^ base) continue)
+      $(commits t.commits)
+    $(commits t.commits, edited [i.commits edited])
   ::
   ::  read arms
   ::
@@ -68,7 +77,6 @@
   ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
-  ++  par          (turn commits.branch |=(=commit parent.commit))
   :: ++  detached     =(head hash.i.commits.branch)
   ::
   --
