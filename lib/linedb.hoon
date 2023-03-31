@@ -60,12 +60,12 @@
   ++  get-snap     |=(h=hash snapshot:(get-commit h))
   ++  get-diffs    |=(h=hash diffs:(get-commit h))
   ++  get-diff     |=([h=hash p=path] (~(got by (get-diffs h)) p))
-  ++  get-file     |=([h=hash p=path] (file-to-wain (~(got by (get-snap h)) p)))
+  ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
   ++  head-commit  ?^(commits.branch i.commits.branch *commit)
   ++  head-snap    snapshot:head-commit
   ++  head-diffs   diffs:head-commit
   ++  head-diff    |=(p=path (~(gut by head-diffs) p *diff))
-  ++  head-file    |=(p=path (file-to-cord (~(gut by head-snap) p *file)))
+  ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
   :: ++  detached     =(head hash.i.commits.branch)
@@ -99,9 +99,7 @@
   |%
   ++  diff-files
     |=  [old=file new=file]
-    =+  a=(file-to-wain old)
-    =+  b=(file-to-wain new)
-    (lusk:differ a b (loss:differ a b))
+    (lusk:differ old new (loss:differ old new))
   ::
   ++  line-mapping
     ::  TODO we need a more advanced diff algo if we want individual lines edited

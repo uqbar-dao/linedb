@@ -11,7 +11,7 @@
 +$  index     @ud
 +$  line      @ud
 +$  hash      @uvH
-+$  file      ((mop line cord) lth)
++$  file      wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff      (urge:clay cord)
 +$  snapshot  (map path file)
 +$  commit
@@ -41,14 +41,14 @@
       :: [%fetch =ship repo=@tas branch=_%master]
   ==
 ::
-++  file-on  ((on line cord) lth)
+:: ++  file-on  ((on line cord) lth)
 ::
-++  file-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
-++  file-to-cord  |=(=file (of-wain:format (file-to-wain file)))
-++  cord-to-wain  to-wain:format
-++  cord-to-file  |=(=cord (wain-to-file (cord-to-wain cord)))
-++  wain-to-file
-  |=  =wain
-  %+  gas:file-on  *file
-  p:(spin wain 0 |=([t=@t i=@] [[i t] +(i)]))
+:: ++  file-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
+:: ++  file-to-cord  |=(=file (of-wain:format (file-to-wain file)))
+:: ++  cord-to-wain  to-wain:format
+:: ++  cord-to-file  |=(=cord (wain-to-file (cord-to-wain cord)))
+:: ++  wain-to-file
+::   |=  =wain
+::   %+  gas:file-on  *file
+::   p:(spin wain 0 |=([t=@t i=@] [[i t] +(i)]))
 --
