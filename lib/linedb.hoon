@@ -36,22 +36,22 @@
     branch(head hash)
   ::
   ++  squash :: TODO this code is really ugly
-    |=  [to=hash from=hash]
+    |=  [from=hash to=hash]
     ^+  branch
-    =*  coms  commits.branch
+    =/  coms  (flop commits.branch)
     =|  newb=(list commit)
     =|  froc=(unit commit)
     =|  toc=(unit commit)
     |-
-    ?~  coms  branch(commits (flop newb))
-    ?:  =(to hash.i.coms)
-      $(coms t.coms, toc `i.coms, newb [i.coms newb])
+    ?~  coms  branch(commits newb)
     ?:  =(from hash.i.coms)
-      ?~  toc  ~|("hashes are out of order" !!)
-      =+  new-diffs=(diff-snaps:d snapshot.u.toc snapshot.i.coms)
-      $(coms t.coms, newb [i.coms(diffs new-diffs) newb], froc `i.coms)
-    ?:  &(?=(^ toc) ?=(~ froc))
-      $(coms t.coms)  :: skip everything
+      $(coms t.coms, froc `i.coms)
+    ?:  =(to hash.i.coms)
+      ?~  froc  ~|("hashes are out of order" !!)
+      =+  new-diffs=(diff-snaps:d snapshot.u.froc snapshot.i.coms)
+      $(coms t.coms, newb [i.coms(diffs new-diffs, parent ?^(newb parent.i.newb *hash)) newb], toc `i.coms)
+    ?:  &(?=(^ froc) ?=(~ toc))
+      $(coms t.coms)
     $(coms t.coms, newb [i.coms newb])
   ::
   ::  read arms
@@ -68,6 +68,7 @@
   ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
+  ++  par          (turn commits.branch |=(=commit parent.commit))
   :: ++  detached     =(head hash.i.commits.branch)
   ::
   --
@@ -99,10 +100,10 @@
   |%
   ++  diff-files
     |=  [old=file new=file]
-    (lusk:differ old new (loss:differ old new))
+    (lusk old new (loss old new))
   ::
   ++  line-mapping
-    ::  TODO we need a more advanced diff algo if we want individual lines edited
+    ::  TODO we need a more advanced diff algo if we want individual lines edited...diff could be an (urge tape)
     |=  =diff
     ^-  (map line line)
     =|  iold=@ud
