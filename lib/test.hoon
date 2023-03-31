@@ -19,10 +19,10 @@
       'line3'
       'line4'
   ==
-++  snap-1  (~(gas by *snapshot) [/f wain-1]~)
-++  snap-2  (~(gas by *snapshot) [/f wain-2]~)
-++  snap-3  (~(gas by *snapshot) [/f wain-3]~)
-++  snap-4  (~(gas by *snapshot) [/f wain-4]~)
+++  snap-1  (~(gas by *snap) [/f wain-1]~)
+++  snap-2  (~(gas by *snap) [/f wain-2]~)
+++  snap-3  (~(gas by *snap) [/f wain-3]~)
+++  snap-4  (~(gas by *snap) [/f wain-4]~)
 ++  test
   =|  =branch
   =.  branch  (~(add-commit b:ldb branch) *@p *@da snap-1)

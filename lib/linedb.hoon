@@ -12,7 +12,7 @@
   ::  write arms
   ::
   ++  add-commit
-    |=  [author=ship time=@da new-snap=snapshot]
+    |=  [author=ship time=@da new-snap=snap]
     ^+  branch
     =+  head-hash=(sham new-snap)
     =/  =commit
@@ -48,7 +48,7 @@
       $(coms t.coms, froc `i.coms)
     ?:  =(to hash.i.coms)
       ?~  froc  ~|("hashes are out of order" !!)
-      =+  new-diffs=(diff-snaps:d snapshot.u.froc snapshot.i.coms)
+      =+  new-diffs=(diff-snaps:d snap.u.froc snap.i.coms)
       $(coms t.coms, newb [i.coms(diffs new-diffs, parent ?^(newb parent.i.newb *hash)) newb], toc `i.coms)
     ?:  &(?=(^ froc) ?=(~ toc))
       $(coms t.coms)
@@ -57,12 +57,12 @@
   ::  read arms
   ::
   ++  get-commit   |=(h=hash (~(gut by hash-index.branch) h *commit))
-  ++  get-snap     |=(h=hash snapshot:(get-commit h))
+  ++  get-snap     |=(h=hash snap:(get-commit h))
   ++  get-diffs    |=(h=hash diffs:(get-commit h))
   ++  get-diff     |=([h=hash p=path] (~(got by (get-diffs h)) p))
   ++  get-file     |=([h=hash p=path] (of-wain (~(got by (get-snap h)) p)))
   ++  head-commit  ?^(commits.branch i.commits.branch *commit)
-  ++  head-snap    snapshot:head-commit
+  ++  head-snap    snap:head-commit
   ++  head-diffs   diffs:head-commit
   ++  head-diff    |=(p=path (~(gut by head-diffs) p *diff))
   ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
@@ -79,7 +79,7 @@
   |_  =repo
   ++  active-branch  (~(got by q.repo) active-branch.p.repo)
   ++  commit-active
-    |=  [author=ship time=@da new-snap=snapshot]
+    |=  [author=ship time=@da new-snap=snap]
     ^+  repo
     =.  q.repo
       %+  ~(jab by q.repo)  active-branch.p.repo
@@ -136,8 +136,8 @@
       ==
     ==
   ::
-  ++  diff-snaps                                       ::  from two snapshots
-    |=  [old=snapshot new=snapshot]
+  ++  diff-snaps                                       ::  from two snaps
+    |=  [old=snap new=snap]
     ^-  (map path diff)
     %-  ~(urn by (~(uni by old) new))
     |=  [=path *]
