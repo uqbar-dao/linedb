@@ -60,12 +60,12 @@
   ++  get-snap     |=(h=hash snapshot:(get-commit h))
   ++  get-diffs    |=(h=hash diffs:(get-commit h))
   ++  get-diff     |=([h=hash p=path] (~(got by (get-diffs h)) p))
-  ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
+  ++  get-file     |=([h=hash p=path] (of-wain (~(got by (get-snap h)) p)))
   ++  head-commit  ?^(commits.branch i.commits.branch *commit)
   ++  head-snap    snapshot:head-commit
   ++  head-diffs   diffs:head-commit
   ++  head-diff    |=(p=path (~(gut by head-diffs) p *diff))
-  ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
+  ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
   :: ++  detached     =(head hash.i.commits.branch)
