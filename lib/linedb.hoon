@@ -15,35 +15,44 @@
     |=  [author=ship time=@da new-snap=snapshot]
     ^+  branch
     =+  head-hash=(sham new-snap)
-    =/  new-commit=commit
+    =/  =commit
       :*  head-hash
           head.branch
           author
           time
           new-snap
-          (build:d head-snap new-snap)
+          (diff-snaps:d head-snap new-snap)
       ==
     %=  branch
       head        head-hash
-      commits     [new-commit commits.branch]
-      hash-index  (~(put by hash-index.branch) head-hash new-commit)
+      commits     [commit commits.branch]
+      hash-index  (~(put by hash-index.branch) head-hash commit)
     ==
   ::
   ++  set-head
     |=  =hash
     ^+  branch
     ?>  (~(has by hash-index.branch) hash)
-    %=    branch
-        head  hash :: To see if we are in detached head, check =(head hash.i.commits)
-    ==
+    branch(head hash)
   ::
-  :: ++  squash
-  ::   |=  [from=hash to=hash]
-  ::   ^+  branch
-    :: get sublist of from:to
-    :: get all diffs from from:to
-    :: +join them into a single commit
-
+  ++  squash :: TODO this code is really ugly
+    |=  [to=hash from=hash]
+    ^+  branch
+    =*  coms  commits.branch
+    =|  newb=(list commit)
+    =|  froc=(unit commit)
+    =|  toc=(unit commit)
+    |-
+    ?~  coms  branch(commits (flop newb))
+    ?:  =(to hash.i.coms)
+      $(coms t.coms, toc `i.coms, newb [i.coms newb])
+    ?:  =(from hash.i.coms)
+      ?~  toc  ~|("hashes are out of order" !!)
+      =+  new-diffs=(diff-snaps:d snapshot.u.toc snapshot.i.coms)
+      $(coms t.coms, newb [i.coms(diffs new-diffs) newb], froc `i.coms)
+    ?:  &(?=(^ toc) ?=(~ froc))
+      $(coms t.coms)  :: skip everything
+    $(coms t.coms, newb [i.coms newb])
   ::
   ::  read arms
   ::
@@ -58,7 +67,8 @@
   ++  head-diff    |=(p=path (~(gut by head-diffs) p *diff))
   ++  head-file    |=(p=path (file-to-cord (~(gut by head-snap) p *file)))
   ::
-  :: ++  fetch all diffs for a file - IMPORTANT
+  ++  log          (turn commits.branch |=(=commit hash.commit))
+  :: ++  detached     =(head hash.i.commits.branch)
   ::
   --
 ::
@@ -87,6 +97,12 @@
 ::
 ++  d
   |%
+  ++  diff-files
+    |=  [old=file new=file]
+    =+  a=(file-to-wain old)
+    =+  b=(file-to-wain new)
+    (lusk:differ a b (loss:differ a b))
+  ::
   ++  line-mapping
     ::  TODO we need a more advanced diff algo if we want individual lines edited
     |=  =diff
@@ -96,109 +112,108 @@
     =|  new-lines=(list (pair line line))
     |-
     ?~  diff  (~(gas by *(map line line)) new-lines)
-    ?-  -.i.diff
-      %&  %=    $
-              iold  (add iold p.i.diff)
-              inew  (add inew p.i.diff)
-              diff  t.diff
-              new-lines
-            |-
-            ?:  =(0 p.i.diff)  new-lines
-            %=  $
-              new-lines  [[+(iold) +(inew)] new-lines]
-              p.i.diff   (dec p.i.diff)
-              iold       +(iold)
-              inew       +(inew)
-            ==
-          ==
+    ?-    -.i.diff
+        %&
+      %=    $
+          iold  (add iold p.i.diff)
+          inew  (add inew p.i.diff)
+          diff  t.diff
+          new-lines
+        |-
+        ?:  =(0 p.i.diff)  new-lines
+        %=  $
+          new-lines  [[+(iold) +(inew)] new-lines]
+          p.i.diff   (dec p.i.diff)
+          iold       +(iold)
+          inew       +(inew)
+        ==
+      ==
     ::
-      %|  %=  $
-            iold  (add iold (lent p.i.diff))
-            inew  (add inew (lent q.i.diff))
-            diff  t.diff
-          ==
+        %|
+      %=  $
+        iold  (add iold (lent p.i.diff))
+        inew  (add inew (lent q.i.diff))
+        diff  t.diff
+      ==
     ==
   ::
-  ++  build                                            ::  from two snapshots
+  ++  diff-snaps                                       ::  from two snapshots
     |=  [old=snapshot new=snapshot]
     ^-  (map path diff)
     %-  ~(urn by (~(uni by old) new))
     |=  [=path *]
-    ^-  diff
-    =+  a=(file-to-wain (~(gut by old) path *file))
-    =+  b=(file-to-wain (~(gut by new) path *file))
-    (lusk:differ a b (loss:differ a b))
+    %+  diff-files
+      (~(gut by old) path *file)
+    (~(gut by new) path *file)
   ::
-  ++  join                                             ::  copied from mar/txt/hoon
-    ::  join two diffs
-    |=  [ali=diff bob=diff]
-    ^-  (unit diff)
-    |^
-    =.  ali  (clean ali)
-    =.  bob  (clean bob)
-    |-  ^-  (unit diff)
-    ?~  ali  `bob
-    ?~  bob  `ali
-    ?-    -.i.ali
-        %&
-      ?-    -.i.bob
-          %&
-        ?:  =(p.i.ali p.i.bob)
-          %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=diff [i.ali cud])
-        ?:  (gth p.i.ali p.i.bob)
-          %+  bind  $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)
-          |=(cud=diff [i.bob cud])
-        %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
-        |=(cud=diff [i.ali cud])
-      ::
-          %|
-        ?:  =(p.i.ali (lent p.i.bob))
-          %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=diff [i.bob cud])
-        ?:  (gth p.i.ali (lent p.i.bob))
-          %+  bind  $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)
-          |=(cud=diff [i.bob cud])
-        ~
-      ==
-    ::
-        %|
-      ?-  -.i.bob
-          %|
-        ?.  =(i.ali i.bob)
-          ~
-        %+  bind  $(ali t.ali, bob t.bob)
-        |=(cud=diff [i.ali cud])
-      ::
-          %&
-        ?:  =(p.i.bob (lent p.i.ali))
-          %+  bind  $(ali t.ali, bob t.bob)
-          |=(cud=diff [i.ali cud])
-        ?:  (gth p.i.bob (lent p.i.ali))
-          %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))
-          |=(cud=diff [i.ali cud])
-        ~
-      ==
-    ==
-    ++  clean
-      ::  concatenates matching sections of the diff
-      |=  wig=diff
-      ^-  diff
-      ?~  wig  ~
-      ?~  t.wig  wig
-      ?:  ?=(%& -.i.wig)
-        ?:  ?=(%& -.i.t.wig)
-          $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
-        [i.wig $(wig t.wig)]
-      ?:  ?=(%| -.i.t.wig)
-        $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
-      [i.wig $(wig t.wig)]
-    --
-  ::
-  ++  join-many :: TODO not sure if this is actually right lmao
-    |=  diffs=(list diff)
-    ^-  diff
-    %+  roll  diffs
-    |=([a=diff b=diff] (need (join a b)))
+  :: ++  add                                              ::  copied from mar/txt/hoon
+  ::   ::  for squashing
+  ::   |=  [old=diff new=diff]
+  ::   ^-  (unit diff)
+  ::   |^
+  ::   =.  old  (clean old)
+  ::   =.  new  (clean new)
+  ::   |-  ^-  (unit diff)
+  ::   ?~  old  `new :: TODO this is wrong
+  ::   ?~  new  `old :: TODO this is wrong
+  ::   ?-    -.i.old
+  ::       %&
+  ::     ?-    -.i.new
+  ::         %& :: good
+  ::       ?:  =(p.i.old p.i.new)
+  ::         %+  bind  $(old t.old, new t.new)
+  ::         |=(=diff [i.old diff])
+  ::       ?:  (gth p.i.old p.i.new)
+  ::         %+  bind  $(p.i.old (sub p.i.old p.i.new), new t.new)
+  ::         |=(=diff [i.new diff])
+  ::       %+  bind  $(old t.old, p.i.new (sub p.i.new p.i.old))
+  ::       |=(=diff [i.old diff])
+  ::     ::
+  ::         %| :: TODO
+  ::       ?:  =(p.i.old (lent p.i.new))
+  ::         %+  bind  $(old t.old, new t.new)
+  ::         |=(=diff [i.new diff])
+  ::       ?:  (gth p.i.old (lent p.i.new))
+  ::         %+  bind  $(p.i.old (sub p.i.old (lent p.i.new)), new t.new)
+  ::         |=(=diff [i.new diff])
+  ::       ~  :: TODO this shouldn't be ~
+  ::     ==
+  ::   ::
+  ::       %|
+  ::     ?-    -.i.new
+  ::         %|
+  ::       ?:  =(q.i.old p.i.new)
+  ::         %+  bind  $(old t.old, new t.new)
+  ::         |=(=diff [[p.i.old q.i.new] diff])
+  ::       ~  :: TODO
+  ::       :: ?:  (gth (lent p.i.new) (lent q.i.old)) :: TODO
+  ::       ::   ?~  got=(find q.i.old p.i.new)  ~ :: front of p.i.new contains all of q.i.old
+  ::       ::   ?.  =(0 u.got)  ~
+  ::       ::   %+  bind  $(old, new)
+  ::       ::   |=(=diff [asdf diff])
+  ::     ::
+  ::         %&
+  ::       ?:  =(p.i.new (lent q.i.old))
+  ::         %+  bind  $(old t.old, new t.new)
+  ::         |=(=diff [i.old diff])
+  ::       ?:  (gth p.i.new (lent p.i.old))
+  ::         %+  bind  $(old t.old, p.i.new (sub p.i.new (lent p.i.old)))
+  ::         |=(=diff [i.old diff])
+  ::       ~ :: TODO
+  ::     ==
+  ::   ==
+  ::   ++  clean
+  ::     ::  concatenates matching sections of the diff
+  ::     |=  wig=diff
+  ::     ^-  diff
+  ::     ?~  wig  ~
+  ::     ?~  t.wig  wig
+  ::     ?:  ?=(%& -.i.wig)
+  ::       ?:  ?=(%& -.i.t.wig)
+  ::         $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
+  ::       [i.wig $(wig t.wig)]
+  ::     ?:  ?=(%| -.i.t.wig)
+  ::       $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
+  ::     [i.wig $(wig t.wig)]
   --
 --

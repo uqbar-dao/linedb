@@ -46,9 +46,9 @@
 ++  file-to-wain  |=(=file `wain`(turn (tap:file-on file) tail))
 ++  file-to-cord  |=(=file (of-wain:format (file-to-wain file)))
 ++  cord-to-wain  to-wain:format
-++  cord-to-file
-  |=  =cord
-  ^-  file
+++  cord-to-file  |=(=cord (wain-to-file (cord-to-wain cord)))
+++  wain-to-file
+  |=  =wain
   %+  gas:file-on  *file
-  p:(spin (cord-to-wain cord) 0 |=([t=@t i=@] [[i t] +(i)])) 
+  p:(spin wain 0 |=([t=@t i=@] [[i t] +(i)]))
 --
