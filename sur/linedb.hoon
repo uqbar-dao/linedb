@@ -33,7 +33,8 @@
 +$  repo  (pair repo-metadata (map @tas branch))
 ::
 +$  action
-  $%  [%commit repo=@tas =snap]
+  $%  [%new-repo name=@tas]
+      [%commit repo=@tas =snap]
       [%branch repo=@tas name=@tas]
       [%checkout repo=@tas branch=@tas]
       [%merge repo=@tas branch=@tas]

@@ -51,6 +51,13 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
+      %new-repo
+    =.  repos
+      %+  ~(put by repos)  name.act
+      :-  [our.bowl %master]
+      (~(put by *(map @tas branch)) %master *branch)
+    `state
+  ::
       %commit
     =.  repos
       %+  ~(jab by repos)  repo.act
@@ -76,6 +83,9 @@
 ++  handle-scry
   |=  =path
   ^-  (unit (unit cage))
-  :: branch :: lists all branches, highlighting active
-  [~ ~]
+  ?+    path  `~
+      [%x %repos ~]  ``noun+!>((turn ~(tap by repos) head))
+      [%x %branch @ ~]
+    ``noun+!>(~(branches r:ldb (~(got by repos) i.t.t.path)))
+  ==
 --

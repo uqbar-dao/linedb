@@ -132,6 +132,10 @@
     %+  three-way-merge:d
       [active-branch.p.repo (~(gut by active-diffs) path *diff)]
     [name (~(gut by incoming-diffs) path *diff)]
+  ::
+  ::  read arms
+  ::
+  ++  branches  (turn ~(tap by q.repo) head)
   --
 ::
 ::  diff operations
