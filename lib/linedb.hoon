@@ -79,6 +79,16 @@
   ++  log          (turn commits.branch |=(=commit hash.commit))
   :: ++  detached     =(head hash.i.commits.branch)
   ::
+  ++  most-recent-ancestor
+    |=  dat=^branch
+    ^-  (unit hash)
+    =+  dem-hashes=(silt ~(log b dat))
+    =/  our-hashes  log
+    |-
+    ?~  our-hashes  ~
+    ?:  (~(has in dem-hashes) i.our-hashes)
+      `i.our-hashes
+    $(our-hashes t.our-hashes)
   --
 ::
 ::  repo engine
@@ -100,6 +110,22 @@
   ++  new-branch
     |=  name=@tas
     (~(put by q.repo) name active-branch)
+  ++  merge
+    |=  name=@tas
+    ^-  diff
+    :: merge active and name
+    =/  incoming  (~(got by q.repo) name)
+    ?~  base=(~(most-recent-ancestor b active-branch) incoming)
+      !!  :: TODO
+    =/  d1=(map path diff)
+      =+  commits:(~(squash b active-branch) u.base head:active-branch)
+      ?>(?=(^ -) diffs.i.-)
+    =/  d2=(map path diff)
+      =+  commits:(~(squash b incoming) u.base head:incoming)
+      ?>(?=(^ -) diffs.i.-)
+    :: (~(urn by (~(uni by ))))
+    *diff
+    :: (three-way-merge [active-branch.p.repo d1] [name d2])
   --
 ::
 ::  diff operations
@@ -153,74 +179,176 @@
       (~(gut by old) path *file)
     (~(gut by new) path *file)
   ::
-  :: ++  add                                              ::  copied from mar/txt/hoon
-  ::   ::  for squashing
-  ::   |=  [old=diff new=diff]
-  ::   ^-  (unit diff)
-  ::   |^
-  ::   =.  old  (clean old)
-  ::   =.  new  (clean new)
-  ::   |-  ^-  (unit diff)
-  ::   ?~  old  `new :: TODO this is wrong
-  ::   ?~  new  `old :: TODO this is wrong
-  ::   ?-    -.i.old
-  ::       %&
-  ::     ?-    -.i.new
-  ::         %& :: good
-  ::       ?:  =(p.i.old p.i.new)
-  ::         %+  bind  $(old t.old, new t.new)
-  ::         |=(=diff [i.old diff])
-  ::       ?:  (gth p.i.old p.i.new)
-  ::         %+  bind  $(p.i.old (sub p.i.old p.i.new), new t.new)
-  ::         |=(=diff [i.new diff])
-  ::       %+  bind  $(old t.old, p.i.new (sub p.i.new p.i.old))
-  ::       |=(=diff [i.old diff])
-  ::     ::
-  ::         %| :: TODO
-  ::       ?:  =(p.i.old (lent p.i.new))
-  ::         %+  bind  $(old t.old, new t.new)
-  ::         |=(=diff [i.new diff])
-  ::       ?:  (gth p.i.old (lent p.i.new))
-  ::         %+  bind  $(p.i.old (sub p.i.old (lent p.i.new)), new t.new)
-  ::         |=(=diff [i.new diff])
-  ::       ~  :: TODO this shouldn't be ~
-  ::     ==
-  ::   ::
-  ::       %|
-  ::     ?-    -.i.new
-  ::         %|
-  ::       ?:  =(q.i.old p.i.new)
-  ::         %+  bind  $(old t.old, new t.new)
-  ::         |=(=diff [[p.i.old q.i.new] diff])
-  ::       ~  :: TODO
-  ::       :: ?:  (gth (lent p.i.new) (lent q.i.old)) :: TODO
-  ::       ::   ?~  got=(find q.i.old p.i.new)  ~ :: front of p.i.new contains all of q.i.old
-  ::       ::   ?.  =(0 u.got)  ~
-  ::       ::   %+  bind  $(old, new)
-  ::       ::   |=(=diff [asdf diff])
-  ::     ::
-  ::         %&
-  ::       ?:  =(p.i.new (lent q.i.old))
-  ::         %+  bind  $(old t.old, new t.new)
-  ::         |=(=diff [i.old diff])
-  ::       ?:  (gth p.i.new (lent p.i.old))
-  ::         %+  bind  $(old t.old, p.i.new (sub p.i.new (lent p.i.old)))
-  ::         |=(=diff [i.old diff])
-  ::       ~ :: TODO
-  ::     ==
-  ::   ==
-  ::   ++  clean
-  ::     ::  concatenates matching sections of the diff
-  ::     |=  wig=diff
-  ::     ^-  diff
-  ::     ?~  wig  ~
-  ::     ?~  t.wig  wig
-  ::     ?:  ?=(%& -.i.wig)
-  ::       ?:  ?=(%& -.i.t.wig)
-  ::         $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
-  ::       [i.wig $(wig t.wig)]
-  ::     ?:  ?=(%| -.i.t.wig)
-  ::       $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
-  ::     [i.wig $(wig t.wig)]
+++  three-way-merge                                    ::  +mash in mar/txt/hoon
+    |=  $:  [ald=@tas ali=diff]
+            [bod=@tas bob=diff]
+        ==
+    ^-  diff
+    |^
+    =.  ali  (clean ali)
+    =.  bob  (clean bob)
+    |-  ^-  diff
+    ?~  ali  bob
+    ?~  bob  ali
+    ?-    -.i.ali
+        %&
+      ?-    -.i.bob
+          %&
+        ?:  =(p.i.ali p.i.bob)
+          [i.ali $(ali t.ali, bob t.bob)]
+        ?:  (gth p.i.ali p.i.bob)
+          [i.bob $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)]
+        [i.ali $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))]
+      ::
+          %|
+        ?:  =(p.i.ali (lent p.i.bob))
+          [i.bob $(ali t.ali, bob t.bob)]
+        ?:  (gth p.i.ali (lent p.i.bob))
+          [i.bob $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)]
+        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+            (resolve ali bob)
+        [fic $(ali ali, bob bob)]
+        ::  ~   ::  here, alice is good for a while, but not for the whole
+      ==    ::  length of bob's changes
+    ::
+        %|
+      ?-  -.i.bob
+          %|
+        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+            (resolve ali bob)
+        [fic $(ali ali, bob bob)]
+      ::
+          %&
+        ?:  =(p.i.bob (lent p.i.ali))
+          [i.ali $(ali t.ali, bob t.bob)]
+        ?:  (gth p.i.bob (lent p.i.ali))
+          [i.ali $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))]
+        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+            (resolve ali bob)
+        [fic $(ali ali, bob bob)]
+      ==
+    ==
+    ::
+    ++  annotate                                        ::  annotate conflict
+      |=  $:  ali=(list @t)
+              bob=(list @t)
+              bas=(list @t)
+          ==
+      ^-  (list @t)
+      %-  zing
+      ^-  (list (list @t))
+      %-  flop
+      ^-  (list (list @t))
+      :-  :_  ~
+          %^  cat  3  '<<<<<<<<<<<<'
+          %^  cat  3  ' '
+          %^  cat  3  '/'
+          bod
+
+      :-  bob
+      :-  ~['------------']
+      :-  bas
+      :-  ~['++++++++++++']
+      :-  ali
+      :-  :_  ~
+          %^  cat  3  '>>>>>>>>>>>>'
+          %^  cat  3  ' '
+          %^  cat  3  '/'
+          ald
+      ~
+    ::
+    ++  clean                                          ::  clean
+      |=  wig=diff
+      ^-  diff
+      ?~  wig  ~
+      ?~  t.wig  wig
+      ?:  ?=(%& -.i.wig)
+        ?:  ?=(%& -.i.t.wig)
+          $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
+        [i.wig $(wig t.wig)]
+      ?:  ?=(%| -.i.t.wig)
+        $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
+      [i.wig $(wig t.wig)]
+    ::
+    ++  resolve
+      |=  [ali=diff bob=diff]
+      ^-  [fic=[%| p=(list cord) q=(list cord)] ali=diff bob=diff]
+      =-  [[%| bac (annotate alc boc bac)] ali bob]
+      |-  ^-  $:  $:  bac=(list cord)
+                      alc=(list cord)
+                      boc=(list cord)
+                  ==
+                  ali=diff
+                  bob=diff
+              ==
+      ?~  ali  [[~ ~ ~] ali bob]
+      ?~  bob  [[~ ~ ~] ali bob]
+      ?-    -.i.ali
+          %&
+        ?-    -.i.bob
+            %&  [[~ ~ ~] ali bob]                       ::  no conflict
+            %|
+          =+  lob=(lent p.i.bob)
+          ?:  =(lob p.i.ali)
+            [[p.i.bob p.i.bob q.i.bob] t.ali t.bob]
+          ?:  (lth lob p.i.ali)
+            [[p.i.bob p.i.bob q.i.bob] [[%& (sub p.i.ali lob)] t.ali] t.bob]
+          =+  wat=(scag (sub lob p.i.ali) p.i.bob)
+          =+  ^=  res
+              %=  $
+                ali  t.ali
+                bob  [[%| (scag (sub lob p.i.ali) p.i.bob) ~] t.bob]
+              ==
+          :*  :*  (welp bac.res wat)
+                  (welp alc.res wat)
+                  (welp boc.res q.i.bob)
+              ==
+              ali.res
+              bob.res
+          ==
+        ==
+      ::
+          %|
+        ?-    -.i.bob
+            %&
+          =+  loa=(lent p.i.ali)
+          ?:  =(loa p.i.bob)
+            [[p.i.ali q.i.ali p.i.ali] t.ali t.bob]
+          ?:  (lth loa p.i.bob)
+            [[p.i.ali q.i.ali p.i.ali] t.ali [[%& (sub p.i.bob loa)] t.bob]]
+          =+  wat=(slag (sub loa p.i.bob) p.i.ali)
+          =+  ^=  res
+              %=  $
+                ali  [[%| (scag (sub loa p.i.bob) p.i.ali) ~] t.ali]
+                bob  t.bob
+              ==
+          :*  :*  (welp bac.res wat)
+                  (welp alc.res q.i.ali)
+                  (welp boc.res wat)
+              ==
+              ali.res
+              bob.res
+          ==
+        ::
+            %|
+          =+  loa=(lent p.i.ali)
+          =+  lob=(lent p.i.bob)
+          ?:  =(loa lob)
+            [[p.i.ali q.i.ali q.i.bob] t.ali t.bob]
+          =+  ^=  res
+              ?:  (gth loa lob)
+                $(ali [[%| (scag (sub loa lob) p.i.ali) ~] t.ali], bob t.bob)
+              ~&  [%scagging loa=loa pibob=p.i.bob slag=(scag loa p.i.bob)]
+              $(ali t.ali, bob [[%| (scag (sub lob loa) p.i.bob) ~] t.bob])
+          :*  :*  (welp bac.res ?:((gth loa lob) p.i.bob p.i.ali))
+                  (welp alc.res q.i.ali)
+                  (welp boc.res q.i.bob)
+              ==
+              ali.res
+              bob.res
+          ==
+        ==
+      ==
+    --
   --
 --
