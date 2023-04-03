@@ -77,7 +77,11 @@
       |=(=repo (~(checkout r:ldb repo) branch.act))
     `state    
   ::
-      %merge  `state
+      %merge
+    =.  repos
+      %+  ~(jab by repos)  repo.act
+      |=(=repo (~(merge r:ldb repo) branch.act))
+    `state
   ==
 ::
 ++  handle-scry

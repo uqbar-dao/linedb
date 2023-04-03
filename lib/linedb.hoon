@@ -12,6 +12,7 @@
   ::  write arms
   ::
   ++  add-commit
+    ::  TODO might want to have some idea of staging files - would make the diff calculation much faster
     |=  [author=ship time=@da new-snap=snap]
     ^+  branch
     =+  head-hash=(sham new-snap)
@@ -28,6 +29,8 @@
       commits     [commit commits.branch]
       hash-index  (~(put by hash-index.branch) head-hash commit)
     ==
+  ::
+  :: ++  add-commit-as-diff :: TODO might be a good idea
   ::
   ++  set-head
     |=  =hash
@@ -116,22 +119,31 @@
     repo
   ++  merge
     |=  name=@tas
-    ^-  (map path diff)
+    ^+  repo
     =/  incoming  (~(got by q.repo) name)
     ?~  base=(~(most-recent-ancestor b active-branch) incoming)
       ~|("%linedb: merge: no common base for {<active-branch>} and {<name>}" !!)
     =/  active-diffs=(map path diff)
       =+  commits:(~(squash b active-branch) u.base head:active-branch)
-      ?>(?=(^ -) diffs.i.-)
+      ?:(?=(^ -) diffs.i.- *(map path diff))
     =/  incoming-diffs=(map path diff)
       =+  commits:(~(squash b incoming) u.base head:incoming)
-      ?>(?=(^ -) diffs.i.-)
-    %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
-    |=  [=path *]
-    ^-  diff
-    %+  three-way-merge:d
-      [active-branch.p.repo (~(gut by active-diffs) path *diff)]
-    [name (~(gut by incoming-diffs) path *diff)]
+      ?:(?=(^ -) diffs.i.- *(map path diff))
+    =/  diffs=(map path diff)
+      %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
+      |=  [=path *]
+      ^-  diff
+      %+  three-way-merge:d
+        [active-branch.p.repo (~(gut by active-diffs) path *diff)]
+      [name (~(gut by incoming-diffs) path *diff)]
+    =+  br=(~(got by q.repo) active-branch.p.repo)
+    =/  new-snap=snap
+      ?@  commits.br  *snap
+      %-  ~(urn by snap.i.commits.br)
+      |=  [=path =file]
+      =+  dif=(~(got by diffs) path)
+      (apply-diff:d file dif)
+    (commit-active *@p *@da new-snap)
   ::
   ::  read arms
   ::
@@ -176,6 +188,25 @@
       %=  $
         iold  (add iold (lent p.i.diff))
         inew  (add inew (lent q.i.diff))
+        diff  t.diff
+      ==
+    ==
+  ::
+  ++  apply-diff
+    |=  [=file =diff]
+    ^-  ^file
+    =|  new=^file
+    |-
+    ?~  diff  new
+    ?-    -.i.diff
+        %&
+      =+  qux=(scag p.i.diff file)
+      $(file qux, new (weld new qux), diff t.diff)
+    ::
+        %|
+      %=  $
+        file  (scag (lent p.i.diff) file)
+        new   (weld new q.i.diff)
         diff  t.diff
       ==
     ==
