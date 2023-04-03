@@ -112,20 +112,22 @@
     (~(put by q.repo) name active-branch)
   ++  merge
     |=  name=@tas
-    ^-  diff
-    :: merge active and name
+    ^-  (map path diff)
     =/  incoming  (~(got by q.repo) name)
     ?~  base=(~(most-recent-ancestor b active-branch) incoming)
-      !!  :: TODO
-    =/  d1=(map path diff)
+      ~|("%linedb: merge: no common base for {<active-branch>} and {<name>}" !!)
+    =/  active-diffs=(map path diff)
       =+  commits:(~(squash b active-branch) u.base head:active-branch)
       ?>(?=(^ -) diffs.i.-)
-    =/  d2=(map path diff)
+    =/  incoming-diffs=(map path diff)
       =+  commits:(~(squash b incoming) u.base head:incoming)
       ?>(?=(^ -) diffs.i.-)
-    :: (~(urn by (~(uni by ))))
-    *diff
-    :: (three-way-merge [active-branch.p.repo d1] [name d2])
+    %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
+    |=  [=path *]
+    ^-  diff
+    %+  three-way-merge:d
+    :-  [active-branch.p.repo (~(gut by active-diffs) path *diff)]
+    [name (~(gut by incoming-diffs) path *diff)]
   --
 ::
 ::  diff operations
