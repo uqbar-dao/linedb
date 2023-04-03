@@ -106,10 +106,14 @@
     repo
   ++  checkout
     |=  branch=@tas
+    ^+  repo
     repo(active-branch.p branch)
   ++  new-branch
     |=  name=@tas
-    (~(put by q.repo) name active-branch)
+    ^+  repo
+    =.  q.repo
+      (~(put by q.repo) name active-branch)
+    repo
   ++  merge
     |=  name=@tas
     ^-  (map path diff)
@@ -126,7 +130,7 @@
     |=  [=path *]
     ^-  diff
     %+  three-way-merge:d
-    :-  [active-branch.p.repo (~(gut by active-diffs) path *diff)]
+      [active-branch.p.repo (~(gut by active-diffs) path *diff)]
     [name (~(gut by incoming-diffs) path *diff)]
   --
 ::

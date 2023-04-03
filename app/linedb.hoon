@@ -52,10 +52,10 @@
   ^-  (quip card _state)
   ?-    -.act
       %commit
-    :: =.  repos
-    ::   %+  ~(jab by repos)  repo.act
-    ::   |=  =repo
-    ::   (~(commit-active r:ldb repo) our.bowl now.bowl snapshot.act)
+    =.  repos
+      %+  ~(jab by repos)  repo.act
+      |=  =repo
+      (~(commit-active r:ldb repo) our.bowl now.bowl snap.act)
     `state
   ::
       %branch
@@ -76,5 +76,6 @@
 ++  handle-scry
   |=  =path
   ^-  (unit (unit cage))
+  :: branch :: lists all branches, highlighting active
   [~ ~]
 --
