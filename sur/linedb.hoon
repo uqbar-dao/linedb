@@ -1,9 +1,7 @@
 |%
 ::  snaps are full document sets with all lines
-::  structural sharing makes this efficient?
 ::
 ::  a branch is an ordered history of snaps.
-::  make a new branch by selecting an existing one to go off
 ::
 ::  to add a commit to a branch, simply call +add-commit:branch
 ::  with your files
