@@ -21,7 +21,6 @@
           author
           time
           new-snap
-          (diff-snaps:d head-snap new-snap)
       ==
     %=  branch
       head        head-hash
@@ -48,32 +47,35 @@
       $(commits t.commits, base `i.commits)
     ?:  =(to hash.i.commits)
       ?~  base
-        ~|("%linedb: squash: out of order, no changes made" branch)
-      %=    $
-          continue  %.n
-          commits   t.commits
-          edited
-        :_  edited
-        %=  i.commits
-          diffs   (diff-snaps:d snap.u.base snap.i.commits)
-          parent  ?^(edited hash.i.edited *hash)
-        ==
+        ~|("%linedb: squash: out of order, no changes made" !!)
+      %=  $
+        continue  %.n
+        commits   t.commits
+        edited    [i.commits(parent ?^(edited hash.i.edited *hash)) edited]
       ==
     ?:  &(?=(^ base) continue)
       $(commits t.commits)
     $(commits t.commits, edited [i.commits edited])
   ::
+  ++  reset  :: hard reset
+    |=  to=hash
+    ^+  branch
+    ?.  (~(has by hash-index.branch) to)
+      ~|("%linedb: reset: hash doesn't exist, cannot reset" !!)
+    =*  commits  commits.branch
+    =*  hash-index  hash-index.branch
+    |-
+    ?~  commits  !!
+    ?:  =(hash.i.commits to)  branch(head to)
+    $(commits t.commits, hash-index (~(del by hash-index) hash.i.commits))
+  ::
   ::  read arms
   ::
   ++  get-commit   |=(h=hash (~(gut by hash-index.branch) h *commit))
   ++  get-snap     |=(h=hash snap:(get-commit h))
-  ++  get-diffs    |=(h=hash diffs:(get-commit h))
-  ++  get-diff     |=([h=hash p=path] (~(got by (get-diffs h)) p))
   ++  get-file     |=([h=hash p=path] (of-wain (~(got by (get-snap h)) p)))
   ++  head-commit  ?^(commits.branch i.commits.branch *commit)
   ++  head-snap    snap:head-commit
-  ++  head-diffs   diffs:head-commit
-  ++  head-diff    |=(p=path (~(gut by head-diffs) p *diff))
   ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
@@ -114,24 +116,58 @@
     =.  q.repo
       (~(put by q.repo) name active-branch)
     repo
+  ::
+  ++  delete-branch
+    |=  name=@tas
+    ^+  repo
+    ?:  =(name active-branch.p.repo)
+      ~&("{<name>} is active, cannot delete" repo)
+    =.  q.repo  (~(del by q.repo) name)
+    repo
+  ::
+  ++  reset-branch
+    |=  [name=@tas =hash]
+    ^+  repo
+    =.  q.repo
+      %+  ~(jab by q.repo)  name
+      |=(=branch (~(reset b branch) hash))
+    repo
+  ::
   ++  merge
     |=  name=@tas
-    ^-  (map path diff)
+    ^+  repo
     =/  incoming  (~(got by q.repo) name)
+    =*  active-index    hash-index:active-branch
+    =*  incoming-index  hash-index.incoming
     ?~  base=(~(most-recent-ancestor b active-branch) incoming)
       ~|("%linedb: merge: no common base for {<active-branch>} and {<name>}" !!)
     =/  active-diffs=(map path diff)
-      =+  commits:(~(squash b active-branch) u.base head:active-branch)
-      ?>(?=(^ -) diffs.i.-)
+      %+  diff-snaps:d
+        snap:(~(got by active-index) u.base)
+        snap:(~(got by active-index) head:active-branch)
     =/  incoming-diffs=(map path diff)
-      =+  commits:(~(squash b incoming) u.base head:incoming)
-      ?>(?=(^ -) diffs.i.-)
-    %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
-    |=  [=path *]
-    ^-  diff
-    %+  three-way-merge:d
-      [active-branch.p.repo (~(gut by active-diffs) path *diff)]
-    [name (~(gut by incoming-diffs) path *diff)]
+      %+  diff-snaps:d
+        snap:(~(got by incoming-index) u.base)
+        snap:(~(got by incoming-index) head.incoming)
+    =/  diffs=(map path diff)
+      %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
+      |=  [=path *]
+      ^-  diff
+      %+  three-way-merge:d
+        [active-branch.p.repo (~(gut by active-diffs) path *diff)]
+      [name (~(gut by incoming-diffs) path *diff)]
+    =+  br=(~(got by q.repo) active-branch.p.repo)
+    =/  new-snap=snap
+      ?@  commits.br  *snap
+      %-  ~(urn by snap.i.commits.br)
+      |=  [=path =file]
+      =+  dif=(~(got by diffs) path)
+      (lurk file dif)
+    (commit-active *@p *@da new-snap) :: TODO
+  ::
+  ::  read arms
+  ::
+  ++  branches  (turn ~(tap by q.repo) head)
   --
 ::
 ::  diff operations
@@ -185,7 +221,7 @@
       (~(gut by old) path *file)
     (~(gut by new) path *file)
   ::
-++  three-way-merge                                    ::  +mash in mar/txt/hoon
+  ++  three-way-merge                                    ::  +mash in mar/txt/hoon
     |=  $:  [ald=@tas ali=diff]
             [bod=@tas bob=diff]
         ==

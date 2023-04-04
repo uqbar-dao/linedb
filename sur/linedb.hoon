@@ -1,9 +1,7 @@
 |%
 ::  snaps are full document sets with all lines
-::  structural sharing makes this efficient?
 ::
 ::  a branch is an ordered history of snaps.
-::  make a new branch by selecting an existing one to go off
 ::
 ::  to add a commit to a branch, simply call +add-commit:branch
 ::  with your files
@@ -12,14 +10,13 @@
 +$  hash  @uvH
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
-+$  snap  (map path file)
++$  snap  (map path file) :: maybe use $axal and +of 
 +$  commit
   $:  =hash
       parent=hash
       author=ship
       time=@da
       =snap
-      diffs=(map path diff)
   ==
 +$  branch
   $:  head=hash
@@ -33,11 +30,20 @@
 +$  repo  (pair repo-metadata (map @tas branch))
 ::
 +$  action
-  $%  [%commit repo=@tas =snap]
+  $%  [%new-repo name=@tas]
+      [%commit repo=@tas =snap]
       [%branch repo=@tas name=@tas]
+      [%delete-branch repo=@tas name=@tas]
       [%checkout repo=@tas branch=@tas]
       [%merge repo=@tas branch=@tas]
-      :: [%fetch =ship repo=@tas branch=_%master]
+      [%reset repo=@tas branch=@tas =hash]
+  ==
+::
++$  fetch
+  $%  [%ask who=ship repo=@tas]
+      [%request repo=@tas]
+      [%response name=@tas =repo]
+      :: [%deny ~] :: TODO add permissions
   ==
 ::
 :: ++  file-on  ((on line cord) lth)
