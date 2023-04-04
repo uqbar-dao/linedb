@@ -91,6 +91,12 @@
       |=(=repo (~(new-branch r:ldb repo) name.act))
     `state
   ::
+      %delete-branch
+    =.  repos
+      %+  ~(jab by repos)  repo.act
+      |=(=repo (~(delete-branch r:ldb repo) name.act))
+    `state
+  ::
       %checkout
     =.  repos
       %+  ~(jab by repos)  repo.act
@@ -101,7 +107,13 @@
     =.  repos
       %+  ~(jab by repos)  repo.act
       |=(=repo (~(merge r:ldb repo) branch.act))
-    `state    
+    `state
+  ::
+      %reset
+    =.  repos
+      %+  ~(jab by repos)  repo.act
+      |=(=repo (~(reset-branch r:ldb repo) [branch hash]:act))
+    `state
   ==
 ::
 ++  handle-fetch

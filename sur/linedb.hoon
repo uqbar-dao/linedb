@@ -17,7 +17,6 @@
       author=ship
       time=@da
       =snap
-      diffs=(map path diff) :: TODO get rid of this and instead calculate diffs
   ==
 +$  branch
   $:  head=hash
@@ -34,8 +33,10 @@
   $%  [%new-repo name=@tas]
       [%commit repo=@tas =snap]
       [%branch repo=@tas name=@tas]
+      [%delete-branch repo=@tas name=@tas]
       [%checkout repo=@tas branch=@tas]
       [%merge repo=@tas branch=@tas]
+      [%reset repo=@tas branch=@tas =hash]
   ==
 ::
 +$  fetch
