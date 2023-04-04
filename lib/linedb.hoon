@@ -12,7 +12,6 @@
   ::  write arms
   ::
   ++  add-commit
-    ::  TODO might want to have some idea of staging files - would make the diff calculation much faster
     |=  [author=ship time=@da new-snap=snap]
     ^+  branch
     =+  head-hash=(sham new-snap)
@@ -29,8 +28,6 @@
       commits     [commit commits.branch]
       hash-index  (~(put by hash-index.branch) head-hash commit)
     ==
-  ::
-  :: ++  add-commit-as-diff :: TODO might be a good idea
   ::
   ++  set-head
     |=  =hash

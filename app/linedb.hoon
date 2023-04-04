@@ -45,14 +45,14 @@
       ~&  >  wire
       ~&  >  -.sign
       ?+    wire  (on-agent:def wire sign)
-          [%ask ~]
+          [%fetch %ask ~]
         ?+    -.sign  (on-agent:def wire sign)
             %fact
           ~&  >  p.cage.sign
           `this
         ==
       ::
-          [%req ~]
+          [%fetch %req ~]
         ?+    -.sign  (on-agent:def wire sign)
             %fact
           ~&  >  p.cage.sign
@@ -111,16 +111,15 @@
       %ask
     :_  state
     =+  !>([%request repo.fetch])
-    [%pass /ask %agent [who.fetch dap.bowl] %poke %linedb-fetch -]~
-    
+    [%pass /fetch/ask %agent [who.fetch dap.bowl] %poke %linedb-fetch -]~
   ::
       %request
-    =-  [%pass /req %agent [src dap]:bowl %poke %linedb-fetch -]~^state
+    =-  [%pass /fetch/req %agent [src dap]:bowl %poke %linedb-fetch -]~^state
     ?~  got=(~(get by repos) repo.fetch)  !>(~)
     !>([%response repo.fetch u.got])
   ::
       %response
-    :: TODO probably just need to grab master?  
+    :: TODO partial checkout - just grab one branch
     `state(repos (~(put by repos) [name repo]:fetch))
   ==
 ::

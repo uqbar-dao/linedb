@@ -10,14 +10,14 @@
 +$  hash  @uvH
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
-+$  snap  (map path file)
++$  snap  (map path file) :: maybe use $axal and +of 
 +$  commit
   $:  =hash
       parent=hash
       author=ship
       time=@da
       =snap
-      diffs=(map path diff)
+      diffs=(map path diff) :: TODO get rid of this and instead calculate diffs
   ==
 +$  branch
   $:  head=hash
