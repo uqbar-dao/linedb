@@ -79,7 +79,6 @@
   ++  head-file    |=(p=path (of-wain (~(gut by head-snap) p *file)))
   ::
   ++  log          (turn commits.branch |=(=commit hash.commit))
-  :: ++  detached     =(head hash.i.commits.branch)
   ::
   ++  most-recent-ancestor
     |=  dat=^branch
@@ -98,6 +97,7 @@
 ++  r
   |_  =repo
   ++  active-branch  (~(got by q.repo) active-branch.p.repo)
+  ::
   ++  commit-active
     |=  [author=ship time=@da new-snap=snap]
     ^+  repo
@@ -106,10 +106,12 @@
       |=  =branch
       (~(add-commit b active-branch) author time new-snap)
     repo
+  ::
   ++  checkout
     |=  branch=@tas
     ^+  repo
     repo(active-branch.p branch)
+  ::
   ++  new-branch
     |=  name=@tas
     ^+  repo
@@ -162,7 +164,7 @@
       %-  ~(urn by snap.i.commits.br)
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
-      (lurk file dif)
+      (apply-diff:d file dif)
     (commit-active *@p *@da new-snap) :: TODO
   ::
   ::  read arms
@@ -174,9 +176,8 @@
 ::
 ++  d
   |%
-  ++  diff-files
-    |=  [old=file new=file]
-    (lusk old new (loss old new))
+  ++  diff-files  |=([old=file new=file] (lusk old new (loss old new)))
+  ++  apply-diff  |=([=file =diff] (lurk file diff))
   ::
   ++  line-mapping
     ::  TODO we need a more advanced diff algo if we want individual lines edited...diff could be an (urge tape)
@@ -221,7 +222,7 @@
       (~(gut by old) path *file)
     (~(gut by new) path *file)
   ::
-  ++  three-way-merge                                    ::  +mash in mar/txt/hoon
+  ++  three-way-merge                                  ::  +mash in mar/txt/hoon
     |=  $:  [ald=@tas ali=diff]
             [bod=@tas bob=diff]
         ==
