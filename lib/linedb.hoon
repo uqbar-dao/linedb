@@ -162,7 +162,7 @@
       %-  ~(urn by snap.i.commits.br)
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
-      (apply-diff:d file dif)
+      (lurk file dif)
     (commit-active *@p *@da new-snap) :: TODO
   ::
   ::  read arms
@@ -208,25 +208,6 @@
       %=  $
         iold  (add iold (lent p.i.diff))
         inew  (add inew (lent q.i.diff))
-        diff  t.diff
-      ==
-    ==
-  ::
-  ++  apply-diff
-    |=  [=file =diff]
-    ^-  ^file
-    =|  new=^file
-    |-
-    ?~  diff  new
-    ?-    -.i.diff
-        %&
-      =+  qux=(scag p.i.diff file)
-      $(file qux, new (weld new qux), diff t.diff)
-    ::
-        %|
-      %=  $
-        file  (scag (lent p.i.diff) file)
-        new   (weld new q.i.diff)
         diff  t.diff
       ==
     ==
