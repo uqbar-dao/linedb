@@ -36,7 +36,13 @@
       [%branch repo=@tas name=@tas]
       [%checkout repo=@tas branch=@tas]
       [%merge repo=@tas branch=@tas]
-      :: [%fetch =ship repo=@tas branch=_%master]
+  ==
+::
++$  fetch
+  $%  [%ask who=ship repo=@tas]
+      [%request repo=@tas]
+      [%response name=@tas =repo]
+      :: [%deny ~] :: TODO add permissions
   ==
 ::
 :: ++  file-on  ((on line cord) lth)

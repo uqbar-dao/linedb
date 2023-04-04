@@ -35,10 +35,30 @@
       =^  cards  state
         ?+  mark  (on-poke:def mark vase)
           %linedb-action  (handle-action:hc !<(action vase))
+          %linedb-fetch   (handle-fetch:hc !<(fetch vase))
         ==
       [cards this]
     ::
-    ++  on-agent  on-agent:def
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      ^-  (quip card _this)
+      ~&  >  wire
+      ~&  >  -.sign
+      ?+    wire  (on-agent:def wire sign)
+          [%ask ~]
+        ?+    -.sign  (on-agent:def wire sign)
+            %fact
+          ~&  >  p.cage.sign
+          `this
+        ==
+      ::
+          [%req ~]
+        ?+    -.sign  (on-agent:def wire sign)
+            %fact
+          ~&  >  p.cage.sign
+          `this
+        ==
+      ==
     ++  on-watch  on-watch:def
     ++  on-peek   handle-scry:hc
     ++  on-arvo   on-arvo:def
@@ -81,7 +101,27 @@
     =.  repos
       %+  ~(jab by repos)  repo.act
       |=(=repo (~(merge r:ldb repo) branch.act))
-    `state
+    `state    
+  ==
+::
+++  handle-fetch
+  |=  =fetch
+  ^-  (quip card _state)
+  ?-    -.fetch
+      %ask
+    :_  state
+    =+  !>([%request repo.fetch])
+    [%pass /ask %agent [who.fetch dap.bowl] %poke %linedb-fetch -]~
+    
+  ::
+      %request
+    =-  [%pass /req %agent [src dap]:bowl %poke %linedb-fetch -]~^state
+    ?~  got=(~(get by repos) repo.fetch)  !>(~)
+    !>([%response repo.fetch u.got])
+  ::
+      %response
+    :: TODO probably just need to grab master?  
+    `state(repos (~(put by repos) [name repo]:fetch))
   ==
 ::
 ++  handle-scry
