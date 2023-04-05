@@ -144,6 +144,6 @@
     ``noun+!>(~(branches r:ldb (~(got by repos) i.t.t.path)))
   ::
       [%x %active-branch @ ~]
-    ``noun+!>(active-branch.p:(~(got by resos) i.t.t.path))
+    ``noun+!>(active-branch.p:(~(got by repos) i.t.t.path))
   ==
 --

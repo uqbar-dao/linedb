@@ -15,20 +15,20 @@
     |=  [author=ship time=@da new-snap=snap]
     ^+  branch
     =+  head-hash=(sham new-snap)
-    =/  =commit
+    =.  commits.branch
+      :_  commits.branch
       :*  head-hash
           head.branch
           author
           time
           new-snap
       ==
-    %=  branch
-      head        head-hash
-      commits     [commit commits.branch]
-      hash-index  (~(put by hash-index.branch) head-hash commit)
-    ==
+    =.  hash-index.branch
+      %+  ~(put by hash-index.branch)  head-hash
+      ?>(?=(^ commits.branch) i.commits.branch)
+    branch(head head-hash)
   ::
-  ++  squash :: TODO this code is really ugly
+  ++  squash :: TODO this code is really ugly, I think you can do it with just a nested trap
     |=  [from=hash to=hash]
     ^+  branch
     =|  edited=(list commit)
@@ -56,12 +56,12 @@
     ^+  branch
     ?.  (~(has by hash-index.branch) to)
       ~|("%linedb: reset: hash doesn't exist, cannot reset" !!)
-    =*  commits  commits.branch
-    =*  hash-index  hash-index.branch
     |-
-    ?~  commits  !!
-    ?:  =(hash.i.commits to)  branch(head to)
-    $(commits t.commits, hash-index (~(del by hash-index) hash.i.commits))
+    ?~  commits.branch  !!  ::  should never happen
+    ?:  =(hash.i.commits.branch to)  branch(head to)
+    =.  hash-index.branch
+      (~(del by hash-index.branch) hash.i.commits.branch)
+    $(commits.branch t.commits.branch)
   ::
   ::  read arms
   ::
@@ -121,7 +121,7 @@
     =.  q.repo  (~(del by q.repo) name)
     repo
   ::
-  ++  reset-branch
+  ++  reset-branch :: TODO I don't like how this is just a wrapper around ~(reset b branch)
     |=  [name=@tas =hash]
     ^+  repo
     =.  q.repo
