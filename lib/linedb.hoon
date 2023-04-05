@@ -28,12 +28,6 @@
       hash-index  (~(put by hash-index.branch) head-hash commit)
     ==
   ::
-  ++  set-head
-    |=  =hash
-    ^+  branch
-    ?>  (~(has by hash-index.branch) hash)
-    branch(head hash)
-  ::
   ++  squash :: TODO this code is really ugly
     |=  [from=hash to=hash]
     ^+  branch
