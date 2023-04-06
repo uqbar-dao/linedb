@@ -1,5 +1,6 @@
 /-  *screed, *linedb
-/+  dbug, default-agent, *mip, ldb=linedb, screed-lib=screed, verb
+/+  ldb=linedb
+/+  default-agent, verb, dbug
 ::
 %-  agent:dbug
 %+  verb  &
@@ -35,33 +36,12 @@
       =^  cards  state
         ?+  mark  (on-poke:def mark vase)
           %linedb-action  (handle-action:hc !<(action vase))
-          %linedb-fetch   (handle-fetch:hc !<(fetch vase))
-          %linedb-push    (handle-push:hc !<(push vase))
         ==
       [cards this]
     ::
-    ++  on-agent
-      |=  [=wire =sign:agent:gall]
-      ^-  (quip card _this)
-      ~&  >  wire
-      ~&  >  -.sign
-      ?+    wire  (on-agent:def wire sign)
-          [%fetch %ask ~]
-        ?+    -.sign  (on-agent:def wire sign)
-            %fact
-          ~&  >  p.cage.sign
-          `this
-        ==
-      ::
-          [%fetch %req ~]
-        ?+    -.sign  (on-agent:def wire sign)
-            %fact
-          ~&  >  p.cage.sign
-          `this
-        ==
-      ==
+    ++  on-agent  on-agent:def
     ++  on-watch  on-watch:def
-    ++  on-peek   handle-scry:hc
+    ++  on-peek   on-peek:def
     ++  on-arvo   on-arvo:def
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
@@ -75,100 +55,15 @@
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
-  `state
-  :: ?-    -.act
-  ::     %new-repo
-  ::   =.  repos
-  ::     %+  ~(put by repos)  name.act
-  ::     :-  [our.bowl %master]
-  ::     (~(put by *(map @tas branch)) %master *branch)
-  ::   `state
-  :: ::
-  ::     %commit
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=  =repo
-  ::     (~(re-commit re repo) our.bowl now.bowl snap.act)
-  ::   `state
-  :: ::
-  ::     %branch
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=(=repo (~(new-branch re repo) name.act))
-  ::   `state
-  :: ::
-  ::     %delete-branch
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=(=repo (~(delete-branch re repo) name.act))
-  ::   `state
-  :: ::
-  ::     %checkout
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=(=repo (~(checkout re repo) branch.act))
-  ::   `state    
-  :: ::
-  ::     %merge
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=(=repo (~(merge re repo) branch.act))
-  ::   `state
-  :: ::
-  ::     %reset
-  ::   =.  repos
-  ::     %+  ~(jab by repos)  repo.act
-  ::     |=(=repo (~(reset-branch re repo) hash.act))
-  ::   `state
-  :: ==
-::
-++  handle-fetch
-  |=  =fetch
-  ^-  (quip card _state)
-  ?-    -.fetch
-      %ask
-    :_  state
-    =+  !>([%request repo.fetch])
-    [%pass /fetch/ask %agent [who.fetch dap.bowl] %poke %linedb-fetch -]~
-  ::
-      %request
-    =-  [%pass /fetch/req %agent [src dap]:bowl %poke %linedb-fetch -]~^state
-    ?~  got=(~(get by repos) repo.fetch)  !>(~)
-    !>([%response repo.fetch u.got])
-  ::
-      %response
-    :: TODO partial checkout - just grab one branch
-    `state(repos (~(put by repos) [name repo]:fetch))
+  ?-  -.act
+    %new-repo       re-abet:(re name.act)
+    %commit         re-abet:(re-commit:(re repo.act) snap.act)
+    %branch         re-abet:(re-branch:(re repo.act) name.act)
+    %delete-branch  re-abet:(re-delete:(re repo.act) name.act)
+    %checkout       re-abet:(re-checkout:(re repo.act) branch.act)
+    %merge          re-abet:(re-merge:(re repo.act) branch.act)
+    %reset          re-abet:(re-reset:(re repo.act) hash.act)
   ==
-::
-++  handle-push
-  |=  =push
-  ^-  (quip card _state)
-  ?-    -.push
-      %ask
-    :_  state
-    =+  !>([%push [repo branch who]:push])
-    [%pass /push/ask %agent [who.push dap.bowl] %poke %linedb-push -]~
-  ::
-      %push
-    ~&  >  commits.push
-    :: if it's a fast forward then it's fine
-    :: otherwise we need to get to poke back with a notification that says they need to pull
-    `state :: TODO change state
-  ==
-::
-++  handle-scry
-  |=  =path
-  ^-  (unit (unit cage))
-  `~
-  :: ?+    path  `~
-  ::     [%x %repos ~]  ``noun+!>((turn ~(tap by repos) head))
-  ::     [%x %branches @ ~]
-  ::   ``noun+!>(~(branches re (~(got by repos) i.t.t.path)))
-  :: ::
-  ::     [%x %active-branch @ ~]
-  ::   ``noun+!>(active-branch.p:(~(got by repos) i.t.t.path))
-  :: ==
 ::
 ::  repo engine
 ::
@@ -179,14 +74,15 @@
       :-  [our.bowl %master]
       (~(put by *(map @tas branch)) %master *branch)
   =*  repo  -
+  ::
   |%
   ::
   ::  Done; install data
   ::
   ++  re-abet
-    ^+  ..re-abet
+    ^-  (quip card _state)
     =.  repos  (~(put by repos) rep repo)
-    ..re-abet
+    `state
   ::
   ::  active branch, checked-out
   ::
@@ -206,7 +102,7 @@
     $(har t.har)
   ::
   ++  re-commit
-    |=  new=^snap
+    |=  new=snap
     ^+  ..re-abet
     ba-abet:(ba-commit:(ba active.p.repo) new)
   ::
@@ -259,8 +155,8 @@
         [active.p.repo (~(gut by active-diffs) path *diff)]
       [name (~(gut by incoming-diffs) path *diff)]
     =+  br=(~(got by q.repo) active.p.repo)
-    =/  new-snap=^snap
-      ?@  commits.br  *^snap
+    =/  new-snap=snap
+      ?@  commits.br  *snap
       %-  ~(urn by snap.i.commits.br)
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
@@ -285,7 +181,7 @@
       ..re-abet
     ::
     ++  ba-commit :: TODO ugly
-      |=  new=^snap
+      |=  new=snap
       ^+  ..ba-abet
       =+  head-hash=(sham new)
       =/  blah=commit
