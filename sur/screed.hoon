@@ -6,13 +6,7 @@
       title=@t
       published=@da
       comments=(map @da comment)
-      global-permissions=permissions
-      user-permissions=(map @p permissions)
   ==
-::
-+$  permissions
-  $~  %none
-  ?(%none %read %comment %write)
 ::
 +$  comment
   $:  =line

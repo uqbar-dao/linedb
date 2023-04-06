@@ -129,7 +129,7 @@
       %^    add-commit:remote
           src.bowl
         now.bowl
-    (~(put by latest-snap:local) path.act (cord-to-file file.act))
+      (~(put by latest-snap:local) path.act (cord-to-file file.act))
     =.  remotes
       (~(put by remotes) src.bowl remote)
     `state
