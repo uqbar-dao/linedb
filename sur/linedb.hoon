@@ -23,11 +23,15 @@
       commits=(list commit)
       hash-index=(map hash commit)
   ==
+::
 +$  repo-metadata
   $:  upstream=ship
-      active-branch=@tas
+      active=@tas
   ==
 +$  repo  (pair repo-metadata (map @tas branch))
++$  permission-level
+  $~  %private
+  ?(%private %public %only-tagged)
 ::
 +$  action
   $%  [%new-repo name=@tas]
@@ -40,10 +44,15 @@
   ==
 ::
 +$  fetch
-  $%  [%ask who=ship repo=@tas]
+  $%  [%ask repo=@tas who=ship]
       [%request repo=@tas]
       [%response name=@tas =repo]
       :: [%deny ~] :: TODO add permissions
+  ==
+::
++$  push
+  $%  [%ask repo=@tas branch=@tas who=ship]
+      [%push repo=@tas branch=@tas to=@p commits=(list commit)]
   ==
 ::
 :: ++  file-on  ((on line cord) lth)
