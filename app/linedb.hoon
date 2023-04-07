@@ -1,5 +1,7 @@
-/-  *screed, *linedb
+/-  *linedb
+/-  sss
 /+  ldb=linedb
+/+  sss
 /+  default-agent, verb, dbug
 ::
 %-  agent:dbug
@@ -56,13 +58,13 @@
   |=  act=action
   ^-  (quip card _state)
   ?-  -.act
-    %new-repo       re-abet:(re name.act)
-    %commit         re-abet:(re-commit:(re repo.act) snap.act)
-    %branch         re-abet:(re-branch:(re repo.act) name.act)
-    %delete-branch  re-abet:(re-delete:(re repo.act) name.act)
-    %checkout       re-abet:(re-checkout:(re repo.act) branch.act)
-    %merge          re-abet:(re-merge:(re repo.act) branch.act)
-    %reset          re-abet:(re-reset:(re repo.act) hash.act)
+    %create  re-abet:(re name.act)
+    %commit  re-abet:(re-commit:(re repo.act) snap.act)
+    %branch  re-abet:(re-branch:(re repo.act) name.act)
+    %delete  re-abet:(re-delete:(re repo.act) name.act)
+    %focus   re-abet:(re-focus:(re repo.act) branch.act)
+    %merge   re-abet:(re-merge:(re repo.act) branch.act)
+    %reset   re-abet:(re-reset:(re repo.act) hash.act)
   ==
 ::
 ::  repo engine
@@ -106,7 +108,7 @@
     ^+  ..re-abet
     ba-abet:(ba-commit:(ba active.p.repo) new)
   ::
-  ++  re-checkout
+  ++  re-focus
     |=  chek=@tas
     ^+  ..re-abet
     ..re-abet(active.p.repo chek)
