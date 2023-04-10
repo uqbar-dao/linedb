@@ -6,8 +6,9 @@
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  =+  sub-branch=(mk-subs:sss b ,[%branch ^])
-    =+  pub-branch=(mk-pubs:sss b ,[%branch ^])
+=>  =+  sss-paths=,[@tas @tas ~] :: /repo/branch
+    =+  sub-branch=(mk-subs:sss b sss-paths)
+    =+  pub-branch=(mk-pubs:sss b sss-paths)
     |%
     +$  versioned-state
       $%  state-0
@@ -26,9 +27,9 @@
     +*  this  .
         hc    ~(. +> bowl dab dub)
         def   ~(. (default-agent this %|) bowl)
-        dab   =/  da  (da:sss b ,[%branch ^])
+        dab   =/  da  (da:sss b sss-paths)
               (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-        dub   =/  du  (du:sss b ,[%branch ^])
+        dub   =/  du  (du:sss b sss-paths)
               (du pub-branch bowl -:!>(*result:du))
     ++  on-init  on-init:def
     ++  on-save  !>(state)
@@ -46,13 +47,18 @@
         ?+    mark  (on-poke:def mark vase)
             %linedb-action  (handle-action:hc !<(action vase))
         ::
+            %fetch
+          =^  cards  sub-branch  
+            (surf:dab !<(@p (slot 2 vase)) dap.bowl !<(sss-paths (slot 3 vase)))
+          [cards state]
+        ::
             %sss-branch
+          ~&  >  !<(into:dab (fled:sss vase))
           =^  cards  sub-branch  (apply:dab !<(into:dab (fled:sss vase)))
           [cards state]
         ::
             %sss-to-pub
           =+  msg=!<($%(into:dub) (fled:sss vase))
-          ?>  =(-.msg [[%branch ^] *])
           =^  cards  pub-branch  (apply:dub msg)
           [cards state]
         ::
@@ -61,16 +67,16 @@
         ==
       [cards this]
     ::
-    ++  on-agent :: on-agent:def
+    ++  on-agent
       |=  [=wire =sign:agent:gall]
       ^-  (quip card _this)
       ?>  ?=(%poke-ack -.sign)
       ?~  p.sign  `this
       %-  (slog u.p.sign)
       =^  cards  sub-branch
-        ?+    wire   `sub-branch
-          [~ %sss %on-rock @ @ @ %branch ^]      `(chit:dab |3:wire sign)
-          [~ %sss %scry-request @ @ @ %branch ^]  (tell:dab |3:wire sign)
+        ?+    wire   ~&  >  'fail'  `sub-branch
+          [~ %sss %on-rock @ @ @ @tas @tas ~]      `(chit:dab |3:wire sign)
+          [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
         ==
       [cards this]
     ++  on-watch  on-watch:def
@@ -79,7 +85,7 @@
       |=  [=wire sign=sign-arvo]
       ^-  (quip card:agent:gall _this)
       ?+  wire  `this
-        [~ %sss %behn @ @ @ %branch ^]  [(behn:dab |3:wire) this]
+        [~ %sss %behn @ @ @ @tas @tas ~]  [(behn:dab |3:wire) this]
       ==
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
@@ -87,7 +93,7 @@
 ::
 ::  if the helper core used any cards I would put them here as part of state
 ::
-|_  [=bowl:gall dab=_((da:sss b ,[%branch ^])) dub=_((du:sss b ,[%branch ^]))]
+|_  [=bowl:gall dab=_((da:sss b sss-paths)) dub=_((du:sss b sss-paths))]
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
@@ -233,7 +239,7 @@
         %+  ~(put by hash-index.branch)  head-hash
         ?>(?=(^ commits.branch) i.commits.branch)
       =.  head.branch  head-hash
-      =^  cad  pub-branch  (give:dub [%branch ban ~] blah)
+      =^  cad  pub-branch  (give:dub [rep ban ~] blah)
       =.  cards  (weld cad cards)
       ..ba-abet
     ::
