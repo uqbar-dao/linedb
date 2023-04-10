@@ -8,6 +8,6 @@
   %=  rock
     head        hash.wave
     commits     [wave commits.rock]
-    hash-index  (~(put by hash-index.rock) wave)
+    hash-index  (~(put by hash-index.rock) hash.wave wave)
   ==
 --

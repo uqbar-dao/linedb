@@ -1,5 +1,4 @@
-/-  *linedb
-/-  sss
+/-  *linedb, b=branch
 /+  ldb=linedb
 /+  sss
 /+  default-agent, verb, dbug
@@ -7,13 +6,17 @@
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  |%
+=>  =+  sub-branch=(mk-subs:sss b ,[%branch ^])
+    =+  pub-branch=(mk-pubs:sss b ,[%branch ^])
+    |%
     +$  versioned-state
       $%  state-0
       ==
     +$  state-0
       $:  %0
           repos=(map @tas repo)
+          =_sub-branch
+          =_pub-branch
       ==
     +$  card  card:agent:gall
     --
@@ -23,6 +26,10 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
+        dab   =/  da  (da:sss b ,[%branch ^])
+              (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+        dub   =/  du  (du:sss b ,[%branch ^])
+              (du pub-branch bowl -:!>(*result:du))
     ++  on-init  on-init:def
     ++  on-save  !>(state)
     ++  on-load
@@ -36,22 +43,45 @@
     ++  on-poke
       |=  [=mark =vase]
       =^  cards  state
-        ?+  mark  (on-poke:def mark vase)
-          %linedb-action  (handle-action:hc !<(action vase))
+        ?+    mark  (on-poke:def mark vase)
+            %linedb-action  (handle-action:hc !<(action vase))
+        ::
+            %sss-branch     `state
+            %sss-surf-fail  `state
+            %sss-on-rock    `state
+            %sss-to-pub
+          =+  msg=!<($%(into:dub) (fled:sss vase))
+          ?>  =(-.msg [[%branch ^] *])
+          =^  cards  pub-branch  (apply:dub msg)
+          [cards state]
         ==
       [cards this]
     ::
-    ++  on-agent  on-agent:def
+    ++  on-agent :: on-agent:def
+      |=  [=wire =sign:agent:gall]
+      ^-  (quip card _this)
+      ?>  ?=(%poke-ack -.sign)
+      ?~  p.sign  `this
+      %-  (slog u.p.sign)
+      =^  cards  sub-branch
+        ?+    wire   `sub-branch ::(on-agent:def wire sign)
+          [~ %sss %on-rock @ @ @ %branch ^]      `(chit:dab |3:wire sign)
+          [~ %sss %scry-request @ @ @ %branch ^]  (tell:dab |3:wire sign)
+        ==
+      [cards this]
     ++  on-watch  on-watch:def
     ++  on-peek   on-peek:def
-    ++  on-arvo   on-arvo:def
+    ++  on-arvo
+      |=  [=wire sign=sign-arvo]
+      ^-  (quip card:agent:gall _this)
+      ?+  wire  `this
+        [~ %sss %behn @ @ @ %branch ^]  [(behn:dab |3:wire) this]
+      ==
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
 ::
 ::  if the helper core used any cards I would put them here as part of state
-::  possibly advnatageous to refactor everything as abet instead of having
-::  various helper arms. TODO...
 :: 
 |_  bowl=bowl:gall
 ++  handle-action
