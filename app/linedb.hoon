@@ -18,13 +18,13 @@
           =_sub-branch
           =_pub-branch
       ==
-    +$  card  card:agent:gall
+    +$  card  $+(card card:agent:gall) :: $+ makes debugging easier here
     --
 =|  state-0
 =*  state  -
 =<  |_  =bowl:gall
     +*  this  .
-        hc    ~(. +> bowl)
+        hc    ~(. +> bowl dab dub)
         def   ~(. (default-agent this %|) bowl)
         dab   =/  da  (da:sss b ,[%branch ^])
               (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
@@ -46,14 +46,18 @@
         ?+    mark  (on-poke:def mark vase)
             %linedb-action  (handle-action:hc !<(action vase))
         ::
-            %sss-branch     `state
-            %sss-surf-fail  `state
-            %sss-on-rock    `state
+            %sss-branch
+          =^  cards  sub-branch  (apply:dab !<(into:dab (fled:sss vase)))
+          [cards state]
+        ::
             %sss-to-pub
           =+  msg=!<($%(into:dub) (fled:sss vase))
           ?>  =(-.msg [[%branch ^] *])
           =^  cards  pub-branch  (apply:dub msg)
           [cards state]
+        ::
+          %sss-surf-fail  `state  :: you try to subscribe but aren't allwoed
+          %sss-on-rock    `state  :: a rock has updated
         ==
       [cards this]
     ::
@@ -64,7 +68,7 @@
       ?~  p.sign  `this
       %-  (slog u.p.sign)
       =^  cards  sub-branch
-        ?+    wire   `sub-branch ::(on-agent:def wire sign)
+        ?+    wire   `sub-branch
           [~ %sss %on-rock @ @ @ %branch ^]      `(chit:dab |3:wire sign)
           [~ %sss %scry-request @ @ @ %branch ^]  (tell:dab |3:wire sign)
         ==
@@ -82,8 +86,8 @@
     --
 ::
 ::  if the helper core used any cards I would put them here as part of state
-:: 
-|_  bowl=bowl:gall
+::
+|_  [=bowl:gall dab=_((da:sss b ,[%branch ^])) dub=_((du:sss b ,[%branch ^]))]
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
@@ -100,6 +104,7 @@
 ::  repo engine
 ::
 ++  re
+  =|  cards=(list card)
   |=  rep=@tas
   =+  %+  ~(gut by repos)  rep
       ^-  repo
@@ -114,7 +119,7 @@
   ++  re-abet
     ^-  (quip card _state)
     =.  repos  (~(put by repos) rep repo)
-    `state
+    [(flop cards) state]
   ::
   ::  active branch, checked-out
   ::
@@ -228,6 +233,8 @@
         %+  ~(put by hash-index.branch)  head-hash
         ?>(?=(^ commits.branch) i.commits.branch)
       =.  head.branch  head-hash
+      =^  cad  pub-branch  (give:dub [%branch ban ~] blah)
+      =.  cards  (weld cad cards)
       ..ba-abet
     ::
     ++  ba-squash :: TODO this code is really ugly, I think you can do it with just a nested trap
