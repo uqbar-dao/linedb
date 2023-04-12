@@ -1,5 +1,5 @@
 /-  *linedb
 :-  %say
-|=  [* [who=ship repo=@tas ~] ~]
-:-  %linedb-fetch
-[%ask who repo]
+|=  [* [who=ship repo=@tas branch=@tas ~] ~]
+:-  %fetch
+[who repo branch ~]

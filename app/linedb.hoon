@@ -62,8 +62,10 @@
           =^  cards  pub-branch  (apply:dub msg)
           [cards state]
         ::
-          %sss-surf-fail  `state  :: you try to subscribe but aren't allwoed
-          %sss-on-rock    `state  :: a rock has updated
+          %sss-surf-fail
+        `state  :: you try to subscribe but aren't allwoed
+          %sss-on-rock
+        `state  :: a rock has updated
         ==
       [cards this]
     ::
@@ -75,8 +77,16 @@
       %-  (slog u.p.sign)
       =^  cards  sub-branch
         ?+    wire   ~&  >  'fail'  `sub-branch
-          [~ %sss %on-rock @ @ @ @tas @tas ~]      `(chit:dab |3:wire sign)
-          [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
+          [~ %sss %on-rock @ @ @ @tas @tas ~]
+          =/  asdf  `(chit:dab |3:wire sign)
+          ~&  >  "chit"
+          ~&  >  asdf
+          asdf
+          [~ %sss %scry-request @ @ @ @tas @tas ~]
+          =/  asdf  (tell:dab |3:wire sign)
+          ~&  >  'tell'
+          ~&  >  asdf
+          asdf
         ==
       [cards this]
     ++  on-watch  on-watch:def
@@ -240,6 +250,8 @@
         ?>(?=(^ commits.branch) i.commits.branch)
       =.  head.branch  head-hash
       =^  cad  pub-branch  (give:dub [rep ban ~] blah)
+      ~&  >>>  "cad"
+      ~&  >  cad
       =.  cards  (weld cad cards)
       ..ba-abet
     ::
