@@ -6,9 +6,8 @@
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  =+  sss-paths=,[@tas @tas ~] :: /repo/branch
-    =+  sub-branch=(mk-subs:sss b sss-paths)
-    =+  pub-branch=(mk-pubs:sss b sss-paths)
+=>  
+=+  sss-paths=,[@tas @tas ~]
     |%
     +$  versioned-state
       $%  state-0
@@ -16,8 +15,8 @@
     +$  state-0
       $:  %0
           repos=(map @tas repo)
-          =_sub-branch
-          =_pub-branch
+          sub-branch=_(mk-subs:sss b sss-paths)
+          pub-branch=_(mk-pubs:sss b sss-paths)
       ==
     +$  card  $+(card card:agent:gall) :: $+ makes debugging easier here
     --
@@ -61,10 +60,20 @@
           =^  cards  pub-branch  (apply:dub msg)
           [cards state]
         ::
-          %sss-surf-fail
-        `state  :: you try to subscribe but aren't allwoed
-          %sss-on-rock
-        `state  :: a rock has updated
+            %sss-surf-fail  `state  :: you try to subscribe but aren't allwoed
+            %sss-on-rock    `state  :: a rock has updated
+        ::
+            %perm-public
+          =.  pub-branch  (public:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-secret
+          =.  pub-branch  (secret:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-allow
+          =.  pub-branch  (allow:dub !<([(list ship) (list sss-paths)] vase))
+          `state
         ==
       [cards this]
     ::
@@ -91,8 +100,6 @@
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
-::
-::  if the helper core used any cards I would put them here as part of state
 ::
 |_  =bowl:gall
 +*  dab  =/  da  (da:sss b sss-paths)
@@ -172,6 +179,7 @@
     ?:  =(name active.p.repo)
       ~&("{<name>} is active, cannot delete" ..re-abet)
     =.  q.repo  (~(del by q.repo) name)
+    =.  pub-branch  (kill:dub [rep name ~]~)
     ..re-abet
   ::
   ++  re-reset
@@ -219,7 +227,6 @@
     =*  branch  -
     ::
     |%
-    ++  ba-core  .
     ::
     ::  Done; install data
     ::

@@ -32,4 +32,6 @@
       [%merge repo=@tas branch=@tas]
       [%reset repo=@tas =hash]
   ==
+:: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
+:: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch
 --
