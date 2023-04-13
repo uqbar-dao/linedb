@@ -25,7 +25,7 @@
 =*  state  -
 =<  |_  =bowl:gall
     +*  this  .
-        hc    ~(. +> bowl dab dub)
+        hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
         dab   =/  da  (da:sss b sss-paths)
               (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
@@ -53,7 +53,6 @@
           [cards state]
         ::
             %sss-branch
-          ~&  >  !<(into:dab (fled:sss vase))
           =^  cards  sub-branch  (apply:dab !<(into:dab (fled:sss vase)))
           [cards state]
         ::
@@ -76,17 +75,9 @@
       ?~  p.sign  `this
       %-  (slog u.p.sign)
       =^  cards  sub-branch
-        ?+    wire   ~&  >  'fail'  `sub-branch
-          [~ %sss %on-rock @ @ @ @tas @tas ~]
-          =/  asdf  `(chit:dab |3:wire sign)
-          ~&  >  "chit"
-          ~&  >  asdf
-          asdf
-          [~ %sss %scry-request @ @ @ @tas @tas ~]
-          =/  asdf  (tell:dab |3:wire sign)
-          ~&  >  'tell'
-          ~&  >  asdf
-          asdf
+        ?+    wire  `sub-branch
+          [~ %sss %on-rock @ @ @ @tas @tas ~]      `(chit:dab |3:wire sign)
+          [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
         ==
       [cards this]
     ++  on-watch  on-watch:def
@@ -103,7 +94,11 @@
 ::
 ::  if the helper core used any cards I would put them here as part of state
 ::
-|_  [=bowl:gall dab=_((da:sss b sss-paths)) dub=_((du:sss b sss-paths))]
+|_  =bowl:gall
++*  dab  =/  da  (da:sss b sss-paths)
+         (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    dub  =/  du  (du:sss b sss-paths)
+         (du pub-branch bowl -:!>(*result:du))
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
@@ -250,8 +245,6 @@
         ?>(?=(^ commits.branch) i.commits.branch)
       =.  head.branch  head-hash
       =^  cad  pub-branch  (give:dub [rep ban ~] blah)
-      ~&  >>>  "cad"
-      ~&  >  cad
       =.  cards  (weld cad cards)
       ..ba-abet
     ::
