@@ -60,7 +60,11 @@
           =^  cards  pub-branch  (apply:dub msg)
           [cards state]
         ::
-            %sss-surf-fail  `state  :: you try to subscribe but aren't allwoed
+            %sss-surf-fail
+          =/  msg  !<(fail:dab (fled:sss vase))
+          ~&  >>>  "not allowed to surf on {<msg>}"
+          `state
+        ::
             %sss-on-rock    `state  :: a rock has updated
         ::
             %perm-public
