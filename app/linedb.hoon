@@ -1,19 +1,24 @@
-/-  *screed, *linedb
+/-  *linedb, b=branch
 /+  ldb=linedb
+/+  sss
 /+  default-agent, verb, dbug
 ::
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  |%
+=>  
+=+  sss-paths=,[@tas @tas ~]
+    |%
     +$  versioned-state
       $%  state-0
       ==
     +$  state-0
       $:  %0
           repos=(map @tas repo)
+          sub-branch=_(mk-subs:sss b sss-paths)
+          pub-branch=_(mk-pubs:sss b sss-paths)
       ==
-    +$  card  card:agent:gall
+    +$  card  $+(card card:agent:gall) :: $+ makes debugging easier here
     --
 =|  state-0
 =*  state  -
@@ -21,6 +26,10 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
+        dab   =/  da  (da:sss b sss-paths)
+              (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+        dub   =/  du  (du:sss b sss-paths)
+              (du pub-branch bowl -:!>(*result:du))
     ++  on-init  on-init:def
     ++  on-save  !>(state)
     ++  on-load
@@ -34,40 +43,90 @@
     ++  on-poke
       |=  [=mark =vase]
       =^  cards  state
-        ?+  mark  (on-poke:def mark vase)
-          %linedb-action  (handle-action:hc !<(action vase))
+        ?+    mark  (on-poke:def mark vase)
+            %linedb-action  (handle-action:hc !<(action vase))
+        ::
+            %fetch
+          =^  cards  sub-branch  
+            (surf:dab !<(@p (slot 2 vase)) dap.bowl !<(sss-paths (slot 3 vase)))
+          [cards state]
+        ::
+            %sss-branch
+          =^  cards  sub-branch  (apply:dab !<(into:dab (fled:sss vase)))
+          [cards state]
+        ::
+            %sss-to-pub
+          =+  msg=!<($%(into:dub) (fled:sss vase))
+          =^  cards  pub-branch  (apply:dub msg)
+          [cards state]
+        ::
+            %sss-surf-fail
+          =/  msg  !<(fail:dab (fled:sss vase))
+          ~&  >>>  "not allowed to surf on {<msg>}"
+          `state
+        ::
+            %sss-on-rock    `state  :: a rock has updated
+        ::
+            %perm-public
+          =.  pub-branch  (public:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-secret
+          =.  pub-branch  (secret:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-allow
+          =.  pub-branch  (allow:dub !<([(list ship) (list sss-paths)] vase))
+          `state
         ==
       [cards this]
     ::
-    ++  on-agent  on-agent:def
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      ^-  (quip card _this)
+      ?>  ?=(%poke-ack -.sign)
+      ?~  p.sign  `this
+      %-  (slog u.p.sign)
+      =^  cards  sub-branch
+        ?+    wire  `sub-branch
+          [~ %sss %on-rock @ @ @ @tas @tas ~]      `(chit:dab |3:wire sign)
+          [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
+        ==
+      [cards this]
     ++  on-watch  on-watch:def
     ++  on-peek   on-peek:def
-    ++  on-arvo   on-arvo:def
+    ++  on-arvo
+      |=  [=wire sign=sign-arvo]
+      ^-  (quip card:agent:gall _this)
+      ?+  wire  `this
+        [~ %sss %behn @ @ @ @tas @tas ~]  [(behn:dab |3:wire) this]
+      ==
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
 ::
-::  if the helper core used any cards I would put them here as part of state
-::  possibly advnatageous to refactor everything as abet instead of having
-::  various helper arms. TODO...
-:: 
-|_  bowl=bowl:gall
+|_  =bowl:gall
++*  dab  =/  da  (da:sss b sss-paths)
+         (da sub-branch bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
+    dub  =/  du  (du:sss b sss-paths)
+         (du pub-branch bowl -:!>(*result:du))
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
   ?-  -.act
-    %new-repo       re-abet:(re name.act)
-    %commit         re-abet:(re-commit:(re repo.act) snap.act)
-    %branch         re-abet:(re-branch:(re repo.act) name.act)
-    %delete-branch  re-abet:(re-delete:(re repo.act) name.act)
-    %checkout       re-abet:(re-checkout:(re repo.act) branch.act)
-    %merge          re-abet:(re-merge:(re repo.act) branch.act)
-    %reset          re-abet:(re-reset:(re repo.act) hash.act)
+    %create  re-abet:(re name.act)
+    %commit  re-abet:(re-commit:(re repo.act) snap.act)
+    %branch  re-abet:(re-branch:(re repo.act) name.act)
+    %delete  re-abet:(re-delete:(re repo.act) name.act)
+    %focus   re-abet:(re-focus:(re repo.act) branch.act)
+    %merge   re-abet:(re-merge:(re repo.act) branch.act)
+    %reset   re-abet:(re-reset:(re repo.act) hash.act)
   ==
 ::
 ::  repo engine
 ::
 ++  re
+  =|  cards=(list card)
   |=  rep=@tas
   =+  %+  ~(gut by repos)  rep
       ^-  repo
@@ -82,7 +141,7 @@
   ++  re-abet
     ^-  (quip card _state)
     =.  repos  (~(put by repos) rep repo)
-    `state
+    [(flop cards) state]
   ::
   ::  active branch, checked-out
   ::
@@ -106,7 +165,7 @@
     ^+  ..re-abet
     ba-abet:(ba-commit:(ba active.p.repo) new)
   ::
-  ++  re-checkout
+  ++  re-focus
     |=  chek=@tas
     ^+  ..re-abet
     ..re-abet(active.p.repo chek)
@@ -124,6 +183,7 @@
     ?:  =(name active.p.repo)
       ~&("{<name>} is active, cannot delete" ..re-abet)
     =.  q.repo  (~(del by q.repo) name)
+    =.  pub-branch  (kill:dub [rep name ~]~)
     ..re-abet
   ::
   ++  re-reset
@@ -171,7 +231,6 @@
     =*  branch  -
     ::
     |%
-    ++  ba-core  .
     ::
     ::  Done; install data
     ::
@@ -196,6 +255,8 @@
         %+  ~(put by hash-index.branch)  head-hash
         ?>(?=(^ commits.branch) i.commits.branch)
       =.  head.branch  head-hash
+      =^  cad  pub-branch  (give:dub [rep ban ~] blah)
+      =.  cards  (weld cad cards)
       ..ba-abet
     ::
     ++  ba-squash :: TODO this code is really ugly, I think you can do it with just a nested trap

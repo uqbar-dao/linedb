@@ -1,5 +1,5 @@
 /-  *linedb
 :-  %say
 |=  [* [who=ship repo=@tas branch=@tas ~] ~]
-:-  %fetch
-[who repo branch ~]
+:-  %perm-allow
+[[who ~] [repo branch ~]~]

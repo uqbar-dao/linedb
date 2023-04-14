@@ -1,4 +1,4 @@
 :-  %say
 |=  [* [name=@tas ~] ~]
 :-  %linedb-action
-[%new-repo name]
+[%create name]

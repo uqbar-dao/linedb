@@ -24,12 +24,14 @@
 +$  repo  (pair repo-metadata (map @tas branch))
 ::
 +$  action
-  $%  [%new-repo name=@tas]
+  $%  [%create name=@tas]
       [%commit repo=@tas =snap]
       [%branch repo=@tas name=@tas]
-      [%delete-branch repo=@tas name=@tas]
-      [%checkout repo=@tas branch=@tas]
+      [%delete repo=@tas name=@tas]
+      [%focus repo=@tas branch=@tas]
       [%merge repo=@tas branch=@tas]
       [%reset repo=@tas =hash]
   ==
+:: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
+:: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch
 --
