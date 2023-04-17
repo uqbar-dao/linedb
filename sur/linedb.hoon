@@ -21,7 +21,7 @@
   $%  [%commit repo=@tas branch=@tas =snap]
       :: [%branch repo=@tas from=@tas name=@tas]
       [%delete repo=@tas branch=@tas] :: NOTE this doesn't actually delete it bc referential transparency
-      [%merge repo=@tas branch=@tas bob=@tas]
+      :: [%merge repo=@tas branch=@tas bob=@tas]
       :: [%reset repo=@tas branch=@tas =hash] :: resets aren't possible due to ref transparency
   ==
 :: TODO idk why this has to live at the top of /app/linedb/hoon instead of here

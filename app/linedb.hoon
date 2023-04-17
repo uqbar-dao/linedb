@@ -114,7 +114,7 @@
   ?-  -.act
     %commit  ba-abet:(ba-commit:(ba [repo branch ~]:act) snap.act)
     %delete  ba-abet:ba-delete:(ba repo.act branch.act ~)
-    %merge   ba-abet:(ba-merge:(ba repo.act branch.act ~) [repo bob ~]:act)
+    :: %merge   ba-abet:(ba-merge:(ba repo.act branch.act ~) [repo bob ~]:act)
     :: %branch  re-abet:(re-branch:(re repo.act) [from name]:act)
     :: %reset   re-abet:(re-reset:(re repo.act) [branch hash]:act)
   ==
@@ -157,7 +157,7 @@
       %+  ~(put by hash-index.branch)  head-hash
       ?>(?=(^ commits.branch) i.commits.branch)
     =.  head.branch  head-hash
-    =^  cad  pubs  (give:dub ali com)
+    =^  cad  pubs  (give:dub ali commit+com)
     =.  cards  (weld cad cards)
     ..ba-abet
   ::
