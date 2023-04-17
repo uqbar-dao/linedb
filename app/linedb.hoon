@@ -126,71 +126,62 @@
       %reset
     =^  cards  pubs  (give:dub [repo branch ~]:act reset+hash.act)
     [cards state]
-  :: %merge   ba-abet:(ba-merge:(ba repo.act branch.act ~) [repo bob ~]:act)
+  ::
+      %merge
+    |^
+    =/  alice   (ba [repo ali ~]:act)
+    =/  robert  (ba [repo bob ~]:act)
+    =*  alice-index   hash-index.alice
+    =*  robert-index  hash-index.robert
+    ?~  base=(merge-base [[repo ali ~] [repo bob ~]]:act)
+      ~|("%linedb: merge: no common base for {<ali.act>} and {<bob.act>}" !!)
+    =/  alice-diffs=(map path diff)
+      %+  diff-snaps:di:ldb
+        snap:(~(got by alice-index) u.base)
+        snap:(~(got by alice-index) head.alice)
+    =/  robert-diffs=(map path diff)
+      %+  diff-snaps:di:ldb
+        snap:(~(got by robert-index) u.base)
+        snap:(~(got by robert-index) head.robert)
+    =/  diffs=(map path diff)
+      %-  ~(urn by (~(uni by alice-diffs) robert-diffs))
+      |=  [=path *]
+      ^-  diff
+      %+  three-way-merge:di:ldb
+        [ali.act (~(gut by alice-diffs) path *diff)]
+      [bob.act (~(gut by robert-diffs) path *diff)]
+    =/  new-snap=snap
+      ?@  commits.alice  *snap
+      %-  ~(urn by snap.i.commits.alice)
+      |=  [=path =file]
+      =+  dif=(~(got by diffs) path)
+      (apply-diff:di:ldb file dif)
+    =^  cards  pubs
+      (give:dub [repo ali ~]:act %commit our.bowl now.bowl new-snap)
+    [cards state]
+    ::
+    ++  merge-base
+      |=  [bar=sss-paths ali=sss-paths]
+      ^-  (unit hash)
+      =/  har        log:(ba bar)
+      =/  han  (silt log:(ba ali))
+      |-
+      ?~  har  ~
+      ?:  (~(has in han) i.har)
+        `i.har
+      $(har t.har)
+    --
   :: %branch  re-abet:(re-branch:(re repo.act) [from name]:act)
   ==
 ::
 ::  branch engine
 ::
 ++  ba
-  =|  cards=(list card)
-  |=  ali=sss-paths
-  =+  rock:(~(got by read:dub) ali)
+  |=  ban=sss-paths
+  =+  rock:(~(got by read:dub) ban)
   =*  branch  -
   ::
   |%
-  ::
-  ::  Done; install data
-  ::
-  ++  ba-abet
-    ^-  (quip card _state)
-    [(flop cards) state]
-  ::
-  :: ++  ba-merge
-    :: |=  bob=sss-paths
-    :: ^+  ..ba-abet
-    :: |^
-    :: =/  robert  branch:(ba bob)
-    :: =*  alice-index   hash-index:branch
-    :: =*  robert-index  hash-index.robert
-    :: ?~  base=(merge-base ali bob)
-    ::   ~|("%linedb: merge: no common base for {<ali>} and {<bob>}" !!)
-    :: =/  alice-diffs=(map path diff)
-    ::   %+  diff-snaps:di:ldb
-    ::     snap:(~(got by alice-index) u.base)
-    ::     snap:(~(got by alice-index) head:branch)
-    :: =/  robert-diffs=(map path diff)
-    ::   %+  diff-snaps:di:ldb
-    ::     snap:(~(got by robert-index) u.base)
-    ::     snap:(~(got by robert-index) head.robert)
-    :: =/  diffs=(map path diff)
-    ::   %-  ~(urn by (~(uni by alice-diffs) robert-diffs))
-    ::   |=  [=path *]
-    ::   ^-  diff
-    ::   %+  three-way-merge:di:ldb
-    ::     [+<:ali (~(gut by alice-diffs) path *diff)]
-    ::   [+<:bob (~(gut by robert-diffs) path *diff)]
-    :: =/  new-snap=snap
-    ::   ?@  commits.branch  *snap
-    ::   %-  ~(urn by snap.i.commits.branch)
-    ::   |=  [=path =file]
-    ::   =+  dif=(~(got by diffs) path)
-    ::   (apply-diff:di:ldb file dif)
-    :: =^  cards  pubs
-    ::   (give:dub [repo branch ~]:act %commit our.bowl now.bowl snap.act)
-    :: ::
-    :: ++  merge-base
-    ::   |=  [bar=sss-paths ali=sss-paths]
-    ::   ^-  (unit hash)
-    ::   =/  har        log:(ba bar)
-    ::   =/  han  (silt log:(ba ali))
-    ::   |-
-    ::   ?~  har  ~
-    ::   ?:  (~(has in han) i.har)
-    ::     `i.har
-    ::   $(har t.har)
-    :: --
-  ::
   ::  read arms
   ::
   :: ++  get-commit   |=(h=hash (~(gut by hash-index.branch) h *commit))

@@ -22,7 +22,7 @@
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
       :: [%branch repo=@tas from=@tas name=@tas]
-      :: [%merge repo=@tas branch=@tas bob=@tas]
+      [%merge repo=@tas ali=@tas bob=@tas]
   ==
 :: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
 :: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch :: actually this should probably just be anything goes
