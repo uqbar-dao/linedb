@@ -4,6 +4,7 @@
 +$  rock  branch
 +$  wave  commit
 ++  wash
+  :: TOOD: a git reset needs a delete function here 
   |=  [=rock =wave]
   %=  rock
     head        hash.wave
