@@ -6,8 +6,7 @@
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  
-=+  sss-paths=,[@tas @tas ~]
+=>  =+  sss-paths=,[@tas @tas ~]
     |%
     +$  versioned-state
       $%  state-0
@@ -115,12 +114,11 @@
   ^-  (quip card _state)
   ?-  -.act
     %create  re-abet:(re name.act)
-    %commit  re-abet:(re-commit:(re repo.act) snap.act)
-    %branch  re-abet:(re-branch:(re repo.act) name.act)
+    %commit  re-abet:(re-commit:(re repo.act) [branch snap]:act)
+    %branch  re-abet:(re-branch:(re repo.act) [from name]:act)
     %delete  re-abet:(re-delete:(re repo.act) name.act)
-    %focus   re-abet:(re-focus:(re repo.act) branch.act)
-    %merge   re-abet:(re-merge:(re repo.act) branch.act)
-    %reset   re-abet:(re-reset:(re repo.act) hash.act)
+    %merge   re-abet:(re-merge:(re repo.act) [base come]:act)
+    %reset   re-abet:(re-reset:(re repo.act) [branch hash]:act)
   ==
 ::
 ::  repo engine
@@ -130,7 +128,6 @@
   |=  rep=@tas
   =+  %+  ~(gut by repos)  rep
       ^-  repo
-      :-  [our.bowl %master]
       (~(put by *(map @tas branch)) %master *branch)
   =*  repo  -
   ::
@@ -145,8 +142,7 @@
   ::
   ::  active branch, checked-out
   ::
-  ++  re-active    (~(got by q.repo) active.p.repo)
-  ++  re-branches  (turn ~(tap by q.repo) head)
+  ++  re-branches  (turn ~(tap by repo) head)
   ::
   ::
   ++  re-ancestor
@@ -161,73 +157,66 @@
     $(har t.har)
   ::
   ++  re-commit
-    |=  new=snap
+    |=  [branch=@tas new=snap]
     ^+  ..re-abet
-    ba-abet:(ba-commit:(ba active.p.repo) new)
-  ::
-  ++  re-focus
-    |=  chek=@tas
-    ^+  ..re-abet
-    ..re-abet(active.p.repo chek)
+    ba-abet:(ba-commit:(ba branch) new)
   ::
   ++  re-branch
-    |=  name=@tas
+    |=  [from=@tas name=@tas]
     ^+  ..re-abet
-    =.  q.repo
-      (~(put by q.repo) name re-active)
+    =.  repo
+      (~(put by repo) name (~(got by repo) from))
     ..re-abet
   ::
   ++  re-delete
     |=  name=@tas
     ^+  ..re-abet
-    ?:  =(name active.p.repo)
-      ~&("{<name>} is active, cannot delete" ..re-abet)
-    =.  q.repo  (~(del by q.repo) name)
+    =.  repo  (~(del by repo) name)
     =.  pub-branch  (kill:dub [rep name ~]~)
     ..re-abet
   ::
   ++  re-reset
-    |=  =hash
+    |=  [branch=@tas =hash]
     ^+  ..re-abet
-    ba-abet:(ba-reset:(ba active.p.repo) hash)
+    ba-abet:(ba-reset:(ba branch) hash)
   ::
   ++  re-merge
-    |=  name=@tas
+    |=  [ali=@tas bob=@tas]
     ^+  ..re-abet
-    =/  incoming  (~(got by q.repo) name)
-    =*  active-index    hash-index:re-active
-    =*  incoming-index  hash-index.incoming
-    ?~  base=(re-ancestor active.p.repo name)
-      ~|("%linedb: merge: no common base for {<re-active>} and {<name>}" !!)
-    =/  active-diffs=(map path diff)
+    =/  alice   (~(got by repo) ali)
+    =/  robert  (~(got by repo) bob)
+    =*  alice-index   hash-index:alice
+    =*  robert-index  hash-index.robert
+    ?~  base=(re-ancestor ali bob)
+      ~|("%linedb: merge: no common base for {<ali>} and {<bob>}" !!)
+    =/  alice-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by active-index) u.base)
-        snap:(~(got by active-index) head:re-active)
-    =/  incoming-diffs=(map path diff)
+        snap:(~(got by alice-index) u.base)
+        snap:(~(got by alice-index) head:alice)
+    =/  robert-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by incoming-index) u.base)
-        snap:(~(got by incoming-index) head.incoming)
+        snap:(~(got by robert-index) u.base)
+        snap:(~(got by robert-index) head.robert)
     =/  diffs=(map path diff)
-      %-  ~(urn by (~(uni by active-diffs) incoming-diffs))
+      %-  ~(urn by (~(uni by alice-diffs) robert-diffs))
       |=  [=path *]
       ^-  diff
       %+  three-way-merge:di:ldb
-        [active.p.repo (~(gut by active-diffs) path *diff)]
-      [name (~(gut by incoming-diffs) path *diff)]
-    =+  br=(~(got by q.repo) active.p.repo)
+        [ali (~(gut by alice-diffs) path *diff)]
+      [bob (~(gut by robert-diffs) path *diff)]
     =/  new-snap=snap
-      ?@  commits.br  *snap
-      %-  ~(urn by snap.i.commits.br)
+      ?@  commits.alice  *snap
+      %-  ~(urn by snap.i.commits.alice)
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
       (apply-diff:di:ldb file dif)
-    (re-commit new-snap)
+    (re-commit ali new-snap)
   ::
   ::  branch engine
   ::
   ++  ba
     |=  ban=@tas
-    =+  (~(got by q.repo) ban)
+    =+  (~(got by repo) ban)
     =*  branch  -
     ::
     |%
@@ -236,7 +225,7 @@
     ::
     ++  ba-abet
       ^+  ..re-abet
-      =.  q.repo  (~(put by q.repo) ban branch)
+      =.  repo  (~(put by repo) ban branch)
       ..re-abet
     ::
     ++  ba-commit :: TODO ugly
