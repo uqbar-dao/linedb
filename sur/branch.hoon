@@ -3,7 +3,7 @@
 ++  name  %branch
 +$  rock  branch
 +$  wave
-  $%  [%commit =commit]
+  $%  [%commit our=ship now=@da =snap]
       [%squash from=hash to=hash]
       [%reset =hash]
       [%delete ~]
@@ -14,10 +14,17 @@
   ?-    -.wave
   ::
       %commit
+    =/  com=commit
+      :*  (sham snap.wave)
+          head.rock
+          our.wave
+          now.wave
+          snap.wave
+      ==
     %=  rock
-      head        hash.commit.wave
-      commits     [+.wave commits.rock]
-      hash-index  (~(put by hash-index.rock) [hash.commit commit]:wave)
+      head        hash.com
+      commits     [com commits.rock]
+      hash-index  (~(put by hash-index.rock) hash.com com)
     ==
   ::
       %reset
