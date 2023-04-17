@@ -137,54 +137,26 @@
   ::
   ++  ba-delete
     ^+  ..ba-abet
+    =^  cad  pubs  (give:dub ali [%delete ~])
     =.  pubs  (kill:dub ali ~)
     =.  pubs  (wipe:dub ali)
+    =.  cards  (weld cad cards)
     ..ba-abet
   ::
-  ++  ba-commit :: TODO ugly
+  ++  ba-commit
     |=  new=snap
     ^+  ..ba-abet
-    =+  head-hash=(sham new)
-    =/  com=commit
-      :*  head-hash
+    =^  cad  pubs
+      %+  give:dub  ali
+      :-  %commit
+      :*  (sham new)
           head.branch
           src.bowl
           now.bowl
           new
       ==
-    =.  commits.branch  [com commits.branch]
-    =.  hash-index.branch
-      %+  ~(put by hash-index.branch)  head-hash
-      ?>(?=(^ commits.branch) i.commits.branch)
-    =.  head.branch  head-hash
-    =^  cad  pubs  (give:dub ali commit+com)
     =.  cards  (weld cad cards)
     ..ba-abet
-  ::
-  ++  ba-squash :: TODO this code is really ugly, I think you can do it with just a nested trap
-    |=  [from=hash to=hash]
-    ^+  ..ba-abet
-    =|  edited=(list commit)
-    =|  base=(unit commit)
-    =|  continue=?
-    =/  commits  (flop commits.branch)
-    |-
-    ?~  commits
-      =.  commits.branch  edited
-      ..ba-abet
-    ?:  =(from hash.i.commits)
-      $(commits t.commits, base `i.commits)
-    ?:  =(to hash.i.commits)
-      ?~  base
-        ~|("%linedb: squash: out of order, no changes made" !!)
-      %=  $
-        continue  %.n
-        commits   t.commits
-        edited    [i.commits(parent ?^(edited hash.i.edited *hash)) edited]
-      ==
-    ?:  &(?=(^ base) continue)
-      $(commits t.commits)
-    $(commits t.commits, edited [i.commits edited])
   ::
   ++  ba-merge
     |=  bob=sss-paths
@@ -229,20 +201,6 @@
         `i.har
       $(har t.har)
     --
-  ::
-  :: ++  ba-reset  :: TODO need to add something to sur/sss/branch/hoon to make this actually work
-  ::   |=  to=hash
-  ::   ^+  ..ba-abet
-  ::   ?.  (~(has by hash-index.branch) to)
-  ::     ~|("%linedb: reset: hash doesn't exist, cannot reset" !!)
-  ::   |-
-  ::   ?~  commits.branch  !!  ::  should never happen
-  ::   ?:  =(hash.i.commits.branch to)
-  ::     =.  head.branch  to
-  ::     ..ba-abet
-  ::   =.  hash-index.branch
-  ::     (~(del by hash-index.branch) hash.i.commits.branch)
-  ::   $(commits.branch t.commits.branch)
   ::
   ::  read arms
   ::

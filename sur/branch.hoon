@@ -4,6 +4,7 @@
 +$  rock  branch
 +$  wave
   $%  [%commit =commit]
+      [%squash from=hash to=hash]
       [%reset =hash]
       [%delete ~]
   ==
@@ -11,6 +12,7 @@
   |=  [=rock =wave]
   ^+  rock
   ?-    -.wave
+  ::
       %commit
     %=  rock
       head        hash.commit.wave
@@ -30,6 +32,30 @@
     $(commits.rock t.commits.rock)
   ::
       %delete  *branch
+  ::
+      %squash
+    ^+  rock
+    =|  edited=(list commit)
+    =|  base=(unit commit)
+    =|  continue=?
+    =/  commits  (flop commits.rock)
+    |-
+    ?~  commits
+      =.  commits.rock  edited
+      rock
+    ?:  =(from.wave hash.i.commits)
+      $(commits t.commits, base `i.commits)
+    ?:  =(to.wave hash.i.commits)
+      ?~  base
+        ~|("%linedb: squash: out of order, no changes made" !!)
+      %=  $
+        continue  %.n
+        commits   t.commits
+        edited    [i.commits(parent ?^(edited hash.i.edited *hash)) edited]
+      ==
+    ?:  &(?=(^ base) continue)
+      $(commits t.commits)
+    $(commits t.commits, edited [i.commits edited])
   ::
   ==
 --
