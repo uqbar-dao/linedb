@@ -17,21 +17,14 @@
       hash-index=(map hash commit)
   ==
 ::
-+$  repo-metadata
-  $:  upstream=ship
-      active=@tas
-  ==
-+$  repo  (pair repo-metadata (map @tas branch))
-::
 +$  action
-  $%  [%create name=@tas]
-      [%commit repo=@tas =snap]
-      [%branch repo=@tas name=@tas]
-      [%delete repo=@tas name=@tas]
-      [%focus repo=@tas branch=@tas]
-      [%merge repo=@tas branch=@tas]
-      [%reset repo=@tas =hash]
+  $%  ::[%reset branch=sss-paths =hash]
+      [%commit branch=sss-paths =snap]
+      :: [%branch branch=sss-paths name=sss-paths]
+      [%delete branch=sss-paths]
+      :: [%merge branch=sss-paths branch=@tas]
+      [%fork branch=sss-paths]
   ==
-:: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
-:: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch
+::
++$  sss-paths  ,[@tas @tas ~]  :: /repo/branch
 --
