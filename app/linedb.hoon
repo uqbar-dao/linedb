@@ -6,8 +6,7 @@
 %-  agent:dbug
 %+  verb  &
 ^-  agent:gall
-=>  =+  sss-paths=,[@tas @tas ~]
-    |%
+=>  |%
     +$  versioned-state
       $%  state-0
       ==
@@ -43,11 +42,6 @@
       =^  cards  state
         ?+    mark  (on-poke:def mark vase)
             %linedb-action  (handle-action:hc !<(action vase))
-        ::
-            %fetch
-          =^  cards  subs  
-            (surf:dab !<(@p (slot 2 vase)) dap.bowl !<(sss-paths (slot 3 vase)))
-          [cards state]
         ::
             %sss-branch
           =^  cards  subs  (apply:dab !<(into:dab (fled:sss vase)))
@@ -138,7 +132,7 @@
         ~|("%linedb: merge: no common base for {<ali.act>} and {<bob.act>}" !!)
       ?:  (~(has in alh) i.boh)
         i.boh
-      $(boh t.boh)      
+      $(boh t.boh)
     =/  alice-diffs=(map path diff)
       %+  diff-snaps:di:ldb
         snap:(~(got by hash-index.alice) base)
@@ -165,12 +159,15 @@
     [cards state]
   ::
       %branch
-    =.  pubs  (fork:dub [repo from ~]:act [repo name ~]:act)
-    `state
-  ::
-      %fork
+    ?:  =(our.bowl who.act)
+      =.  pubs  (fork:dub [repo from ~]:act [repo name ~]:act)
+      `state
     =.  pubs  (copy:dub subs [who %linedb repo from ~]:act [repo name ~]:act)
     `state
+  ::
+      %fetch
+    =^  cards  subs  (surf:dab who.act dap.bowl [repo branch ~]:act)
+    [cards state]
   ==
 ::
 ::  branch engine

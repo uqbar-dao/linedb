@@ -21,10 +21,10 @@
   $%  [%commit repo=@tas branch=@tas =snap]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
-      [%merge repo=@tas ali=@tas bob=@tas]
-      [%branch repo=@tas from=@tas name=@tas]       ::  local
-      [%fork who=@p repo=@tas from=@tas name=@tas]  ::  remote
+      [%merge repo=@tas ali=@tas bob=@tas] :: TODO probably add who in here
+      [%branch who=@p repo=@tas from=@tas name=@tas]
+      [%fetch who=@p repo=@tas branch=@tas]
   ==
-:: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
-:: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch :: actually this should probably just be anything goes
+::
+++  sss-paths  ,[@tas @tas ~] :: /repo/branch
 --
