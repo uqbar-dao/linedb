@@ -163,7 +163,14 @@
     =^  cards  pubs
       (give:dub [repo ali ~]:act %commit our.bowl now.bowl new-snap)
     [cards state]
-  :: %branch  re-abet:(re-branch:(re repo.act) [from name]:act)
+  ::
+      %branch
+    =.  pubs  (fork:dub [repo from ~]:act [repo name ~]:act)
+    `state
+  ::
+      %fork
+    =.  pubs  (copy:dub subs [who %linedb repo from ~]:act [repo name ~]:act)
+    `state
   ==
 ::
 ::  branch engine

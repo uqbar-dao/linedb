@@ -238,8 +238,26 @@
     =/  last=[=aeon =rock:lake]  (fall (pry:rok rok.tide) *[key val]:rok)
     =.  wav.tide  (put:wav wav.tide next wave)
     =.  mem.tide  ~
-    ?.  =(next (add aeon.last waves.rul.tide))  buoy(tid tide)
+    ?.  =(next (add aeon.last waves.rul.tide))  buoy
     buoy(tid (form tide))
+  ::
+  ++  fork                                   ::  Fork a pub into an empty path.
+    |=  [from=paths to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    (~(put by pub) to (~(got by pub) from))
+  ::
+  ++  copy                                   ::  Fork a sub into an empty path.
+    |=  [sub=_(mk-subs lake *) from=[ship dude *] to=paths]
+    ^-  pubs
+    :-  %0
+    ?<  (~(has by pub) to)
+    %+  ~(put by pub)  to
+    =/  flow  (need (~(got by +:sub) from))
+    %*  .  *$<(aeon buoy)
+      rok.tid  (put:rok ~ [aeon rock]:flow)
+    ==
   ::
   ++  perm                                   ::  Change permissions with gate.
     |=  [where=(list paths) diff=$-((unit (set ship)) (unit (set ship)))]
