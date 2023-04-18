@@ -42,6 +42,20 @@
       =^  cards  state
         ?+    mark  (on-poke:def mark vase)
             %linedb-action  (handle-action:hc !<(action vase))
+        ::  permissions
+        ::
+            %perm-public
+          =.  pubs  (public:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-secret
+          =.  pubs  (secret:dub !<((list sss-paths) vase))
+          `state
+        ::
+            %perm-allow
+          =.  pubs  (allow:dub !<([(list ship) (list sss-paths)] vase))
+          `state
+        ::  sss boilerplate
         ::
             %sss-branch
           =^  cards  subs  (apply:dab !<(into:dab (fled:sss vase)))
@@ -57,19 +71,7 @@
           ~&  >>>  "not allowed to surf on {<msg>}"
           `state
         ::
-            %sss-on-rock    `state  :: a rock has updated
-        ::
-            %perm-public
-          =.  pubs  (public:dub !<((list sss-paths) vase))
-          `state
-        ::
-            %perm-secret
-          =.  pubs  (secret:dub !<((list sss-paths) vase))
-          `state
-        ::
-            %perm-allow
-          =.  pubs  (allow:dub !<([(list ship) (list sss-paths)] vase))
-          `state
+            %sss-on-rock  `state  :: a rock has updated
         ==
       [cards this]
     ::
