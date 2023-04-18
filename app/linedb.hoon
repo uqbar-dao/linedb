@@ -88,7 +88,7 @@
         ==
       [cards this]
     ++  on-watch  on-watch:def
-    ++  on-peek   on-peek:def
+    ++  on-peek   handle-peek:hc
     ++  on-arvo
       |=  [=wire sign=sign-arvo]
       ^-  (quip card:agent:gall _this)
@@ -170,6 +170,16 @@
       %fetch
     =^  cards  subs  (surf:dab who.act dap.bowl [repo branch ~]:act)
     [cards state]
+  ==
+::
+++  handle-peek
+  |=  =path
+  ^-  (unit (unit cage))
+  ?+    path  ~
+      [%x %log @ @tas @tas ~]
+    =*  who  (slav %p i.t.t.path)
+    =*  sss  t.t.t.path
+    ``noun+!>(log:(ba who sss))
   ==
 ::
 ::  branch engine
