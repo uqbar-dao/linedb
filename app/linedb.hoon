@@ -124,40 +124,40 @@
     [cards state]
   ::
       %merge
-    =/  alice   (ba [repo ali ~]:act)
-    =/  robert  (ba [repo bob ~]:act)
+    =/  ali  (ba our.bowl [repo branch ~]:act)
+    =/  bob  (ba from.act [repo incoming ~]:act)
     =/  base=hash
-      =/  boh        log:robert
-      =/  alh  (silt log:alice)
+      =/  boh        log:bob
+      =/  alh  (silt log:ali)
       |-
       ?~  boh
-        ~|("%linedb: merge: no common base for {<ali.act>} and {<bob.act>}" !!)
+        ~|("%linedb: merge: no common base for {<branch.act>} and {<incoming.act>}" !!)
       ?:  (~(has in alh) i.boh)
         i.boh
       $(boh t.boh)
-    =/  alice-diffs=(map path diff)
+    =/  ali-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.alice) base)
-        snap:(~(got by hash-index.alice) head.alice)
-    =/  robert-diffs=(map path diff)
+        snap:(~(got by hash-index.ali) base)
+        snap:(~(got by hash-index.ali) head.ali)
+    =/  bob-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.robert) base)
-        snap:(~(got by hash-index.robert) head.robert)
+        snap:(~(got by hash-index.bob) base)
+        snap:(~(got by hash-index.bob) head.bob)
     =/  diffs=(map path diff)
-      %-  ~(urn by (~(uni by alice-diffs) robert-diffs))
+      %-  ~(urn by (~(uni by ali-diffs) bob-diffs))
       |=  [=path *]
       ^-  diff
       %+  three-way-merge:di:ldb
-        [ali.act (~(gut by alice-diffs) path *diff)]
-      [bob.act (~(gut by robert-diffs) path *diff)]
+        [branch.act (~(gut by ali-diffs) path *diff)]
+      [incoming.act (~(gut by bob-diffs) path *diff)]
     =/  new-snap=snap
-      ?@  commits.alice  *snap
-      %-  ~(urn by snap.i.commits.alice)
+      ?@  commits.ali  *snap
+      %-  ~(urn by snap.i.commits.ali)
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
       (apply-diff:di:ldb file dif)
     =^  cards  pubs
-      (give:dub [repo ali ~]:act %commit our.bowl now.bowl new-snap)
+      (give:dub [repo branch ~]:act %commit our.bowl now.bowl new-snap)
     [cards state]
   ::
       %branch
@@ -175,8 +175,10 @@
 ::  branch engine
 ::
 ++  ba
-  |=  ban=sss-paths
-  =+  rock:(~(got by read:dub) ban)
+  |=  [from=@p ban=sss-paths]
+  =+  ?:  =(from our.bowl)
+        rock:(~(got by read:dub) ban)
+      rock:(~(got by read:dab) from %linedb ban)
   =*  branch  -
   ::
   |%

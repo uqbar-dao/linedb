@@ -21,7 +21,7 @@
   $%  [%commit repo=@tas branch=@tas =snap]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
-      [%merge repo=@tas ali=@tas bob=@tas] :: TODO probably add who in here
+      [%merge repo=@tas branch=@tas from=@p incoming=@tas]
       [%branch who=@p repo=@tas from=@tas name=@tas]
       [%fetch who=@p repo=@tas branch=@tas]
   ==
