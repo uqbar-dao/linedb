@@ -15,12 +15,13 @@
   ::
       %commit
     =/  com=commit
-      :*  (sham snap.wave)
+      :*  `@ux`(sham snap.wave)
           head.rock
           our.wave
           now.wave
           snap.wave
       ==
+    ?<  =(hash.com parent.com)
     %=  rock
       head        hash.com
       commits     [com commits.rock]

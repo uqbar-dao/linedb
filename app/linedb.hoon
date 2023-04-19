@@ -127,8 +127,8 @@
     =/  ali  (ba our.bowl [repo branch ~]:act)
     =/  bob  (ba from.act [repo incoming ~]:act)
     =/  base=hash
-      =/  boh        log:bob
-      =/  alh  (silt log:ali)
+      =/  boh        history:bob
+      =/  alh  (silt history:ali)
       |-
       ?~  boh
         ~|("%linedb: merge: no common base for {<branch.act>} and {<incoming.act>}" !!)
@@ -176,10 +176,39 @@
   |=  =path
   ^-  (unit (unit cage))
   ?+    path  ~
-      [%x %log @ @tas @tas ~]
+  ::
+      [%x %log @ @tas @tas ~]                          ::  list of all meatdata
     =*  who  (slav %p i.t.t.path)
     =*  sss  t.t.t.path
     ``noun+!>(log:(ba who sss))
+  ::
+      [%x %history @ @tas @tas ~]                      ::  list of all hashes
+    =*  who  (slav %p i.t.t.path)
+    =*  sss  t.t.t.path
+    ``noun+!>(history:(ba who sss))
+  ::
+      [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
+    =*  who          (slav %p i.t.path)
+    =*  repo                i.t.t.path
+    =*  branch            i.t.t.t.path
+    =-  ``noun+!>(-)
+    %-  turn  :_  head
+    ?-  hash=i.t.t.t.t.path
+      %head  ~(tap by head-snap:(ba who [repo branch ~]))
+      @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
+    ==
+  ::
+      [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
+    =*  who  (slav %p i.t.path)
+    =*  repo        i.t.t.path
+    =*  branch    i.t.t.t.path
+    =*  file    t.t.t.t.t.path
+    =-  ``noun+!>(-)
+    ?-  hash=i.t.t.t.t.path
+      %head  (head-file:(ba who [repo branch ~]) file)
+      @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
+    ==
+  ::
   ==
 ::
 ::  branch engine
@@ -194,13 +223,18 @@
   |%
   ::  read arms
   ::
-  :: ++  get-commit   |=(h=hash (~(gut by hash-index.branch) h *commit))
-  :: ++  get-snap     |=(h=hash snap:(get-commit h))
-  :: ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
-  :: ++  head-commit  ?^(commits.branch i.commits.branch *commit)
-  :: ++  head-snap    snap:head-commit
-  :: ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
+  ++  get-commit   |=(h=hash (~(get by hash-index.branch) h))
+  ++  get-snap     |=(h=hash snap:(need (get-commit h)))
+  ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
   ::
-  ++  log          (turn commits.branch |=(=commit hash.commit))
+  ++  head-commit  ?>(?=(^ commits.branch) i.commits.branch)
+  ++  head-snap    snap:head-commit
+  ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
+  ::
+  ++  history          (turn commits.branch |=(=commit hash.commit))
+  ++  log
+    ^-  (list [hash hash @p @da])
+    %+  turn  commits.branch
+    |=(c=commit [hash parent author time]:c)
   --
 --

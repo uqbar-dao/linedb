@@ -1,19 +1,20 @@
 |%
 +$  line  @ud
-+$  hash  @uvH
++$  hash  @ux
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
-+$  snap  (map path file) :: maybe use $axal and +of 
++$  snap  (map path file) :: maybe use $axal and +of
 +$  commit
   $:  =hash
       parent=hash
-      author=ship
+      author=@p
       time=@da
       =snap
   ==
 +$  branch
   $:  head=hash
-      commits=(list commit)
+      commits=(list commit) :: TODO ((mop @da commit) gth)
+      :: TODO label-index=(map label commit)
       hash-index=(map hash commit)
   ==
 ::
