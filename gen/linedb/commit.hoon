@@ -1,5 +1,5 @@
 /-  *linedb
 :-  %say
-|=  [* [repo=@tas =snap ~] ~]
+|=  [* [repo=@tas branch=@tas =snap ~] ~]
 :-  %linedb-action
-[%commit repo snap]
+[%commit repo branch snap]

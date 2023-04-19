@@ -1,37 +1,31 @@
 |%
 +$  line  @ud
-+$  hash  @uvH
++$  hash  @ux
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
-+$  snap  (map path file) :: maybe use $axal and +of 
++$  snap  (map path file) :: maybe use $axal and +of
 +$  commit
   $:  =hash
       parent=hash
-      author=ship
+      author=@p
       time=@da
       =snap
   ==
 +$  branch
   $:  head=hash
-      commits=(list commit)
+      commits=(list commit) :: TODO ((mop @da commit) gth)
+      :: TODO label-index=(map label commit)
       hash-index=(map hash commit)
   ==
 ::
-+$  repo-metadata
-  $:  upstream=ship
-      active=@tas
-  ==
-+$  repo  (pair repo-metadata (map @tas branch))
-::
 +$  action
-  $%  [%create name=@tas]
-      [%commit repo=@tas =snap]
-      [%branch repo=@tas name=@tas]
-      [%delete repo=@tas name=@tas]
-      [%focus repo=@tas branch=@tas]
-      [%merge repo=@tas branch=@tas]
-      [%reset repo=@tas =hash]
+  $%  [%commit repo=@tas branch=@tas =snap]
+      [%delete repo=@tas branch=@tas]
+      [%reset repo=@tas branch=@tas =hash]
+      [%merge repo=@tas branch=@tas from=@p incoming=@tas]
+      [%branch who=@p repo=@tas from=@tas name=@tas]
+      [%fetch who=@p repo=@tas branch=@tas]
   ==
-:: TODO idk why this has to live at the top of /app/linedb/hoon instead of here
-:: +$  sss-paths  ,[@tas @tas ~]  :: /repo/branch
+::
+++  sss-paths  ,[@tas @tas ~] :: /repo/branch
 --
