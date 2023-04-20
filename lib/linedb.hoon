@@ -291,7 +291,17 @@
     ~
   ::
   ++  snap
-    ^-  $-(json (map path wain))
-    (op stap (ar so))
+    |=  jon=json
+    ^-  (map path wain)
+    ?>  ?=([%o *] jon)
+    %-  ~(gas by *(map path wain))
+    %+  turn  ~(tap by p.jon)
+    |=  [a=@t b=json]
+    =>  .(+< [a b]=+<)
+    :-  (rash a stap)
+    ?+  b  !!
+      [%a *]  ((ar so) b)
+      [%s @]  ~[+:(need (de:base64:mimes:html +.b))]
+    ==
   --
 --

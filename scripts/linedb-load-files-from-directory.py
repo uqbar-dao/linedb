@@ -7,6 +7,7 @@ import os
 import sys
 
 import argparse
+import base64
 import requests
 
 from urllib.parse import urljoin
@@ -49,12 +50,19 @@ def read_files_in_directory(directory):
     file_contents = {}
 
     def read_file(file_path):
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            return [line.strip() for line in lines]
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                lines = file.readlines()
+                return [line.strip() for line in lines]
+        except UnicodeDecodeError:
+            with open(file_path, "rb") as file:
+                binary_data = file.read()
+                encoded_data = base64.b64encode(binary_data).decode('utf-8')
+                print(f"encoding binary file to b64: {file_path}")
+                return encoded_data
 
     def make_path_key(path):
-        #  lower() to avoid, e.g., "/README/md" from crashing path parsing
+        #  use .lower() to avoid, e.g., "/README/md" from crashing path parsing
         hoon_notation_path = "/".join(path[len(directory):].split(".")).lower()
         if hoon_notation_path[0] == "/":
           return f"{hoon_notation_path}"
@@ -66,11 +74,7 @@ def read_files_in_directory(directory):
             if entry[0] == ".":
                 continue
             if os.path.isfile(full_path):
-                try:
-                    file_contents[make_path_key(full_path)] = read_file(full_path)
-                except:
-                    print(f"linedb-load-files-from-directory: failed to read {full_path}")
-                    continue
+                file_contents[make_path_key(full_path)] = read_file(full_path)
             elif os.path.isdir(full_path):
                 recurse_directory(full_path)
 
