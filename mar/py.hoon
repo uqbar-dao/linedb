@@ -1,68 +1,112 @@
-/-  *linedb
 ::
-=,  format
+::::  /hoon/txt/mar
+  ::
+/?    310
+::
+=,  clay
 =,  differ
-|%
+=,  format
+=,  mimes:html
+|_  txt=wain
 ::
-::  diff operations
-::
-++  di
+++  grab                                                ::  convert from
   |%
-  ++  diff-files  |=([old=file new=file] (lusk old new (loss old new)))
-  ++  apply-diff  |=([=file =diff] (lurk file diff))
+  ++  mime  |=((pair mite octs) (to-wain q.q))
+  ++  noun  wain                                        ::  clam from %noun
+  --
+++  grow
+  =>  v=.
+  |%
+  ++  mime  =>  v  [/text/plain (as-octs (of-wain txt))]
+  ++  elem  =>  v  ;pre: {(trip (of-wain txt))}
+  --
+++  grad
+  |%
+  ++  form  %txt-diff
+  ++  diff
+    |=  tyt=wain
+    ^-  (urge cord)
+    (lusk txt tyt (loss txt tyt))
   ::
-  ++  line-mapping
-    ::  TODO we need a more advanced diff algo if we want individual lines edited...diff could be an (urge tape)
-    |=  =diff
-    ^-  (map line line)
-    =|  iold=@ud
-    =|  inew=@ud
-    =|  new-lines=(list (pair line line))
-    |-
-    ?~  diff  (~(gas by *(map line line)) new-lines)
-    ?-    -.i.diff
-        %&
-      %=    $
-          iold  (add iold p.i.diff)
-          inew  (add inew p.i.diff)
-          diff  t.diff
-          new-lines
-        |-
-        ?:  =(0 p.i.diff)  new-lines
-        %=  $
-          new-lines  [[+(iold) +(inew)] new-lines]
-          p.i.diff   (dec p.i.diff)
-          iold       +(iold)
-          inew       +(inew)
-        ==
-      ==
-    ::
-        %|
-      %=  $
-        iold  (add iold (lent p.i.diff))
-        inew  (add inew (lent q.i.diff))
-        diff  t.diff
-      ==
-    ==
+  ++  pact
+    |=  dif=(urge cord)
+    ~|  [%pacting dif]
+    ^-  wain
+    (lurk txt dif)
   ::
-  ++  diff-snaps                                       ::  from two snaps
-    |=  [old=snap new=snap]
-    ^-  (map path diff)
-    %-  ~(urn by (~(uni by old) new))
-    |=  [=path *]
-    %+  diff-files
-      (~(gut by old) path *file)
-    (~(gut by new) path *file)
-  ::
-  ++  three-way-merge                                  ::  +mash in mar/txt/hoon
-    |=  $:  [ald=@tas ali=diff]
-            [bod=@tas bob=diff]
-        ==
-    ^-  diff
+  ++  join
+    |=  [ali=(urge cord) bob=(urge cord)]
+    ^-  (unit (urge cord))
     |^
     =.  ali  (clean ali)
     =.  bob  (clean bob)
-    |-  ^-  diff
+    |-  ^-  (unit (urge cord))
+    ?~  ali  `bob
+    ?~  bob  `ali
+    ?-    -.i.ali
+        %&
+      ?-    -.i.bob
+          %&
+        ?:  =(p.i.ali p.i.bob)
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.ali cud])
+        ?:  (gth p.i.ali p.i.bob)
+          %+  bind  $(p.i.ali (sub p.i.ali p.i.bob), bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob p.i.ali))
+        |=(cud=(urge cord) [i.ali cud])
+      ::
+          %|
+        ?:  =(p.i.ali (lent p.i.bob))
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        ?:  (gth p.i.ali (lent p.i.bob))
+          %+  bind  $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)
+          |=(cud=(urge cord) [i.bob cud])
+        ~
+      ==
+    ::
+        %|
+      ?-  -.i.bob
+          %|
+        ?.  =(i.ali i.bob)
+          ~
+        %+  bind  $(ali t.ali, bob t.bob)
+        |=(cud=(urge cord) [i.ali cud])
+      ::
+          %&
+        ?:  =(p.i.bob (lent p.i.ali))
+          %+  bind  $(ali t.ali, bob t.bob)
+          |=(cud=(urge cord) [i.ali cud])
+        ?:  (gth p.i.bob (lent p.i.ali))
+          %+  bind  $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))
+          |=(cud=(urge cord) [i.ali cud])
+        ~
+      ==
+    ==
+    ++  clean                                          ::  clean
+      |=  wig=(urge cord)
+      ^-  (urge cord)
+      ?~  wig  ~
+      ?~  t.wig  wig
+      ?:  ?=(%& -.i.wig)
+        ?:  ?=(%& -.i.t.wig)
+          $(wig [[%& (add p.i.wig p.i.t.wig)] t.t.wig])
+        [i.wig $(wig t.wig)]
+      ?:  ?=(%| -.i.t.wig)
+        $(wig [[%| (welp p.i.wig p.i.t.wig) (welp q.i.wig q.i.t.wig)] t.t.wig])
+      [i.wig $(wig t.wig)]
+    --
+  ::
+  ++  mash
+    |=  $:  [als=ship ald=desk ali=(urge cord)]
+            [bos=ship bod=desk bob=(urge cord)]
+        ==
+    ^-  (urge cord)
+    |^
+    =.  ali  (clean ali)
+    =.  bob  (clean bob)
+    |-  ^-  (urge cord)
     ?~  ali  bob
     ?~  bob  ali
     ?-    -.i.ali
@@ -80,7 +124,7 @@
           [i.bob $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.ali (lent p.i.bob))
           [i.bob $(p.i.ali (sub p.i.ali (lent p.i.bob)), bob t.bob)]
-        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
         ::  ~   ::  here, alice is good for a while, but not for the whole
@@ -89,7 +133,7 @@
         %|
       ?-  -.i.bob
           %|
-        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ::
@@ -98,7 +142,7 @@
           [i.ali $(ali t.ali, bob t.bob)]
         ?:  (gth p.i.bob (lent p.i.ali))
           [i.ali $(ali t.ali, p.i.bob (sub p.i.bob (lent p.i.ali)))]
-        =/  [fic=(unce:clay cord) ali=diff bob=diff]
+        =/  [fic=(unce cord) ali=(urge cord) bob=(urge cord)]
             (resolve ali bob)
         [fic $(ali ali, bob bob)]
       ==
@@ -117,6 +161,7 @@
       :-  :_  ~
           %^  cat  3  '<<<<<<<<<<<<'
           %^  cat  3  ' '
+          %^  cat  3  `@t`(scot %p bos)
           %^  cat  3  '/'
           bod
 
@@ -128,13 +173,14 @@
       :-  :_  ~
           %^  cat  3  '>>>>>>>>>>>>'
           %^  cat  3  ' '
+          %^  cat  3  `@t`(scot %p als)
           %^  cat  3  '/'
           ald
       ~
     ::
     ++  clean                                          ::  clean
-      |=  wig=diff
-      ^-  diff
+      |=  wig=(urge cord)
+      ^-  (urge cord)
       ?~  wig  ~
       ?~  t.wig  wig
       ?:  ?=(%& -.i.wig)
@@ -146,15 +192,15 @@
       [i.wig $(wig t.wig)]
     ::
     ++  resolve
-      |=  [ali=diff bob=diff]
-      ^-  [fic=[%| p=(list cord) q=(list cord)] ali=diff bob=diff]
+      |=  [ali=(urge cord) bob=(urge cord)]
+      ^-  [fic=[%| p=(list cord) q=(list cord)] ali=(urge cord) bob=(urge cord)]
       =-  [[%| bac (annotate alc boc bac)] ali bob]
       |-  ^-  $:  $:  bac=(list cord)
                       alc=(list cord)
                       boc=(list cord)
                   ==
-                  ali=diff
-                  bob=diff
+                  ali=(urge cord)
+                  bob=(urge cord)
               ==
       ?~  ali  [[~ ~ ~] ali bob]
       ?~  bob  [[~ ~ ~] ali bob]
@@ -225,73 +271,5 @@
         ==
       ==
     --
-  --
-::
-++  dejs
-  =,  dejs:format
-  |%
-  ++  action
-    ^-  $-(json ^action)
-    %-  of
-    :~  [%commit commit]
-        [%delete delete]
-        [%reset reset]
-        [%merge merge]
-        [%branch branch]
-        [%fetch fetch]
-    ==
-  ::
-  ++  commit
-    ^-  $-(json [@tas @tas (map path wain)])
-    %-  ot
-    :^    [%repo (se %tas)]
-        [%branch (se %tas)]
-      [%snap snap]
-    ~
-  ::
-  ++  delete
-    ^-  $-(json [@tas @tas])
-    %-  ot
-    :+  [%repo (se %tas)]
-      [%branch (se %tas)]
-    ~
-  ::
-  ++  reset
-    ^-  $-(json [@tas @tas @ux])
-    %-  ot
-    :^    [%repo (se %tas)]
-        [%branch (se %tas)]
-      [%hash (se %ux)]
-    ~
-  ::
-  ++  merge
-    ^-  $-(json [@tas @tas @p @tas])
-    %-  ot
-    :-  [%repo (se %tas)]
-    :^    [%branch (se %tas)]
-        [%from (se %p)]
-      [%incoming (se %tas)]
-    ~
-  ::
-  ++  branch
-    ^-  $-(json [@p @tas @tas @tas])
-    %-  ot
-    :-  [%who (se %p)]
-    :^    [%repo (se %tas)]
-        [%from (se %tas)]
-      [%name (se %tas)]
-    ~
-  ::
-  ++  fetch
-    ^-  $-(json [@p @tas @tas])
-    %-  ot
-    :^    [%who (se %p)]
-        [%repo (se %tas)]
-      [%branch (se %tas)]
-    ~
-  ::
-  ++  snap
-    ^-  $-(json (map path wain))
-    (op stap (ar so))
   --
 --
