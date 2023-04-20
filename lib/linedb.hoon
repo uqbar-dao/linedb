@@ -226,4 +226,83 @@
       ==
     --
   --
+::
+++  dejs
+  =,  dejs:format
+  |%
+  ++  action
+    ^-  $-(json ^action)
+    %-  of
+    :~  [%commit commit]
+        [%delete delete]
+        [%reset reset]
+        [%merge merge]
+        [%branch branch]
+        [%fetch fetch]
+    ==
+  ::
+  ++  commit
+    :: ^-  $-(json [@tas @tas ^snap])
+    ^-  $-(json [@tas @tas (map path wain)])
+    %-  ot
+    :^    [%repo (se %tas)]
+        [%branch (se %tas)]
+      [%snap snap]
+    ~
+  ::
+  ++  delete
+    ^-  $-(json [@tas @tas])
+    %-  ot
+    :+  [%repo (se %tas)]
+      [%branch (se %tas)]
+    ~
+  ::
+  ++  reset
+    ^-  $-(json [@tas @tas @ux])
+    %-  ot
+    :^    [%repo (se %tas)]
+        [%branch (se %tas)]
+      [%hash (se %ux)]
+    ~
+  ::
+  ++  merge
+    ^-  $-(json [@tas @tas @p @tas])
+    %-  ot
+    :-  [%repo (se %tas)]
+    :^    [%branch (se %tas)]
+        [%from (se %p)]
+      [%incoming (se %tas)]
+    ~
+  ::
+  ++  branch
+    ^-  $-(json [@p @tas @tas @tas])
+    %-  ot
+    :-  [%who (se %p)]
+    :^    [%repo (se %tas)]
+        [%from (se %tas)]
+      [%name (se %tas)]
+    ~
+  ::
+  ++  fetch
+    ^-  $-(json [@p @tas @tas])
+    %-  ot
+    :^    [%who (se %p)]
+        [%repo (se %tas)]
+      [%branch (se %tas)]
+    ~
+  ::
+  ++  snap
+    ^-  $-(json (map path wain))
+    (op stap (ar so))
+    :: ^-  $-(json ^snap)
+    :: (^snap (op stap (ar so)))
+    ::
+    :: |=  jon=json
+    :: :: ^-  ^snap
+    :: ^-  (map path wain)
+    :: %-  ~(gas by *(map path wain))
+    :: %+  turn  ~(tap by ((om (ar so)) jon))
+    :: |=  [a=@t b=wain]
+    :: [(stab a) b]
+  --
 --
