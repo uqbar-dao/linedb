@@ -54,14 +54,16 @@ def read_files_in_directory(directory):
             return [line.strip() for line in lines]
 
     def make_path_key(path):
-        hoon_notation_path = "/".join(path.split("."))
+        hoon_notation_path = "/".join(path[len(directory):].split("."))
+        if hoon_notation_path[0] == "/":
+          return f"{hoon_notation_path}"
         return f"/{hoon_notation_path}"
 
     def recurse_directory(current_directory):
         for entry in os.listdir(current_directory):
             full_path = os.path.join(current_directory, entry)
             if os.path.isfile(full_path):
-                file_contents[make_path_key(entry)] = read_file(full_path)
+                file_contents[make_path_key(full_path)] = read_file(full_path)
             elif os.path.isdir(full_path):
                 recurse_directory(full_path)
 
