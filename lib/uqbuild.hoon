@@ -29,6 +29,15 @@
 +$  taut  [face=(unit term) pax=term]
 +$  mars  [a=mark b=mark]
 ::
+++  get-repo-files
+  ^-  (set path)
+  %-  ~(gas in *(set path))
+  .^  (list path)
+      %gx
+      %-  weld  :_  (snoc make-repo-path %noun)
+      /(scot %p our.bowl)/linedb/(scot %da now.bowl)
+  ==
+::
 ++  make-repo-path
   ^-  path
   =*  commit=@ta
@@ -79,6 +88,7 @@
 ::
 ++  build-file
   |=  =path
+  ^-  [vase build-state:ub]
   (build-dependency |+path)
 ::
 ++  parse-pile
@@ -268,7 +278,7 @@
   ?~  paz
     ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
   =/  pux=path  pre^(snoc i.paz %hoon)
-  ?:  (~(has in files) pux)
+  ?:  (~(has in get-repo-files) pux)
     pux
   $(paz t.paz)
 ::  +segments: compute all paths from :path-part, replacing some `/`s with `-`s

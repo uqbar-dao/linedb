@@ -1,4 +1,9 @@
 |%
++$  state-0
+  $:  %0
+      =build-cache
+  ==
+::
 +$  build-state
   $:  =bowl:gall
       repo-info
@@ -14,6 +19,19 @@
       repo-name=@tas
       branch-name=@tas
       commit-hash=(unit @ux)
-      files=(set path)
+  ==
+::
++$  action
+  $%  $:  %build
+          our-app=(unit @tas)
+          repo-host=@p
+          repo-name=@tas
+          branch-name=@tas
+          commit-hash=(unit @ux)
+          file-path=path
+      ==
+  ==
++$  update
+  $%  [%build result=(each vase @t)]
   ==
 --
