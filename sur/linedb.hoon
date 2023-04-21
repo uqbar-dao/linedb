@@ -22,9 +22,9 @@
   $%  [%commit repo=@tas branch=@tas =snap]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
-      [%merge repo=@tas branch=@tas from=@p incoming=@tas]
-      [%branch who=@p repo=@tas from=@tas name=@tas]
-      [%fetch who=@p repo=@tas branch=@tas]
+      [%merge from=@p repo=@tas branch=@tas incoming=@tas]
+      [%branch from=@p repo=@tas branch=@tas name=@tas]
+      [%fetch from=@p repo=@tas branch=@tas]
   ==
 ::
 ++  sss-paths  ,[@tas @tas ~] :: /repo/branch

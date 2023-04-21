@@ -1,4 +1,4 @@
 :-  %say
-|=  [* [repo=@tas branch=@tas ~] ~]
+|=  [* [who=@p repo=@tas branch=@tas name=@tas ~] ~]
 :-  %linedb-action
-[%branch repo branch]
+[%branch who repo branch name]

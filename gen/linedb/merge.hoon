@@ -1,5 +1,5 @@
 /-  *linedb
 :-  %say
-|=  [* [repo=@tas branch=@tas ~] ~]
+|=  [* [from=@p repo=@tas branch=@tas incoming=@tas ~] ~]
 :-  %linedb-action
-[%merge repo branch]
+[%merge from repo branch incoming]

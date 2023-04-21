@@ -161,14 +161,15 @@
     [cards state]
   ::
       %branch
-    ?:  =(our.bowl who.act)
-      =.  pubs  (fork:dub [repo from ~]:act [repo name ~]:act)
+    ?:  =(our.bowl from.act)
+      :: need to use +live if it has been killed
+      =.  pubs  (fork:dub [repo branch ~]:act [repo name ~]:act)
       `state
-    =.  pubs  (copy:dub subs [who %linedb repo from ~]:act [repo name ~]:act)
+    =.  pubs  (copy:dub subs [from %linedb repo from ~]:act [repo name ~]:act)
     `state
   ::
       %fetch
-    =^  cards  subs  (surf:dab who.act dap.bowl [repo branch ~]:act)
+    =^  cards  subs  (surf:dab from.act dap.bowl [repo branch ~]:act)
     [cards state]
   ==
 ::
