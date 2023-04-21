@@ -265,27 +265,27 @@
     ~
   ::
   ++  merge
-    ^-  $-(json [@tas @tas @p @tas])
+    ^-  $-(json [@p @tas @tas @tas])
     %-  ot
-    :-  [%repo (se %tas)]
-    :^    [%branch (se %tas)]
-        [%from (se %p)]
+    :-  [%from (se %p)]
+    :^    [%repo (se %tas)]
+        [%branch (se %tas)]
       [%incoming (se %tas)]
     ~
   ::
   ++  branch
     ^-  $-(json [@p @tas @tas @tas])
     %-  ot
-    :-  [%who (se %p)]
+    :-  [%from (se %p)]
     :^    [%repo (se %tas)]
-        [%from (se %tas)]
+        [%branch (se %tas)]
       [%name (se %tas)]
     ~
   ::
   ++  fetch
     ^-  $-(json [@p @tas @tas])
     %-  ot
-    :^    [%who (se %p)]
+    :^    [%from (se %p)]
         [%repo (se %tas)]
       [%branch (se %tas)]
     ~
