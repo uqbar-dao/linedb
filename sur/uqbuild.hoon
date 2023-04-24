@@ -23,7 +23,7 @@
 ::
 +$  action
   $%  $:  %build
-          our-app=(unit @tas)
+          =poke-src
           repo-host=@p
           repo-name=@tas
           branch-name=@tas
@@ -33,5 +33,10 @@
   ==
 +$  update
   $%  [%build result=(each vase @t)]
+  ==
++$  poke-src
+  $@  ~
+  $%  [%app p=@tas]
+      [%ted p=@tatid]
   ==
 --

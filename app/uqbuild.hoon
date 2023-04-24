@@ -66,7 +66,11 @@
     ?-    -.act
         %build
       =*  ubl
-        ~(. uqbuild bowl [repo-host repo-name branch-name commit-hash]:act build-cache ~)
+        %~  .  uqbuild
+        :^    bowl
+            [repo-host repo-name branch-name commit-hash]:act
+          build-cache
+        ~
       :: =*  ubl
       ::   %=  ub-lib
       ::       repo-host    repo-host.act
@@ -77,12 +81,23 @@
       =/  [built-file=vase =build-state:ub]
         (build-file:ubl file-path.act)
       :_  state(build-cache build-cache.build-state)
-      ?~  our-app.act  ~
+      ?~  poke-src.act  ~
       :_  ~
-      %+  ~(poke-our pass:io /pokeback/[u.our-app.act])
-        u.our-app.act
-      :-  %uqbuild-update
-      !>([%build %& built-file])
+      ?-    -.poke-src.act
+          %app
+        %+  ~(poke-our pass:io /pokeback/[p.poke-src.act])
+          p.poke-src.act
+        :-  %uqbuild-update
+        !>([%build %& built-file])
+      ::
+          %ted
+        %+  ~(poke-our pass:io /pokeback/[p.poke-src.act])
+          %spider
+        :-  %spider-input
+        !>  ^-  [@tatid cage]
+        :+  p.poke-src.act  %uqbuild-update
+        !>([%build %& built-file])
+      ==
     ==
   --
 --
