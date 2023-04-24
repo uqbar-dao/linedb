@@ -25,6 +25,7 @@
       [%merge from=@p repo=@tas branch=@tas incoming=@tas]
       [%branch from=@p repo=@tas branch=@tas name=@tas]
       [%fetch from=@p repo=@tas branch=@tas]
+      [%park from=@p repo=@tas branch=@tas]  :: TODO get more than just head
   ==
 ::
 ++  sss-paths  ,[@tas @tas ~] :: /repo/branch

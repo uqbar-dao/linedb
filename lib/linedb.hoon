@@ -4,6 +4,110 @@
 =,  differ
 |%
 ::
+::  generic linedb mark
+::
+++  linedb-mark
+  '''
+  |_  fil=wain
+  ++  grab
+    |%
+    ++  noun  wain
+    ++  mime  |=((pair mite octs) (to-wain:format q.q))
+    --
+  ++  grow
+    |%
+    ++  mime  `^mime`[/text/linedb (as-octs:mimes:html (of-wain:format fil))]
+    ++  noun  fil
+    --
+  ++  grad  %mime
+  --
+  '''
+::
+++  kelvin-mark
+  '''
+  |_  kal=waft:clay
+  ++  grow
+    |%
+    ++  mime  `^mime`[/text/x-kelvin (as-octs:mimes:html hoon)]
+    ++  noun  kal
+    ++  hoon
+      %+  rap  3
+      %+  turn
+        %+  sort
+          ~(tap in (waft-to-wefts:clay kal))
+        |=  [a=weft b=weft]
+        ?:  =(lal.a lal.b)
+          (gte num.a num.b)
+        (gte lal.a lal.b)
+      |=  =weft
+      (rap 3 '[%' (scot %tas lal.weft) ' ' (scot %ud num.weft) ']\0a' ~)
+    ::
+    ++  txt   (to-wain:format hoon)
+    --
+  ++  grab
+    |%
+    ++  noun  waft:clay
+    ++  mime
+      |=  [=mite len=@ud tex=@]
+      (cord-to-waft:clay tex)
+    --
+  ++  grad  %noun
+  --
+  '''
+::
+++  docket-0-mark
+  '''
+  /+  dock=docket
+  |_  =docket:dock
+  ++  grow
+    |%
+    ++  mime  
+      ^-  ^mime
+      [/text/x-docket (as-octt:mimes:html (spit-docket:mime:dock docket))]
+    ++  noun  docket
+    ++  json  (docket:enjs:dock docket)
+    --
+  ++  grab
+    |%
+    ::
+    ++  mime
+      |=  [=mite len=@ud tex=@]
+      ^-  docket:dock
+      %-  need
+      %-  from-clauses:mime:dock
+      !<((list clause:dock) (slap !>(~) (ream tex)))
+
+    ::
+    ++  noun  docket:dock
+    --
+  ++  grad  %noun
+  --
+  '''
+::
+++  ship-mark
+  '''
+  |_  s=ship
+  ++  grad  %noun
+  ++  grow
+    |%
+    ++  noun  s
+    ++  json  s+(scot %p s)
+    ++  mime
+      ^-  ^mime
+      [/text/x-ship (as-octt:mimes:html (scow %p s))]
+
+    --
+  ++  grab
+    |%
+    ++  noun  ship
+    ++  json  (su:dejs:format ;~(pfix sig fed:ag))
+    ++  mime
+      |=  [=mite len=@ tex=@]
+      (slav %p (snag 0 (to-wain:format tex)))
+    --
+  --
+  '''
+::
 ::  diff operations
 ::
 ++  di

@@ -171,6 +171,39 @@
       %fetch
     =^  cards  subs  (surf:dab from.act dap.bowl [repo branch ~]:act)
     [cards state]
+  ::
+      %park
+    :: =/  =snap  head-snap:(ba [from repo branch ~]:act)
+    :: =/  all-marks=(map path (each page lobe:clay)) :: need to add ship docket-0 and kelvin
+    ::   %-  ~(gas by *(map path (each page lobe:clay)))
+    ::   %+  turn  ~(tap by snap)
+    ::   |=([=path *] [/mar/(rear path)/hoon %& %hoon linedb-mark:ldb])
+    :: =.  all-marks
+    ::   (~(put by all-marks) /mar/ship/hoon ship-mark:ldb)
+    :: =.  all-marks
+    ::   (~(put by all-marks) /mar/docket-0/hoon docket-0-mark:ldb)
+    :: =.  all-marks
+    ::   (~(put by all-marks) /mar/kelvin/hoon kelvin-mark:ldb)
+
+    :: %+  turn
+    ::   :~
+    ::   ==
+    
+
+    :: =/  asdf=task:clay
+    ::   :^  %park  repo.act
+    ::     ^-  yoki:clay
+    ::     :+  %&  ~
+    ::     %-  ~(uni by all-marks)
+    ::     ^-  (map path (each page lobe:clay))
+    ::     %-  ~(urn by snap)
+    ::     |=([p=path w=wain] [%& (rear p) w])
+    ::   *rang:clay  ::  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang) ::  I believe this is a speed boost
+    :: :: ~&  >  asdf
+    :: :_  state
+    :: [%pass / %arvo %c asdf]~
+
+    `state
   ==
 ::
 ++  handle-peek
@@ -193,7 +226,6 @@
     =*  repo                i.t.t.path
     =*  branch            i.t.t.t.path
     =-  ``noun+!>(-)
-    %-  turn  :_  head
     ?-  hash=i.t.t.t.t.path
       %head  ~(tap by head-snap:(ba who [repo branch ~]))
       @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
