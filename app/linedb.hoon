@@ -176,28 +176,39 @@
 ++  handle-peek
   |=  =path
   ^-  (unit (unit cage))
-  ?+    path  ~
+  ?+    path  ``noun+!>(~)
   ::
       [%x %log @ @tas @tas ~]                          ::  list of all meatdata
     =*  who  (slav %p i.t.t.path)
     =*  sss  t.t.t.path
-    ``noun+!>(log:(ba who sss))
+    :^  ~  ~  %noun
+    !>
+    =/  log-result  (mule |.(log:(ba who sss)))
+    ?:  ?=(%| -.log-result)  ~  p.log-result
   ::
       [%x %history @ @tas @tas ~]                      ::  list of all hashes
     =*  who  (slav %p i.t.t.path)
     =*  sss  t.t.t.path
-    ``noun+!>(history:(ba who sss))
+    :^  ~  ~  %noun
+    !>
+    =/  history-result
+      (mule |.(history:(ba who sss)))
+    ?:  ?=(%| -.history-result)  ~  p.history-result
   ::
       [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
     =*  who          (slav %p i.t.path)
     =*  repo                i.t.t.path
     =*  branch            i.t.t.t.path
     =-  ``noun+!>(-)
-    %-  turn  :_  head
-    ?-  hash=i.t.t.t.t.path
-      %head  ~(tap by head-snap:(ba who [repo branch ~]))
-      @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
-    ==
+    =/  file-list-result
+      %-  mule
+      |.
+      %-  turn  :_  head
+      ?-  hash=i.t.t.t.t.path
+        %head  ~(tap by head-snap:(ba who [repo branch ~]))
+        @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
+      ==
+    ?:  ?=(%| -.file-list-result)  ~  p.file-list-result
   ::
       [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
     =*  who  (slav %p i.t.path)
@@ -205,10 +216,14 @@
     =*  branch    i.t.t.t.path
     =*  file    t.t.t.t.t.path
     =-  ``noun+!>(-)
-    ?-  hash=i.t.t.t.t.path
-      %head  (head-file:(ba who [repo branch ~]) file)
-      @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
-    ==
+    =/  file-result
+      %-  mule
+      |.
+      ?-  hash=i.t.t.t.t.path
+        %head  (head-file:(ba who [repo branch ~]) file)
+        @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
+      ==
+    ?:  ?=(%| -.file-result)  ~  p.file-result
   ::
   ==
 ::
