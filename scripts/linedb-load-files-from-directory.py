@@ -13,7 +13,7 @@ import requests
 from urllib.parse import urljoin
 
 def get_cookie(
-        url_base="http://localhost:8080",
+        url_base="http://localhost",
         password="ropnys-batwyd-nossyt-mapwet",  #  ~nec
 ):
     url = urljoin(url_base, "/~/login")
@@ -28,7 +28,7 @@ def get_cookie(
 def send_poke(
         cookie,
         poke_json,
-        url_base="http://localhost:8080",
+        url_base="http://localhost",
 ):
     url = urljoin(url_base, "/~/channel/linedb-load-files-from-directory")
     headers = {
@@ -92,8 +92,8 @@ def parse_arguments():
             "--url_base",
             help=".",
             nargs="?",
-            const="http://localhost:8080",
-            default="http://localhost:8080",
+            const="http://localhost",
+            default="http://localhost",
     )
     parser.add_argument(
             "--password",
