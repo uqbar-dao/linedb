@@ -110,25 +110,6 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
-      %build
-    =/  built-file
-      (build-file:ub:(ba [from repo branch ~]:act) file.act)
-    :_  state
-    :_  ~
-    ?-    -.poke-src.act
-        %app
-      :^  %pass  /pokeback/[p.poke-src.act]  %agent
-      :^  [our.bowl p.poke-src.act]  %poke  %uqbuild-update
-      !>([%build %& built-file])
-    ::
-        %ted
-      :^  %pass  /pokeback/[p.poke-src.act]  %agent
-      :^  [our.bowl %spider]  %poke  %spider-input
-      !>  ^-  [@tatid cage]
-      :+  p.poke-src.act  %uqbuild-update
-      !>([%build %& built-file])
-    ==
-::
       %commit
     =^  cards  pubs
       (give:dub [repo branch ~]:act %commit our.bowl now.bowl snap.act)
@@ -192,6 +173,64 @@
       %fetch
     =^  cards  subs  (surf:dab from.act dap.bowl [repo branch ~]:act)
     [cards state]
+  ::
+      %install
+    ::  need to build every app file
+    |^
+    =/  vases=(list [dude:gall vase])
+      =|  res=(list [dude:gall vase])
+      |-
+      ?~  bill.act  res
+      %=    $
+          bill.act  t.bill.act
+          res
+        :_  res
+        [i.bill.act -:(build-file:ub:(ba [from repo branch ~]:act) /app/[i.bill.act]/hoon)]
+      ==
+    :_  state
+    :_  ~ 
+    :^  %pass  /  %arvo
+    :-  %c
+    :^  %park  repo.act
+      ^-  yoki:clay
+      :+  %&  ~
+      %-  ~(gas by *(map path (each page lobe:clay)))
+      %-  zing
+      %+  turn  vases
+      |=  [=dude:gall =vase]
+      :~  [/[repo.act]/app/[dude]/vase %& %vase vase]
+          [/[repo.act]/app/[dude]/hoon %& %hoon (gen-app /[repo.act]/app/[dude]/vase)]
+      ==
+    *rang:clay
+    ::
+    ++  gen-app
+      |=  p=path
+      ^-  @t
+      %-  crip
+      """
+      /*  built  %vase  {<`path`p>}
+      !<(agent:gall built)
+      """
+    --
+  ::
+      %build
+    =/  built-file
+      (build-file:ub:(ba [from repo branch ~]:act) file.act)
+    :_  state
+    :_  ~
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %uqbuild-update
+      !>([%build %& built-file])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %uqbuild-update
+      !>([%build %& built-file])
+    ==
   ==
 ::
 ++  handle-peek

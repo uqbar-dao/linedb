@@ -52,6 +52,7 @@
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
+      [%install from=@p repo=@tas branch=@tas bill=(list dude:gall)] :: put into clay
       $:  %build 
           from=@p
           repo=@tas
@@ -60,5 +61,6 @@
           =poke-src
           :: commit-hash=(unit @ux)
       ==
+
   ==
 --
