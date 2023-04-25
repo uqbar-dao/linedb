@@ -195,11 +195,171 @@
       ^-  yoki:clay
       :+  %&  ~
       %-  ~(gas by *(map path (each page lobe:clay)))
+      ^-  (list [path %& page])
+      %+  weld
+        ^-  (list [path %& page])
+        :~  [/sys/kelvin %& %kelvin [%zuse 414]]
+            [/desk/bill %& %bill bill.act]
+            :^   /mar/noun/hoon  %&  %hoon
+            '''
+            /?    310
+            !:
+            ::::  A minimal noun mark
+            |_  non=*
+            ++  grab  |%
+                      ++  noun  *
+                      --
+            ++  grad
+              |%
+              ++  form  %noun
+              ++  diff  |=(* +<)
+              ++  pact  |=(* +<)
+              ++  join  |=([* *] *(unit *))
+              ++  mash  |=([[ship desk *] [ship desk *]] `*`~|(%noun-mash !!))
+              --
+            --
+            '''
+            :^  /mar/hoon/hoon  %&  %hoon
+            '''
+            ::::  /hoon/hoon/mar
+              ::
+            /?    310
+            ::
+            =,  eyre
+            |_  own=@t
+            ::
+            ++  grow                                                ::  convert to
+              |%
+              ++  mime  `^mime`[/text/x-hoon (as-octs:mimes:html own)] ::  convert to %mime
+              ++  elem                                              ::  convert to %html
+                ;div:pre(urb_codemirror "", mode "hoon"):"{(trip own)}"
+                :: =+  gen-id="src-{<`@ui`(mug own)>}"
+                :: ;div
+                ::   ;textarea(id "{gen-id}"):"{(trip own)}"
+                ::   ;script:"""
+                ::           CodeMirror.fromTextArea(
+                ::             window[{<gen-id>}],
+                ::             \{lineNumbers:true, readOnly:true}
+                ::           )
+                ::           """
+                :: ==
+              ++  hymn
+                :: ;html:(head:title:"Source" "+{elem}")
+                ;html
+                  ;head
+                    ;title:"Source"
+                    ;script@"//cdnjs.cloudflare.com/ajax/libs/codemirror/4.3.0/codemirror.js";
+                    ;script@"/lib/syntax/hoon.js";
+                    ;link(rel "stylesheet", href "//cdnjs.cloudflare.com/ajax/libs/".
+                      "codemirror/4.3.0/codemirror.min.css");
+                    ;link/"/lib/syntax/codemirror.css"(rel "stylesheet");
+                  ==
+                  ;body
+                    ;textarea#src:"{(trip own)}"
+                    ;script:'CodeMirror.fromTextArea(src, {lineNumbers:true, readOnly:true})'
+                  ==
+                ==
+              ++  txt
+                (to-wain:format own)
+              --
+            ++  grab
+              |%                                            ::  convert from
+              ++  mime  |=([p=mite q=octs] q.q)
+              ++  noun  @t                                  ::  clam from %noun
+              ++  txt   of-wain:format
+              --
+            ++  grad  %txt
+            --
+            '''
+            :^  /mar/kelvin/hoon  %&  %hoon
+            '''
+            |_  kal=waft:clay
+            ++  grow
+              |%
+              ++  mime  `^mime`[/text/x-kelvin (as-octs:mimes:html hoon)]
+              ++  noun  kal
+              ++  hoon
+                %+  rap  3
+                %+  turn
+                  %+  sort
+                    ~(tap in (waft-to-wefts:clay kal))
+                  |=  [a=weft b=weft]
+                  ?:  =(lal.a lal.b)
+                    (gte num.a num.b)
+                  (gte lal.a lal.b)
+                |=  =weft
+                (rap 3 '[%' (scot %tas lal.weft) ' ' (scot %ud num.weft) ']\0a' ~)
+              ::
+              ++  txt   (to-wain:format hoon)
+              --
+            ++  grab
+              |%
+              ++  noun  waft:clay
+              ++  mime
+                |=  [=mite len=@ud tex=@]
+                (cord-to-waft:clay tex)
+              --
+            ++  grad  %noun
+            --
+            '''
+            :^  /mar/bill/hoon  %&  %hoon
+            '''
+            |_  bil=(list dude:gall)
+            ++  grow
+              |%
+              ++  mime  `^mime`[/text/x-bill (as-octs:mimes:html hoon)]
+              ++  noun  bil
+              ++  hoon
+                ^-  @t
+                |^  (crip (of-wall:format (wrap-lines (spit-duz bil))))
+                ::
+                ++  wrap-lines
+                  |=  taz=wall
+                  ^-  wall
+                  ?~  taz  ["~"]~
+                  :-  (weld ":~  " i.taz)
+                  %-  snoc  :_  "=="
+                  (turn t.taz |=(t=tape (weld "    " t)))
+                ::
+                ++  spit-duz
+                  |=  duz=(list dude:gall)
+                  ^-  wall
+                  (turn duz |=(=dude:gall ['%' (trip dude)]))
+                --
+              ++  txt   (to-wain:format hoon)
+              --
+            ++  grab
+              |%
+              ++  noun  (list dude:gall)
+              ++  mime
+                |=  [=mite len=@ud tex=@]
+                ~_  tex
+                !<((list dude:gall) (slap !>(~) (ream tex)))
+              --
+            ++  grad  %noun
+            --
+            '''
+            :^  /mar/vase/hoon  %&  %hoon
+            '''
+            /?    310
+            !:
+            |_  v=vase
+            ++  grab  |%
+                      ++  noun  vase
+                      --
+            ++  grow  |%
+                      ++  noun  v
+                      --
+            ++  grad  %noun
+            --
+            '''
+        ==
+      ^-  (list [path %& page])
       %-  zing
       %+  turn  vases
       |=  [=dude:gall =vase]
-      :~  [/[repo.act]/app/[dude]/vase %& %vase vase]
-          [/[repo.act]/app/[dude]/hoon %& %hoon (gen-app /[repo.act]/app/[dude]/vase)]
+      :~  [/app/[dude]/vase %& %vase vase]
+          [/app/[dude]/hoon %& %hoon (gen-app /app/[dude]/vase)]
       ==
     *rang:clay
     ::
