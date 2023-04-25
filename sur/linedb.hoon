@@ -53,12 +53,12 @@
       ::  %uqbuild action
       ::
       $:  %build 
+          from=@p
+          repo=@tas
+          branch=@tas
+          file=path
           =poke-src
-          repo-host=@p
-          repo-name=@tas
-          branch-name=@tas
-          commit-hash=(unit @ux)
-          file-path=path
+          :: commit-hash=(unit @ux)
       ==
   ==
 --

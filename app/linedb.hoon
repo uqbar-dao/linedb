@@ -110,8 +110,25 @@
   |=  act=action
   ^-  (quip card _state)
   ?-    -.act
-      %build  `state
-  ::
+      %build
+    =/  built-file
+      (build-file:ub:(ba [from repo branch ~]:act) file.act)
+    :_  state
+    :_  ~
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %uqbuild-update
+      !>([%build %& built-file])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %uqbuild-update
+      !>([%build %& built-file])
+    ==
+::
       %commit
     =^  cards  pubs
       (give:dub [repo branch ~]:act %commit our.bowl now.bowl snap.act)
