@@ -229,9 +229,13 @@
   |=  =path
   ^-  (unit (unit cage))
   =-  ``noun+!>(-)
-  ?+    path  ~
+  =;  peek-result
+    ?:  ?=(%| -.peek-result)  ~  `p.peek-result
+  %-  mule
+  |.
+  ?+    path  !!
   ::
-      [%x %log @ @tas @tas ~]                          ::  list of all meatdata
+      [%x %log @ @tas @tas ~]                          ::  list of all metadata
     =*  who  (slav %p i.t.t.path)
     =*  sss  t.t.t.path
     log:(ba who sss)
