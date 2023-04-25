@@ -175,8 +175,6 @@
     [cards state]
   ::
       %install
-    ::  need to build every app file
-    |^
     =/  vases=(list [dude:gall vase])
       =|  res=(list [dude:gall vase])
       |-
@@ -202,21 +200,10 @@
       %-  zing
       %+  turn  vases
       |=  [=dude:gall =vase]
-      ~&  >  dude
       :~  [/app/[dude]/vase %& %vase vase]
-          [/app/[dude]/hoon %& %hoon (gen-app /app/[dude]/vase)]
+          [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
       ==
     .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
-    ::
-    ++  gen-app
-      |=  p=path
-      ^-  @t
-      %-  crip
-      """
-      /*  built  %vase  {<`path`p>}
-      !<(agent:gall built)
-      """
-    --
   ::
       %build
     =/  built-file

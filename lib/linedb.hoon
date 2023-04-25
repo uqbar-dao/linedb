@@ -165,6 +165,14 @@
       [/mar/bill/hoon %& %hoon bill-mark]
       [/mar/vase/hoon %& %hoon vase-mark]
   ==
+++  gen-app
+  |=  p=path
+  ^-  @t
+  %-  crip
+  """
+  /*  built  %vase  {<`path`p>}
+  !<(agent:gall built)
+  """
 ::
 ::  diff operations
 ::
