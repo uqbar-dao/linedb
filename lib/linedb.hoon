@@ -148,7 +148,7 @@
   !:
   |_  v=vase
   ++  grab  |%
-            ++  noun  vase
+            ++  noun  |=(n=* !<(vase [-:!>(*vase) n]))
             --
   ++  grow  |%
             ++  noun  v
