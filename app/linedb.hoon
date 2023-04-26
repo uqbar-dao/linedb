@@ -175,15 +175,18 @@
     [cards state]
   ::
       %install
-    =/  vases=(list [dude:gall vase])
+    =^  vases=(list [dude:gall vase])  build-cache
       =|  res=(list [dude:gall vase])
       |-
-      ?~  bill.act  res
+      ?~  bill.act  [res build-cache]
+      =/  [built-file=vase =build-state]
+        %.  /app/[i.bill.act]/hoon
+        %~  build-file  ub:(ba [from repo branch ~]:act)
+        [build-cache ~]
       %=    $
-          bill.act  t.bill.act
-          res
-        :_  res
-        [i.bill.act -:(build-file:ub:(ba [from repo branch ~]:act) /app/[i.bill.act]/hoon)]
+          bill.act     t.bill.act
+          res          [[i.bill.act built-file] res]
+          build-cache  build-cache.build-state
       ==
     :_  state
     :_  ~ 
@@ -206,22 +209,25 @@
     .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
   ::
       %build
-    =/  built-file
-      (build-file:ub:(ba [from repo branch ~]:act) file.act)
-    :_  state
+    =/  [built-file=vase =build-state]
+      %.  file.act
+      %~  build-file  ub:(ba [from repo branch ~]:act)
+      [build-cache ~]
+    :_  state(build-cache build-cache.build-state)
+    ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
         %app
       :^  %pass  /pokeback/[p.poke-src.act]  %agent
-      :^  [our.bowl p.poke-src.act]  %poke  %uqbuild-update
-      !>([%build %& built-file])
+      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+      !>(`update`[%build %& built-file])
     ::
         %ted
       :^  %pass  /pokeback/[p.poke-src.act]  %agent
       :^  [our.bowl %spider]  %poke  %spider-input
       !>  ^-  [@tatid cage]
-      :+  p.poke-src.act  %uqbuild-update
-      !>([%build %& built-file])
+      :+  p.poke-src.act  %linedb-update
+      !>(`update`[%build %& built-file])
     ==
   ==
 ::
@@ -316,7 +322,7 @@
       =/  =pile:clay  (parse-pile p (trip file-text))
       =^  subject=vase  build-state  (run-prelude pile)
       =/  build-result  (mule |.((slap subject hoon.pile)))
-      ?:  ?=(%| -.build-result)  ~|(p.build-result !!)  :: TODO
+      ?:  ?=(%| -.build-result)  ~&(p.build-result !!)  :: TODO
       =.  build-cache
         (~(put by build-cache) file-hash p.build-result)
       ~&  %bd^%done^p

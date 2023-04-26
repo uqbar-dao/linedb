@@ -149,9 +149,11 @@
   |_  v=vase
   ++  grab  |%
             ++  noun  |=(n=* !<(vase [-:!>(*vase) n]))
+            ++  mime  |=(a=@ !<(vase [-:!>(*vase) (cue a)]))
             --
   ++  grow  |%
             ++  noun  v
+            ++  mime  [/application/x-urb-vase (as-octs:mimes:html (jam v))]
             --
   ++  grad  %noun
   --
