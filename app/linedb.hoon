@@ -270,6 +270,14 @@
       %head  (head-file:(ba who [repo branch ~]) file)
       @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
     ==
+  ::
+      [%x %build-result @ ~]
+    =*  file-hash=@ux  (slav %ux i.t.t.path)
+    :^  ~  ~  %uqbuild-update
+    !>  ^-  update
+    :-  %build
+    ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
+    [%| (crip "build not found for file-hash {<file-hash>}")]
   ==
 ::
 ::  branch engine
