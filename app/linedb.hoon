@@ -188,6 +188,10 @@
           res          [[i.bill.act built-file] res]
           build-cache  build-cache.build-state
       ==
+    =/  marks=(list [path %& page])        
+      %+  turn  (head-directory:(ba [from repo branch ~]:act) /mar)
+      |=  [=path =file]
+      [path %& %hoon (of-wain:format file)]
     :_  state
     :_  ~ 
     :^  %pass  /  %arvo
@@ -199,6 +203,7 @@
       ^-  (list [path %& page])
       %+  weld  boilerplate-files:ldb
       %+  weld  [/desk/bill %& %bill bill.act]~
+      %+  weld  marks
       ^-  (list [path %& page])
       %-  zing
       %+  turn  vases
@@ -295,10 +300,24 @@
   ++  get-commit   |=(h=hash (~(get by hash-index.branch) h))
   ++  get-snap     |=(h=hash snap:(need (get-commit h)))
   ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
+  ++  get-directory :: TODO this gets a lot more efficient with an +axal
+    |=  [=hash nedl=path]
+    ^-  (list [path file])
+    %+  murn  ~(tap by (get-snap hash))
+    |=  [hstk=path =file]
+    ?.  =(`0 (find nedl hstk))  ~
+    `[hstk file]
   ::
   ++  head-commit  ?>(?=(^ commits.branch) i.commits.branch)
   ++  head-snap    snap:head-commit
   ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
+  ++  head-directory
+    |=  nedl=path
+    ^-  (list [path file])
+    %+  murn  ~(tap by head-snap)
+    |=  [hstk=path =file]
+    ?.  =(`0 (find nedl hstk))  ~
+    `[hstk file]
   ::
   ++  history          (turn commits.branch |=(=commit hash.commit))
   ++  log
