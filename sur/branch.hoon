@@ -21,7 +21,7 @@
           now.wave
           snap.wave
       ==
-    ?<  =(hash.com parent.com)
+    :: ?<  =(hash.com parent.com) :: TODO corrupts state
     %=  rock
       head        hash.com
       commits     [com commits.rock]

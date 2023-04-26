@@ -242,7 +242,9 @@
   ^-  (unit (unit cage))
   =-  ``noun+!>(-)
   =;  peek-result
-    ?:  ?=(%| -.peek-result)  ~  `p.peek-result
+    ?:  ?=(%| -.peek-result)
+      ((slog p.peek-result) ~)
+    `p.peek-result
   %-  mule
   |.
   ?+    path  !!
