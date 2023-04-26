@@ -188,10 +188,11 @@
           res          [[i.bill.act built-file] res]
           build-cache  build-cache.build-state
       ==
-    =/  marks=(list [path %& page])        
-      %+  turn  (head-directory:(ba [from repo branch ~]:act) /mar)
+    =/  all-files=(list [path %& page])        
+      %+  murn  ~(tap by head-snap:(ba [from repo branch ~]:act))
       |=  [=path =file]
-      [path %& %hoon (of-wain:format file)]
+      ?.  =(%hoon (rear path))  ~
+      `[path %& %hoon (of-wain:format file)]
     :_  state
     :_  ~ 
     :^  %pass  /  %arvo
@@ -203,7 +204,7 @@
       ^-  (list [path %& page])
       %+  weld  boilerplate-files:ldb
       %+  weld  [/desk/bill %& %bill bill.act]~
-      %+  weld  marks
+      %+  weld  all-files
       ^-  (list [path %& page])
       %-  zing
       %+  turn  vases
