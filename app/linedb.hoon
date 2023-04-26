@@ -73,7 +73,18 @@
           ~&  >>>  "not allowed to surf on {<msg>}"
           `state
         ::
-            %sss-on-rock  `state  :: a rock has updated
+            %sss-on-rock  :: a rock has updated
+          =+  !<([p=path src=@p @ ? ? *] vase)
+          ?>  ?=([@ @ ~] p)  ::  TODO: is this true?
+          =*  repo-path=path
+            /repo-updates/(scot %p src)/[i.p]
+          =*  branch-path=path  [(scot %p src) p]
+          :_  state
+          :_  ~
+          :^  %give  %fact
+            ~[repo-path [%branch-updates branch-path]]
+          :-  %linedb-update
+          !>(`update`[%new-data branch-path])
         ==
       [cards this]
     ::
@@ -89,15 +100,31 @@
           [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
         ==
       [cards this]
-    ++  on-watch  on-watch:def
+    ::
+    ++  on-watch
+      |=  =path
+      ^-  (quip card _this)
+      ?+  path  (on-watch:def path)
+        [%repo-updates @ @ ~]      `this  ::  host repo
+        [%branch-updates @ @ @ ~]  `this  ::  host repo branch
+      ==
+    ::
+    ++  on-leave
+      |=  =path
+      ^-  (quip card _this)
+      ?+  path  (on-leave:def path)
+        [%repo-updates @ @ ~]      `this  ::  host repo
+        [%branch-updates @ @ @ ~]  `this  ::  host repo branch
+      ==
+    ::
     ++  on-peek   handle-peek:hc
+    ::
     ++  on-arvo
       |=  [=wire sign=sign-arvo]
       ^-  (quip card:agent:gall _this)
       ?+  wire  `this
         [~ %sss %behn @ @ @ @tas @tas ~]  [(behn:dab |3:wire) this]
       ==
-    ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
 ::
