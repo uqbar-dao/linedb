@@ -63,4 +63,7 @@
       ==
 
   ==
++$  update
+  $%  [%build result=(each vase @t)]
+==
 --
