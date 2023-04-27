@@ -463,7 +463,7 @@
       :: =^  sut=vase  build-state  (run-raz sut raz.pile)
       :: =^  sut=vase  build-state  (run-maz sut maz.pile)
       :: =^  sut=vase  build-state  (run-caz sut caz.pile)
-      :: =^  sut=vase  build-state  (run-bar sut bar.pile)  :: TODO
+      =^  sut=vase  build-state  (run-bar sut bar.pile)
       [sut build-state]
     ::
     ++  run-tauts
@@ -522,13 +522,19 @@
     ::   =.  p.pin  [%face face.i.caz p.pin]
     ::   $(sut (slop pin sut), caz t.caz)
     ::
-    :: ++  run-bar  :: TODO
-    ::   |=  [sut=vase bar=(list [face=term =mark =path])]
-    ::   ^-  [vase build-state]
-    ::   ?~  bar  [sut build-state]
-    ::   =^  =cage  build-state  (cast-path [path mark]:i.bar)
-    ::   =.  p.q.cage  [%face face.i.bar p.q.cage]
-    ::   $(sut (slop q.cage sut), bar t.bar)
+    ++  run-bar  :: TODO extremely ugly
+      |=  [sut=vase bar=(list [face=term =mark =path])]
+      ^-  [vase ^build-state]
+      ~|  "uqbuild: cannot import {<mark>} with /*"
+      ?~  bar  [sut build-state]
+      ?>  =((rear path.i.bar) mark.i.bar)
+      =/  =cage
+        ?+  mark.i.bar  !!  :: TODO other marks
+          %noun  noun+!>((read-file path.i.bar))
+          %jam   jam+!>((read-file path.i.bar))
+        ==
+      =.  p.q.cage  [%face face.i.bar p.q.cage]
+      $(sut (slop q.cage sut), bar t.bar)
     ::
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
