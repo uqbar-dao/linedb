@@ -175,11 +175,11 @@
     [cards state]
   ::
       %install
-    =^  vases=(list [dude:gall vase])  build-cache
-      =|  res=(list [dude:gall vase])
+    =^  vases=(list [dude:gall (each vase @t)])  build-cache
+      =|  res=(list [dude:gall (each vase @t)])
       |-
       ?~  bill.act  [res build-cache]
-      =/  [built-file=vase =build-state]
+      =/  [built-file=(each vase @t) =build-state]
         %.  /app/[i.bill.act]/hoon
         %~  build-file  ub:(ba [from repo branch ~]:act)
         [build-cache ~]
@@ -194,7 +194,13 @@
       ?.  =(%hoon (rear path))  ~
       `[path %& %hoon (of-wain:format file)]
     :_  state
-    :_  ~ 
+    ?.  |- :: if anything failed then don't commit
+        ?~  vases  %&
+        ?:  =(%| +<.i.vases)
+          ~&  build-failed+app+-.i.vases  %|
+        $(vases t.vases)
+      ~
+    :_  ~
     :^  %pass  /  %arvo
     :-  %c
     :^  %park  repo.act
@@ -208,14 +214,15 @@
       ^-  (list [path %& page])
       %-  zing
       %+  turn  vases
-      |=  [=dude:gall =vase]
-      :~  [/app/[dude]/vase %& %vase vase]
+      |=  [=dude:gall vaz=(each vase @t)]
+      ?>  =(%& -.vaz)
+      :~  [/app/[dude]/vase %& %vase p.vaz]
           [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
       ==
     .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
   ::
       %build
-    =/  [built-file=vase =build-state]
+    =/  [built-file=(each vase @t) =build-state]
       %.  file.act
       %~  build-file  ub:(ba [from repo branch ~]:act)
       [build-cache ~]
@@ -226,14 +233,14 @@
         %app
       :^  %pass  /pokeback/[p.poke-src.act]  %agent
       :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
-      !>(`update`[%build %& built-file])
+      !>(`update`[%build built-file])
     ::
         %ted
       :^  %pass  /pokeback/[p.poke-src.act]  %agent
       :^  [our.bowl %spider]  %poke  %spider-input
       !>  ^-  [@tatid cage]
       :+  p.poke-src.act  %linedb-update
-      !>(`update`[%build %& built-file])
+      !>(`update`[%build built-file])
     ==
   ==
 ::
@@ -337,7 +344,7 @@
     ++  read-file  |=(=path (head-file path))
     ++  build-dependency
       |=  dep=(each [dir=path fil=path] path)
-      ^-  [vase ^build-state]
+      ^-  [(each vase @t) ^build-state]
       =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~&  %bd^%start^p
       ~|  %error-building^p  :: TODO
@@ -348,19 +355,24 @@
       =/  file-text=@t   (read-file p)
       =/  file-hash=@ux  (shax file-text)
       ?^  cax=(~(get by build-cache) file-hash)
-        [u.cax build-state]
+        [%&^u.cax build-state]
       =/  =pile:clay  (parse-pile p (trip file-text))
       =^  subject=vase  build-state  (run-prelude pile)
       =/  build-result  (mule |.((slap subject hoon.pile)))
-      ?:  ?=(%| -.build-result)  ~&(p.build-result !!)  :: TODO
+      ?:  ?=(%| -.build-result)
+        :_  build-state
+        :-  %|
+        %-  of-wain:format
+        %+  turn  p.build-result
+        |=(=tank (crip ~(ram re tank)))
       =.  build-cache
         (~(put by build-cache) file-hash p.build-result)
       ~&  %bd^%done^p
-      [p.build-result build-state]
+      [%&^p.build-result build-state]
     ::
     ++  build-file
       |=  =path
-      ^-  [vase ^build-state]
+      ^-  [(each vase @t) ^build-state]
       (build-dependency |+path)
     ::
     ++  parse-pile
@@ -470,17 +482,19 @@
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
       ^-  [vase ^build-state]
       ?~  taz  [sut build-state]
-      =^  pin=vase  build-state  (build-fit wer pax.i.taz)
-      =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
-      $(sut (slop pin sut), taz t.taz)
+      =^  pin=(each vase @t)  build-state  (build-fit wer pax.i.taz)
+      ?:  ?=(%| -.pin)  ~&  'build-failed'  $(taz t.taz)
+      =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
+      $(sut (slop p.pin sut), taz t.taz)
     ::
     ++  run-raw
       |=  [sut=vase raw=(list [face=term =path])]
       ^-  [vase ^build-state]
       ?~  raw  [sut build-state]
-      =^  pin=vase  build-state  (build-file (snoc path.i.raw %hoon))
-      =.  p.pin  [%face face.i.raw p.pin]
-      $(sut (slop pin sut), raw t.raw)
+      =^  pin=(each vase @t)  build-state  (build-file (snoc path.i.raw %hoon))
+      ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
+      =.  p.p.pin  [%face face.i.raw p.p.pin]
+      $(sut (slop p.pin sut), raw t.raw)
     :: ::
     :: ++  run-raz
     ::   |=  [sut=vase raz=(list [face=term =spec =path])]
@@ -540,7 +554,7 @@
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
-      ^-  [vase ^build-state]
+      ^-  [(each vase @t) ^build-state]
       (build-file (fit-path pre pax))
     ::
     ::  +fit-path: find path, maybe converting '-'s to '/'s
