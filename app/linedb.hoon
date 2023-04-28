@@ -7,7 +7,7 @@
       ==
     +$  state-0
       $:  %0
-        subs=_(mk-subs:sss b sss-paths)
+          subs=_(mk-subs:sss b sss-paths)
           pubs=_(mk-pubs:sss b sss-paths)
           =build-cache
       ==
@@ -97,12 +97,12 @@
           [%x %log @ @tas @tas ~]                          ::  list of all metadata
         =*  who  (slav %p i.t.t.path)
         =*  sss  t.t.t.path
-        log:(ba who sss)
+        log:(ba:hc who sss)
       ::
           [%x %history @ @tas @tas ~]                      ::  list of all hashes
         =*  who  (slav %p i.t.t.path)
         =*  sss  t.t.t.path
-        history:(ba who sss)
+        history:(ba:hc who sss)
       ::
           [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
         =*  who          (slav %p i.t.path)
@@ -110,8 +110,8 @@
         =*  branch            i.t.t.t.path
         %-  turn  :_  head
         ?-  hash=i.t.t.t.t.path
-          %head  ~(tap by head-snap:(ba who [repo branch ~]))
-          @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
+          %head  ~(tap by head-snap:(ba:hc who [repo branch ~]))
+          @      ~(tap by (get-snap:(ba:hc who [repo branch ~]) (slav %ux hash)))
         ==
       ::
           [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
@@ -120,8 +120,8 @@
         =*  branch    i.t.t.t.path
         =*  file    t.t.t.t.t.path
         ?-  hash=i.t.t.t.t.path
-          %head  (head-file:(ba who [repo branch ~]) file)
-          @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
+          %head  (head-file:(ba:hc who [repo branch ~]) file)
+          @      (get-file:(ba:hc who [repo branch ~]) (slav %ux hash) file)
         ==
       ::
           [%x %build-result @ ~]
@@ -288,8 +288,12 @@
 ++  ba
   |=  [from=@p ban=sss-paths]
   =+  ?:  =(from our.bowl)
-        rock:(~(got by read:dub) ban)
-      rock:(~(got by read:dab) from %linedb ban)
+        :: TODO not sure if having a bunt is actually good here
+        ::   because we didn't actually create the publication
+        ?~  got=(~(get by read:dub) ban)  *branch
+        rock:u.got
+      ?~  got=(~(get by read:dab) from %linedb ban)  *branch
+      rock:u.got
   =*  branch  -
   ::
   |%
