@@ -3,6 +3,28 @@
 =,  format
 =,  differ
 |%
+:: ++  park
+::   |=  [repo=@tas vases=(list [dude:gall vase])]
+::   :^  %pass  /  %arvo
+::   :-  %c
+::   :^  %park  repo
+::     ^-  yoki:clay
+::     :+  %&  ~
+::     %-  ~(gas by *(map path (each page lobe:clay)))
+::     ^-  (list [path %& page])
+::     %+  weld  boilerplate-files:ldb
+::     %+  weld  [/desk/bill %& %bill bill.act]~
+::     %+  weld  all-files
+::     ^-  (list [path %& page])
+::     %-  zing
+::     %+  turn  vases
+::     |=  [=dude:gall vaz=(each vase @t)]
+::     ?>  =(%& -.vaz)
+::     :~  [/app/[dude]/vase %& %vase p.vaz]
+::         [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
+::     ==
+::   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+::
 ++  noun-mark
     '''
     /?    310
