@@ -7,18 +7,19 @@
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
 +$  snap  (map path file) :: maybe use $axal and +of
-+$  commit
++$  ceta
   $:  =hash
       parent=hash
       author=@p
       time=@da
+  ==
++$  commit
+  $:  =ceta
       =snap
   ==
 +$  branch
-  $:  head=hash
-      commits=(list commit) :: TODO ((mop @da commit) gth)
-      :: TODO label-index=(map label commit)
-      hash-index=(map hash commit)
+  $:  log=(list ceta)
+      commits=(map hash commit)
   ==
 ++  sss-paths  ,[@tas @tas ~] :: /repo/branch
 ::

@@ -94,11 +94,6 @@
       =-  ``noun+!>(-)
       ?+    path  (on-peek:def path)
       ::
-          [%x %log @ @tas @tas ~]                          ::  list of all metadata
-        =*  who  (slav %p i.t.t.path)
-        =*  sss  t.t.t.path
-        log:(ba:hc who sss)
-      ::
           [%x ~]  ~(tap by ~(key by all-rocks:hc))         ::  list all repos
       ::
           [%x @ ~]                                         ::  repos of ship
@@ -120,7 +115,7 @@
           [%x @ @tas @tas ~]                               ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        history:(ba:hc who sss)
+        log.branch:(ba:hc who sss)
       ::
           [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
         =*  who          (slav %p i.t.path)
@@ -203,8 +198,8 @@
     =/  ali  (ba our.bowl [repo branch ~]:act)
     =/  bob  (ba from.act [repo incoming ~]:act)
     =/  base=hash
-      =/  boh        history:bob
-      =/  alh  (silt history:ali)
+      =/  boh        hashes:bob
+      =/  alh  (silt hashes:ali)
       |-
       ?~  boh
         ~|("%linedb: merge: no common base for {<branch.act>} and {<incoming.act>}" !!)
@@ -213,12 +208,12 @@
       $(boh t.boh)
     =/  ali-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.ali) base)
-        snap:(~(got by hash-index.ali) head.ali)
+        snap:(~(got by commits.ali) base)
+        snap:(~(got by commits.ali) head:ali)
     =/  bob-diffs=(map path diff)
       %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.bob) base)
-        snap:(~(got by hash-index.bob) head.bob)
+        snap:(~(got by commits.bob) base)
+        snap:(~(got by commits.bob) head:bob)
     =/  diffs=(map path diff)
       %-  ~(urn by (~(uni by ali-diffs) bob-diffs))
       |=  [=path *]
@@ -227,8 +222,8 @@
         [branch.act (~(gut by ali-diffs) path *diff)]
       [incoming.act (~(gut by bob-diffs) path *diff)]
     =/  new-snap=snap
-      ?@  commits.ali  *snap
-      %-  ~(urn by snap.i.commits.ali)
+      ?~  log.ali  *snap
+      %-  ~(urn by snap:(~(got by commits.ali) head:ali))
       |=  [=path =file]
       =+  dif=(~(got by diffs) path)
       (apply-diff:di:ldb file dif)
@@ -326,9 +321,9 @@
   |%
   ::  read arms
   ::
-  ++  get-commit   |=(h=hash (~(get by hash-index.branch) h))
-  ++  get-snap     |=(h=hash snap:(need (get-commit h)))
-  ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
+  ++  get-commit   |=(h=hash (~(gut by commits.branch) h *commit))
+  ++  get-snap     |=(h=hash snap:(get-commit h))
+  ++  get-file     |=([h=hash p=path] (of-wain:format (~(gut by (get-snap h)) p *wain)))
   ++  get-directory :: TODO this gets a lot more efficient with an +axal
     |=  [=hash nedl=path]
     ^-  (list [path file])
@@ -337,7 +332,8 @@
     ?.  =(`0 (find nedl hstk))  ~
     `[hstk file]
   ::
-  ++  head-commit  ?>(?=(^ commits.branch) i.commits.branch)
+  ++  head         ?:(?=(@ log.branch) *hash hash.i.log.branch)
+  ++  head-commit  (~(gut by commits.branch) head *commit)
   ++  head-snap    snap:head-commit
   ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
   ++  head-directory
@@ -348,11 +344,7 @@
     ?.  =(`0 (find nedl hstk))  ~
     `[hstk file]
   ::
-  ++  history          (turn commits.branch |=(=commit hash.commit))
-  ++  log
-    ^-  (list [hash hash @p @da])
-    %+  turn  commits.branch
-    |=(c=commit [hash parent author time]:c)
+  ++  hashes          (turn log.branch |=(=ceta hash.ceta))
   ::
   ::  uqbuild engine
   ::

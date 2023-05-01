@@ -6,7 +6,7 @@
   $%  [%commit our=ship now=@da =snap]
       [%squash from=hash to=hash]
       [%reset =hash]
-      [%delete ~]
+      [%delete ~] :: TODO unclear if this is good
   ==
 ++  wash
   |=  [=rock =wave]
@@ -14,56 +14,51 @@
   ?-    -.wave
   ::
       %commit
-    =/  com=commit
-      :*  `@ux`(sham snap.wave)
-          head.rock
-          our.wave
-          now.wave
-          snap.wave
-      ==
-    :: ?<  =(hash.com parent.com) :: TODO corrupts state
+    =/  =ceta
+      :+  `@ux`(sham snap.wave)
+        ?@(log.rock *hash hash.i.log.rock)
+      [our now]:wave
     %=  rock
-      head        hash.com
-      commits     [com commits.rock]
-      hash-index  (~(put by hash-index.rock) hash.com com)
+      log      [ceta log.rock]
+      commits  (~(put by commits.rock) hash.ceta [ceta snap.wave])
     ==
   ::
       %reset
-    ?.  (~(has by hash-index.rock) hash.wave)  !! :: TODO error message
+    ?.  (~(has by commits.rock) hash.wave)  rock
+    =+  rok=rock
     |-
-    ?~  commits.rock  !!  ::  should never happen
-    ?:  =(hash.i.commits.rock hash.wave)
-      =.  head.rock  hash.wave
-      rock
-    =.  hash-index.rock
-      (~(del by hash-index.rock) hash.i.commits.rock)
-    $(commits.rock t.commits.rock)
+    ?~  log.rock  rok  ::  should never happen
+    ?:  =(hash.i.log.rock hash.wave)  rock
+    =.  commits.rock  (~(del by commits.rock) hash.i.log.rock)
+    $(log.rock t.log.rock)
   ::
       %delete  *branch
   ::
       %squash
     ^+  rock
-    =|  edited=(list commit)
-    =|  base=(unit commit)
+    =|  edited=(list ceta)
+    =|  base=(unit ceta)
     =|  continue=?
-    =/  commits  (flop commits.rock)
+    =/  log  (flop log.rock)
     |-
-    ?~  commits
-      =.  commits.rock  edited
+    ?~  log
+      =.  log.rock  edited
+      :: TODO also realized that you need to get rid of commits
+      ::   from commits.rock...this is just a terrible function lmao
       rock
-    ?:  =(from.wave hash.i.commits)
-      $(commits t.commits, base `i.commits)
-    ?:  =(to.wave hash.i.commits)
+    ?:  =(from.wave hash.i.log)
+      $(log t.log, base `i.log)
+    ?:  =(to.wave hash.i.log)
       ?~  base
-        ~|("%linedb: squash: out of order, no changes made" !!)
+        ~|("%linedb: squash: out of order, no changes made" rock)
       %=  $
         continue  %.n
-        commits   t.commits
-        edited    [i.commits(parent ?^(edited hash.i.edited *hash)) edited]
+        log       t.log
+        edited    [i.log(parent ?^(edited hash.i.edited *hash)) edited]
       ==
     ?:  &(?=(^ base) continue)
-      $(commits t.commits)
-    $(commits t.commits, edited [i.commits edited])
+      $(log t.log)
+    $(log t.log, edited [i.log edited])
   ::
   ==
 --
