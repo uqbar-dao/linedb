@@ -65,5 +65,6 @@
   ==
 +$  update
   $%  [%build result=(each vase @t)]
+      [%new-data =path]
 ==
 --
