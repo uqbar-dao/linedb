@@ -176,6 +176,9 @@
         :-  %build
         ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
         [%| (crip "build not found for file-hash {<file-hash>}")]
+      ::
+          [%x %state ~]
+        `state-0`state
       ==
     ::
     ++  on-arvo
@@ -276,49 +279,11 @@
     [cards state]
   ::
       %install
-    =^  vases=(list [dude:gall (each vase @t)])  build-cache
-      =|  res=(list [dude:gall (each vase @t)])
-      |-
-      ?~  bill.act  [res build-cache]
-      =/  [built-file=(each vase @t) =build-state]
-        %.  /app/[i.bill.act]/hoon
-        %~  build-file  ub:(ba [from repo branch ~]:act)
-        [build-cache ~]
-      %=  $
-        bill.act     t.bill.act
-        res          [[i.bill.act built-file] res]
-        build-cache  build-cache.build-state
-      ==
-    =/  all-files=(list [path %& page])        
-      %+  murn  ~(tap by head-snap:(ba [from repo branch ~]:act))
-      |=  [=path =file]
-      ?.  =(%hoon (rear path))  ~
-      `[path %& %hoon (of-wain:format file)]
+    =^  result=(unit [@tas yoki:clay rang:clay])  build-cache
+      (build-park [from repo branch bill]:act)
     :_  state
-    ?.  |- :: if anything failed then don't commit
-        ?~  vases  %&
-        ?:  =(%| +<.i.vases)
-          ~&  build-failed+app+-.i.vases  %|
-        $(vases t.vases)
-      ~
-    :_  ~
-    :^  %pass  /  %arvo
-    :-  %c
-    :^  %park  repo.act
-      ^-  yoki:clay
-      :+  %&  ~
-      %-  ~(gas by *(map path (each page lobe:clay)))
-      ^-  (list [path %& page])
-      %+  weld  all-files
-      ^-  (list [path %& page])
-      %-  zing
-      %+  turn  vases
-      |=  [=dude:gall vaz=(each vase @t)]
-      ?>  =(%& -.vaz)
-      :~  [/app/[dude]/vase %& %vase p.vaz]
-          [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
-      ==
-    .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+    ?~  result  ~
+    [%pass / %arvo %c %park u.result]~
   ::
       %build
     =/  [built-file=(each vase @t) =build-state]
@@ -342,6 +307,64 @@
       !>(`update`[%build built-file])
     ==
   ==
+::
+++  build-park
+  |=  $:  from=@p
+          repo=@tas
+          branch=@tas
+          bill=(list dude:gall)
+      ==
+  ^-  [(unit [@tas yoki:clay rang:clay]) _build-cache]
+  =^  vases=(list [dude:gall (each vase @t)])  build-cache
+    =|  res=(list [dude:gall (each vase @t)])
+    |-
+    ?~  bill  [res build-cache]
+    =/  [built-file=(each vase @t) =build-state]
+      %.  /app/[i.bill]/hoon
+      %~  build-file  ub:(ba [from repo branch ~])
+      [build-cache ~]
+    %=  $
+      bill         t.bill
+      res          [[i.bill built-file] res]
+      build-cache  build-cache.build-state
+    ==
+  =/  all-files=(list [path %& page])
+    %+  welp  boilerplate-files:ldb
+    %+  turn  ~(tap by head-snap:(ba [from repo branch ~]))
+    |=  [=path =file]
+    ::  files are stored as `wain`s, and transformed here into atoms.
+    ::   binary files are stored as a length-1 list of the atom's bytes,
+    ::   which is effectively just a %mime, but without the mime-type
+    ::   and file length.
+    ::   here, we just read the file contents from %linedb into `%mime`s
+    ::   and let clay handle the markification:
+    ::   this requires that the files have marks to convert from
+    ::   `%mime` to the respective type
+    =*  file-atom  (of-wain:format file)
+    :+  path  %&
+    [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
+  ?.  |- :: if anything failed then don't commit
+      ?~  vases  %&
+      ?:  =(%| +<.i.vases)
+        ~&  build-failed+app+-.i.vases  %|
+      $(vases t.vases)
+    [~ build-cache]
+  :_  build-cache
+  :^  ~  repo
+    ^-  yoki:clay
+    :+  %&  ~
+    %-  ~(gas by *(map path (each page lobe:clay)))
+    ^-  (list [path %& page])
+    %+  weld  all-files
+    ^-  (list [path %& page])
+    %-  zing
+    %+  turn  vases
+    |=  [=dude:gall vaz=(each vase @t)]
+    ?>  =(%& -.vaz)
+    :~  [/app/[dude]/vase %& %vase p.vaz]
+        [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
+    ==
+  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
 ::
 ::  branch engine
 ::
@@ -394,9 +417,9 @@
       =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~&  %bd^%start^p
       ~|  %error-building^p
-      ?:  (~(has in cycle) build+p)
-        ~|(cycle+file+p^cycle !!)
-      =.  cycle  (~(put in cycle) build+p)
+      :: ?:  (~(has in cycle) build+p)
+      ::   ~|(cycle+file+p^cycle !!)
+      :: =.  cycle  (~(put in cycle) build+p)
       ?>  =(%hoon (rear p))
       =/  file-text=@t   (read-file p)
       =/  file-hash=@ux  (shax file-text)
