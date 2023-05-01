@@ -1,11 +1,6 @@
 /-  *linedb, b=branch
-/+  ldb=linedb
-/+  sss
-/+  default-agent, verb, dbug
+/+  ldb=linedb, sss, default-agent, verb, dbug
 ::
-%-  agent:dbug
-%+  verb  &
-^-  agent:gall
 =>  |%
     +$  versioned-state
       $%  state-0
@@ -16,11 +11,15 @@
           pubs=_(mk-pubs:sss b sss-paths)
           =build-cache
       ==
-    +$  card  $+(card card:agent:gall) :: $+ makes debugging easier here
+    +$  card  $+(card card:agent:gall)
     --
+::
 =|  state-0
 =*  state  -
-=<  |_  =bowl:gall
+=<  %-  agent:dbug
+    %+  verb  &
+    ^-  agent:gall
+    |_  =bowl:gall
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
@@ -28,7 +27,6 @@
               (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
         dub   =/  du  (du:sss b sss-paths)
               (du pubs bowl -:!>(*result:du))
-        ub    ~(. uqb bowl *repo-info build-cache ~)
     ++  on-init  on-init:def
     ++  on-save  !>(state)
     ++  on-load
@@ -90,7 +88,50 @@
         ==
       [cards this]
     ++  on-watch  on-watch:def
-    ++  on-peek   handle-peek:hc
+    ++  on-peek
+      |=  =path
+      ^-  (unit (unit cage))
+      =-  ``noun+!>(-)
+      ?+    path  (on-peek:def path)
+      ::
+          [%x %log @ @tas @tas ~]                          ::  list of all metadata
+        =*  who  (slav %p i.t.t.path)
+        =*  sss  t.t.t.path
+        log:(ba:hc who sss)
+      ::
+          [%x %history @ @tas @tas ~]                      ::  list of all hashes
+        =*  who  (slav %p i.t.t.path)
+        =*  sss  t.t.t.path
+        history:(ba:hc who sss)
+      ::
+          [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
+        =*  who          (slav %p i.t.path)
+        =*  repo                i.t.t.path
+        =*  branch            i.t.t.t.path
+        %-  turn  :_  head
+        ?-  hash=i.t.t.t.t.path
+          %head  ~(tap by head-snap:(ba:hc who [repo branch ~]))
+          @      ~(tap by (get-snap:(ba:hc who [repo branch ~]) (slav %ux hash)))
+        ==
+      ::
+          [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
+        =*  who  (slav %p i.t.path)
+        =*  repo        i.t.t.path
+        =*  branch    i.t.t.t.path
+        =*  file    t.t.t.t.t.path
+        ?-  hash=i.t.t.t.t.path
+          %head  (head-file:(ba:hc who [repo branch ~]) file)
+          @      (get-file:(ba:hc who [repo branch ~]) (slav %ux hash) file)
+        ==
+      ::
+          [%x %build-result @ ~]
+        =*  file-hash=@ux  (slav %ux i.t.t.path)
+        :^  ~  ~  %uqbuild-update
+        !>  ^-  update
+        :-  %build
+        ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
+        [%| (crip "build not found for file-hash {<file-hash>}")]
+      ==
     ++  on-arvo
       |=  [=wire sign=sign-arvo]
       ^-  (quip card:agent:gall _this)
@@ -183,10 +224,10 @@
         %.  /app/[i.bill.act]/hoon
         %~  build-file  ub:(ba [from repo branch ~]:act)
         [build-cache ~]
-      %=    $
-          bill.act     t.bill.act
-          res          [[i.bill.act built-file] res]
-          build-cache  build-cache.build-state
+      %=  $
+        bill.act     t.bill.act
+        res          [[i.bill.act built-file] res]
+        build-cache  build-cache.build-state
       ==
     =/  all-files=(list [path %& page])        
       %+  murn  ~(tap by head-snap:(ba [from repo branch ~]:act))
@@ -208,8 +249,6 @@
       :+  %&  ~
       %-  ~(gas by *(map path (each page lobe:clay)))
       ^-  (list [path %& page])
-      %+  weld  boilerplate-files:ldb
-      %+  weld  [/desk/bill %& %bill bill.act]~
       %+  weld  all-files
       ^-  (list [path %& page])
       %-  zing
@@ -244,64 +283,17 @@
     ==
   ==
 ::
-++  handle-peek
-  |=  =path
-  ^-  (unit (unit cage))
-  =-  ``noun+!>(-)
-  =;  peek-result
-    ?:  ?=(%| -.peek-result)
-      ((slog p.peek-result) ~)
-    `p.peek-result
-  %-  mule
-  |.
-  ?+    path  !!
-  ::
-      [%x %log @ @tas @tas ~]                          ::  list of all metadata
-    =*  who  (slav %p i.t.t.path)
-    =*  sss  t.t.t.path
-    log:(ba who sss)
-  ::
-      [%x %history @ @tas @tas ~]                      ::  list of all hashes
-    =*  who  (slav %p i.t.t.path)
-    =*  sss  t.t.t.path
-    history:(ba who sss)
-  ::
-      [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
-    =*  who          (slav %p i.t.path)
-    =*  repo                i.t.t.path
-    =*  branch            i.t.t.t.path
-    %-  turn  :_  head
-    ?-  hash=i.t.t.t.t.path
-      %head  ~(tap by head-snap:(ba who [repo branch ~]))
-      @      ~(tap by (get-snap:(ba who [repo branch ~]) (slav %ux hash)))
-    ==
-  ::
-      [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
-    =*  who  (slav %p i.t.path)
-    =*  repo        i.t.t.path
-    =*  branch    i.t.t.t.path
-    =*  file    t.t.t.t.t.path
-    ?-  hash=i.t.t.t.t.path
-      %head  (head-file:(ba who [repo branch ~]) file)
-      @      (get-file:(ba who [repo branch ~]) (slav %ux hash) file)
-    ==
-  ::
-      [%x %build-result @ ~]
-    =*  file-hash=@ux  (slav %ux i.t.t.path)
-    :^  ~  ~  %uqbuild-update
-    !>  ^-  update
-    :-  %build
-    ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
-    [%| (crip "build not found for file-hash {<file-hash>}")]
-  ==
-::
 ::  branch engine
 ::
 ++  ba
   |=  [from=@p ban=sss-paths]
   =+  ?:  =(from our.bowl)
-        rock:(~(got by read:dub) ban)
-      rock:(~(got by read:dab) from %linedb ban)
+        :: TODO not sure if having a bunt is actually good here
+        ::   because we didn't actually create the publication
+        ?~  got=(~(get by read:dub) ban)  *branch
+        rock:u.got
+      ?~  got=(~(get by read:dab) from %linedb ban)  *branch
+      rock:u.got
   =*  branch  -
   ::
   |%
