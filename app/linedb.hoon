@@ -373,10 +373,10 @@
       ^-  [(each vase @t) ^build-state]
       =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~&  %bd^%start^p
-      ~|  %error-building^p  :: TODO
-      :: ?:  (~(has in cycle) build+p)
-      ::   ~|(cycle+file+p^cycle !!)  :: TODO
-      :: =.  cycle  (~(put in cycle) build+p)
+      ~|  %error-building^p
+      ?:  (~(has in cycle) build+p)
+        ~|(cycle+file+p^cycle !!)
+      =.  cycle  (~(put in cycle) build+p)
       ?>  =(%hoon (rear p))
       =/  file-text=@t   (read-file p)
       =/  file-hash=@ux  (shax file-text)
