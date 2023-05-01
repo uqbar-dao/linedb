@@ -99,24 +99,12 @@
         =*  sss  t.t.t.path
         log:(ba:hc who sss)
       ::
-          [%x ~]                                           ::  list all repos
-        =/  locals=(list [ship sss-paths])
-          %+  turn  ~(tap by read:dub)
-          |=  [=sss-paths *]
-          [our.bowl sss-paths]
-        =/  remotes=(list [ship sss-paths])
-          %+  turn  ~(tap by read:dab)
-          |=  [[=ship * =sss-paths] *]
-          [ship sss-paths]
-        (weld locals remotes)
+          [%x ~]  ~(tap by ~(key by all-rocks:hc))         ::  list all repos
       ::
           [%x @ ~]                                         ::  repos of ship
         =/  who  (slav %p i.t.path)
-        ?:  =(who our.bowl)
-          %+  turn  ~(tap by read:dub)
-          |=([=sss-paths *] sss-paths)
-        %+  murn  ~(tap by read:dab)
-        |=  [[=ship * =sss-paths] *]
+        %+  murn  ~(tap by all-rocks:hc)
+        |=  [[=ship =sss-paths] *]
         ?:(=(ship who) `sss-paths ~)
       ::
           [%x @ @tas ~]                                    ::  branches of repo
@@ -125,13 +113,9 @@
         ::   repos "real"?
         =/  who  (slav %p i.t.path)
         =*  repo  i.t.t.path
-        ?:  =(who our.bowl)
-          %+  murn  ~(tap by read:dub)
-          |=  [p=sss-paths *]
-          ?:(=(-.p repo) `p ~)
-        %+  murn  ~(tap by read:dab)
-        |=  [[=ship * p=sss-paths] *]
-        ?:(&(=(ship who) =(-.p repo)) `p ~)
+        %+  murn  ~(tap by all-rocks:hc)
+        |=  [[=ship =sss-paths] *]
+        ?:(&(=(ship who) =(-.sss-paths repo)) `sss-paths ~)
       ::
           [%x @ @tas @tas ~]                               ::  log of branch
         =*  who  (slav %p i.t.path)
@@ -181,6 +165,21 @@
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     dub  =/  du  (du:sss b sss-paths)
          (du pubs bowl -:!>(*result:du))
+::
+++  all-rocks
+  ^-  (map [ship sss-paths] rock:b)
+  %-  %~  uni  by
+      ::  pubs
+      %-  ~(gas by *(map [ship sss-paths] rock:b))
+      %+  turn  ~(tap by read:dub)
+      |=  [=sss-paths * =rock:b]
+      [[our.bowl sss-paths] rock]
+  ::  subs
+  %-  ~(gas by *(map [ship sss-paths] rock:b))
+  %+  turn  ~(tap by read:dab)
+  |=  [[=ship * =sss-paths] * * =rock:b]
+  [[ship sss-paths] rock]
+::
 ++  handle-action
   |=  act=action
   ^-  (quip card _state)
@@ -321,13 +320,7 @@
 ::
 ++  ba
   |=  [from=@p ban=sss-paths]
-  =+  ?:  =(from our.bowl)
-        :: TODO not sure if having a bunt is actually good here
-        ::   because we didn't actually create the publication
-        ?~  got=(~(get by read:dub) ban)  *branch
-        rock:u.got
-      ?~  got=(~(get by read:dab) from %linedb ban)  *branch
-      rock:u.got
+  =+  (~(gut by all-rocks) [from ban] *branch) :: not sure if +gut is good here
   =*  branch  -
   ::
   |%
