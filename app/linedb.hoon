@@ -99,9 +99,43 @@
         =*  sss  t.t.t.path
         log:(ba:hc who sss)
       ::
-          [%x %history @ @tas @tas ~]                      ::  list of all hashes
-        =*  who  (slav %p i.t.t.path)
-        =*  sss  t.t.t.path
+          [%x ~]                                           ::  list all repos
+        =/  locals=(list [ship sss-paths])
+          %+  turn  ~(tap by read:dub)
+          |=  [=sss-paths *]
+          [our.bowl sss-paths]
+        =/  remotes=(list [ship sss-paths])
+          %+  turn  ~(tap by read:dab)
+          |=  [[=ship * =sss-paths] *]
+          [ship sss-paths]
+        (weld locals remotes)
+      ::
+          [%x @ ~]                                         ::  repos of ship
+        =/  who  (slav %p i.t.path)
+        ?:  =(who our.bowl)
+          %+  turn  ~(tap by read:dub)
+          |=([=sss-paths *] sss-paths)
+        %+  murn  ~(tap by read:dab)
+        |=  [[=ship * =sss-paths] *]
+        ?:(=(ship who) `sss-paths ~)
+      ::
+          [%x @ @tas ~]                                    ::  branches of repo
+        :: TODO this is not easy the way we have it set up with +ba
+        ::   makes me think maybe we should do a refactor to make
+        ::   repos "real"?
+        =/  who  (slav %p i.t.path)
+        =*  repo  i.t.t.path
+        ?:  =(who our.bowl)
+          %+  murn  ~(tap by read:dub)
+          |=  [p=sss-paths *]
+          ?:(=(-.p repo) `p ~)
+        %+  murn  ~(tap by read:dab)
+        |=  [[=ship * p=sss-paths] *]
+        ?:(&(=(ship who) =(-.p repo)) `p ~)
+      ::
+          [%x @ @tas @tas ~]                               ::  log of branch
+        =*  who  (slav %p i.t.path)
+        =*  sss  t.t.path
         history:(ba:hc who sss)
       ::
           [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
