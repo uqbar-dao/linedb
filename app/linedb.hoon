@@ -1,5 +1,5 @@
 /-  *linedb, bur=branch
-/+  ldb=linedb, bil=branch, sss, default-agent, verb, dbug
+/+  ldb=linedb, bil=branch, ub=uqbuild, sss, default-agent, verb, dbug
 ::
 =>  |%
     +$  versioned-state
@@ -9,7 +9,7 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          =build-cache
+          cache=(map @ux vase)
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -142,7 +142,7 @@
         :^  ~  ~  %uqbuild-update
         !>  ^-  update
         :-  %build
-        ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
+        ?^  build=(~(get by cache) file-hash)  [%& u.build]
         [%| (crip "build not found for file-hash {<file-hash>}")]
       ==
     ::
@@ -223,18 +223,18 @@
     [cards state]
   ::
       %install
-    :: =^  vases=(list [dude:gall (each vase @t)])  build-cache
+    :: =^  vases=(list [dude:gall (each vase @t)])  cache
     ::   =|  res=(list [dude:gall (each vase @t)])
     ::   |-
-    ::   ?~  bill.act  [res build-cache]
+    ::   ?~  bill.act  [res cache]
     ::   =/  [built-file=(each vase @t) =build-state]
     ::     %.  /app/[i.bill.act]/hoon
     ::     %~  build-file  ub:(ba-core [from repo branch ~]:act)
-    ::     [build-cache ~]
+    ::     [cache ~]
     ::   %=  $
     ::     bill.act     t.bill.act
     ::     res          [[i.bill.act built-file] res]
-    ::     build-cache  build-cache.build-state
+    ::     cache  cache.build-state
     ::   ==
     :: =/  all-files=(list [path %& page])        
     ::   %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
@@ -274,26 +274,23 @@
     `state
   ::
       %build
-    :: =/  [built-file=(each vase @t) =build-state]
-    ::   %.  file.act
-    ::   %~  build-file  ub:(ba-core [from repo branch ~]:act)
-    ::   [build-cache ~]
-    :: :_  state(build-cache build-cache.build-state)
-    :: ?~  poke-src.act  ~
-    :: :_  ~
-    :: ?-    -.poke-src.act
-    ::     %app
-    ::   :^  %pass  /pokeback/[p.poke-src.act]  %agent
-    ::   :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
-    ::   !>(`update`[%build built-file])
-    :: ::
-    ::     %ted
-    ::   :^  %pass  /pokeback/[p.poke-src.act]  %agent
-    ::   :^  [our.bowl %spider]  %poke  %spider-input
-    ::   !>  ^-  [@tatid cage]
-    ::   :+  p.poke-src.act  %linedb-update
-    ::   !>(`update`[%build built-file])
-    :: ==
-    `state
+    =/  [built-file=(each vase @t) =build-state]
+      (~(build-file ub [*snap cache ~]) file.act)
+    :_  state(cache cache.build-state)
+    ?~  poke-src.act  ~
+    :_  ~
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+      !>(`update`[%build built-file])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %linedb-update
+      !>(`update`[%build built-file])
+    ==
   ==
 --

@@ -24,12 +24,6 @@
 ::
 ::  uqbuild structures
 ::
-+$  build-cache  (map @ux vase)
-::
-+$  seen-file
-  $%  [%build =path]
-  ==
-::
 +$  poke-src
   $@  ~
   $%  [%app p=@tas]
@@ -38,8 +32,8 @@
 ::
 +$  build-state
   $:  =snap
-      =build-cache
-      cycle=(set seen-file)
+      cache=(map @ux vase)
+      cycle=(set path)
   ==
 ::
 +$  action

@@ -1,38 +1,40 @@
 /-  *linedb
 ::
-|_  =build-state
-++  read-file  |=(=path (~(gut by snap) path *file))
+|_  bus=build-state
+++  read-file
+  |=  =path
+  (of-wain:format (~(gut by snap.bus) path *file))
 ++  build-dependency
   |=  dep=(each [dir=path fil=path] path)
-  ^-  [(each vase @t) ^build-state]
+  ^-  [(each vase @t) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
   ~&  %bd^%start^p
   ~|  %error-building^p
-  ?:  (~(has in cycle) build+p)
-    ~|(cycle+file+p^cycle !!)
-  =.  cycle  (~(put in cycle) build+p)
+  ?:  (~(has in cycle.bus) p)
+    ~|(cycle+file+p^cycle.bus !!)
+  =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
-  ?^  cax=(~(get by build-cache) file-hash)
-    [%&^u.cax build-state]
+  ?^  cax=(~(get by cache.bus) file-hash)
+    [%&^u.cax bus]
   =/  =pile:clay  (parse-pile p (trip file-text))
-  =^  subject=vase  build-state  (run-prelude pile)
+  =^  subject=vase  bus  (run-prelude pile)
   =/  build-result  (mule |.((slap subject hoon.pile)))
   ?:  ?=(%| -.build-result)
-    :_  build-state
+    :_  bus
     :-  %|
     %-  of-wain:format
     %+  turn  p.build-result
     |=(=tank (crip ~(ram re tank)))
-  =.  build-cache
-    (~(put by build-cache) file-hash p.build-result)
+  =.  cache.bus
+    (~(put by cache.bus) file-hash p.build-result)
   ~&  %bd^%done^p
-  [%&^p.build-result build-state]
+  [%&^p.build-result bus]
 ::
 ++  build-file
   |=  =path
-  ^-  [(each vase @t) ^build-state]
+  ^-  [(each vase @t) build-state]
   (build-dependency |+path)
 ::
 ++  parse-pile
@@ -129,37 +131,37 @@
 ::
 ++  run-prelude
   |=  =pile:clay
-  ^-  [vase ^build-state]
+  ^-  [vase build-state]
   =/  sut=vase  !>(..zuse)  :: TODO: cache?
-  =^  sut=vase  build-state  (run-tauts sut %sur sur.pile)  ::  /-
-  =^  sut=vase  build-state  (run-tauts sut %lib lib.pile)  ::  /+
-  =^  sut=vase  build-state  (run-tis sut raw.pile)         ::  /=
-  =^  sut=vase  build-state  (run-tar sut bar.pile)         ::  /*
-  [sut build-state]
+  =^  sut=vase  bus  (run-tauts sut %sur sur.pile)  ::  /-
+  =^  sut=vase  bus  (run-tauts sut %lib lib.pile)  ::  /+
+  =^  sut=vase  bus  (run-tis sut raw.pile)         ::  /=
+  =^  sut=vase  bus  (run-tar sut bar.pile)         ::  /*
+  [sut bus]
 ::
 ++  run-tauts
   |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
-  ^-  [vase ^build-state]
-  ?~  taz  [sut build-state]
-  =^  pin=(each vase @t)  build-state  (build-fit wer pax.i.taz)
+  ^-  [vase build-state]
+  ?~  taz  [sut bus]
+  =^  pin=(each vase @t)  bus  (build-fit wer pax.i.taz)
   ?:  ?=(%| -.pin)  ~&  'build-failed'  $(taz t.taz)
   =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
   $(sut (slop p.pin sut), taz t.taz)
 ::
 ++  run-tis
   |=  [sut=vase raw=(list [face=term =path])]
-  ^-  [vase ^build-state]
-  ?~  raw  [sut build-state]
-  =^  pin=(each vase @t)  build-state  (build-file (snoc path.i.raw %hoon))
+  ^-  [vase build-state]
+  ?~  raw  [sut bus]
+  =^  pin=(each vase @t)  bus  (build-file (snoc path.i.raw %hoon))
   ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
   =.  p.p.pin  [%face face.i.raw p.p.pin]
   $(sut (slop p.pin sut), raw t.raw)
 ::
 ++  run-tar  :: TODO extremely ugly
   |=  [sut=vase bar=(list [face=term =mark =path])]
-  ^-  [vase ^build-state]
+  ^-  [vase build-state]
   ~|  "uqbuild: cannot import {<mark>} with /*"
-  ?~  bar  [sut build-state]
+  ?~  bar  [sut bus]
   ?>  =((rear path.i.bar) mark.i.bar)
   =/  =cage
     ?+  mark.i.bar  !!  :: TODO other marks
@@ -173,7 +175,7 @@
 ::
 ++  build-fit
   |=  [pre=@tas pax=@tas]
-  ^-  [(each vase @t) ^build-state]
+  ^-  [(each vase @t) build-state]
   (build-file (fit-path pre pax))
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
@@ -189,7 +191,7 @@
   ?~  paz
     ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
   =/  pux=path  pre^(snoc i.paz %hoon)
-  ?:  (~(has by head-snap) pux)
+  ?:  (~(has by snap.bus) pux)
     pux
   $(paz t.paz)
 --
