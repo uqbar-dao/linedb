@@ -180,7 +180,7 @@
 ::
 ++  ba-core
   |=  [who=@p pax=sss-paths]
-  =;  ban  (ba:bil ban)
+  =;  ban  bil(branch ban)
   (~(gut by all-rocks) [who pax] *branch)
 ::
 ++  handle-action
@@ -223,75 +223,77 @@
     [cards state]
   ::
       %install
-    =^  vases=(list [dude:gall (each vase @t)])  build-cache
-      =|  res=(list [dude:gall (each vase @t)])
-      |-
-      ?~  bill.act  [res build-cache]
-      =/  [built-file=(each vase @t) =build-state]
-        %.  /app/[i.bill.act]/hoon
-        %~  build-file  ub:(ba-core [from repo branch ~]:act)
-        [build-cache ~]
-      %=  $
-        bill.act     t.bill.act
-        res          [[i.bill.act built-file] res]
-        build-cache  build-cache.build-state
-      ==
-    =/  all-files=(list [path %& page])        
-      %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
-      |=  [=path =file]
-      ?.  =(%hoon (rear path))  ~
-      `[path %& %hoon (of-wain:format file)]
-    :_  state
-    ?.  |- :: if anything failed then don't commit
-        ?~  vases  %&
-        ?:  =(%| +<.i.vases)
-          ~&  build-failed+app+-.i.vases  %|
-        $(vases t.vases)
-      ~
-    :_  ~
-    :^  %pass  /  %arvo
-    :-  %c
-    :^  %park  repo.act
-      ^-  yoki:clay
-      :+  %&  ~
-      %-  ~(gas by *(map path (each page lobe:clay)))
-      ^-  (list [path %& page])
-      %+  weld  all-files
-      ^-  (list [path %& page])
-      %-  zing
-      %+  turn  vases
-      |=  [=dude:gall vaz=(each vase @t)]
-      ?>  =(%& -.vaz)
-      :~  [/app/[dude]/vase %& %vase p.vaz]
-          :^  /app/[dude]/hoon  %&  %hoon 
-          %-  crip
-          """
-          /*  built  %vase  {<`path`/app/[dude]/vase>}
-          !<(agent:gall built)
-          """
-      ==
-    .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+    :: =^  vases=(list [dude:gall (each vase @t)])  build-cache
+    ::   =|  res=(list [dude:gall (each vase @t)])
+    ::   |-
+    ::   ?~  bill.act  [res build-cache]
+    ::   =/  [built-file=(each vase @t) =build-state]
+    ::     %.  /app/[i.bill.act]/hoon
+    ::     %~  build-file  ub:(ba-core [from repo branch ~]:act)
+    ::     [build-cache ~]
+    ::   %=  $
+    ::     bill.act     t.bill.act
+    ::     res          [[i.bill.act built-file] res]
+    ::     build-cache  build-cache.build-state
+    ::   ==
+    :: =/  all-files=(list [path %& page])        
+    ::   %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
+    ::   |=  [=path =file]
+    ::   ?.  =(%hoon (rear path))  ~
+    ::   `[path %& %hoon (of-wain:format file)]
+    :: :_  state
+    :: ?.  |- :: if anything failed then don't commit
+    ::     ?~  vases  %&
+    ::     ?:  =(%| +<.i.vases)
+    ::       ~&  build-failed+app+-.i.vases  %|
+    ::     $(vases t.vases)
+    ::   ~
+    :: :_  ~
+    :: :^  %pass  /  %arvo
+    :: :-  %c
+    :: :^  %park  repo.act
+    ::   ^-  yoki:clay
+    ::   :+  %&  ~
+    ::   %-  ~(gas by *(map path (each page lobe:clay)))
+    ::   ^-  (list [path %& page])
+    ::   %+  weld  all-files
+    ::   ^-  (list [path %& page])
+    ::   %-  zing
+    ::   %+  turn  vases
+    ::   |=  [=dude:gall vaz=(each vase @t)]
+    ::   ?>  =(%& -.vaz)
+    ::   :~  [/app/[dude]/vase %& %vase p.vaz]
+    ::       :^  /app/[dude]/hoon  %&  %hoon 
+    ::       %-  crip
+    ::       """
+    ::       /*  built  %vase  {<`path`/app/[dude]/vase>}
+    ::       !<(agent:gall built)
+    ::       """
+    ::   ==
+    :: .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+    `state
   ::
       %build
-    =/  [built-file=(each vase @t) =build-state]
-      %.  file.act
-      %~  build-file  ub:(ba-core [from repo branch ~]:act)
-      [build-cache ~]
-    :_  state(build-cache build-cache.build-state)
-    ?~  poke-src.act  ~
-    :_  ~
-    ?-    -.poke-src.act
-        %app
-      :^  %pass  /pokeback/[p.poke-src.act]  %agent
-      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
-      !>(`update`[%build built-file])
-    ::
-        %ted
-      :^  %pass  /pokeback/[p.poke-src.act]  %agent
-      :^  [our.bowl %spider]  %poke  %spider-input
-      !>  ^-  [@tatid cage]
-      :+  p.poke-src.act  %linedb-update
-      !>(`update`[%build built-file])
-    ==
+    :: =/  [built-file=(each vase @t) =build-state]
+    ::   %.  file.act
+    ::   %~  build-file  ub:(ba-core [from repo branch ~]:act)
+    ::   [build-cache ~]
+    :: :_  state(build-cache build-cache.build-state)
+    :: ?~  poke-src.act  ~
+    :: :_  ~
+    :: ?-    -.poke-src.act
+    ::     %app
+    ::   :^  %pass  /pokeback/[p.poke-src.act]  %agent
+    ::   :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+    ::   !>(`update`[%build built-file])
+    :: ::
+    ::     %ted
+    ::   :^  %pass  /pokeback/[p.poke-src.act]  %agent
+    ::   :^  [our.bowl %spider]  %poke  %spider-input
+    ::   !>  ^-  [@tatid cage]
+    ::   :+  p.poke-src.act  %linedb-update
+    ::   !>(`update`[%build built-file])
+    :: ==
+    `state
   ==
 --

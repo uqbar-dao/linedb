@@ -37,7 +37,8 @@
   ==
 ::
 +$  build-state
-  $:  =build-cache
+  $:  =snap
+      =build-cache
       cycle=(set seen-file)
   ==
 ::
