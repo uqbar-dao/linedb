@@ -1,5 +1,5 @@
-/-  *linedb, b=branch
-/+  ldb=linedb, sss, default-agent, verb, dbug
+/-  *linedb, bur=branch
+/+  ldb=linedb, bil=branch, ub=uqbuild, sss, default-agent, verb, dbug
 ::
 =>  |%
     +$  versioned-state
@@ -7,9 +7,9 @@
       ==
     +$  state-0
       $:  %0
-          subs=_(mk-subs:sss b sss-paths)
-          pubs=_(mk-pubs:sss b sss-paths)
-          =build-cache
+          subs=_(mk-subs:sss bur sss-paths)
+          pubs=_(mk-pubs:sss bur sss-paths)
+          cache=(map @ux vase)
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -23,9 +23,9 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
-        dab   =/  da  (da:sss b sss-paths)
+        dab   =/  da  (da:sss bur sss-paths)
               (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-        dub   =/  du  (du:sss b sss-paths)
+        dub   =/  du  (du:sss bur sss-paths)
               (du pubs bowl -:!>(*result:du))
     ++  on-init  on-init:def
     ++  on-save  !>(state)
@@ -121,11 +121,6 @@
       =-  ``noun+!>(-)
       ?+    path  (on-peek:def path)
       ::
-          [%x %log @ @tas @tas ~]                          ::  list of all metadata
-        =*  who  (slav %p i.t.t.path)
-        =*  sss  t.t.t.path
-        log:(ba:hc who sss)
-      ::
           [%x ~]  ~(tap by ~(key by all-rocks:hc))         ::  list all repos
       ::
           [%x @ ~]                                         ::  repos of ship
@@ -147,7 +142,7 @@
           [%x @ @tas @tas ~]                               ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        history:(ba:hc who sss)
+        log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::
           [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
         =*  who          (slav %p i.t.path)
@@ -155,8 +150,8 @@
         =*  branch            i.t.t.t.path
         %-  turn  :_  head
         ?-  hash=i.t.t.t.t.path
-          %head  ~(tap by head-snap:(ba:hc who [repo branch ~]))
-          @      ~(tap by (get-snap:(ba:hc who [repo branch ~]) (slav %ux hash)))
+          %head  ~(tap by head-snap:(ba-core:hc who [repo branch ~]))
+          @      ~(tap by (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash)))
         ==
       ::
           [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
@@ -165,8 +160,8 @@
         =*  branch    i.t.t.t.path
         =*  file    t.t.t.t.t.path
         ?-  hash=i.t.t.t.t.path
-          %head  (head-file:(ba:hc who [repo branch ~]) file)
-          @      (get-file:(ba:hc who [repo branch ~]) (slav %ux hash) file)
+          %head  (head-file:(ba-core:hc who [repo branch ~]) file)
+          @      (get-file:(ba-core:hc who [repo branch ~]) (slav %ux hash) file)
         ==
       ::
           [%x %build-result @ ~]
@@ -174,7 +169,7 @@
         :^  ~  ~  %uqbuild-update
         !>  ^-  update
         :-  %build
-        ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
+        ?^  build=(~(get by cache) file-hash)  [%& u.build]
         [%| (crip "build not found for file-hash {<file-hash>}")]
       ==
     ::
@@ -188,24 +183,30 @@
     --
 ::
 |_  =bowl:gall
-+*  dab  =/  da  (da:sss b sss-paths)
++*  dab  =/  da  (da:sss bur sss-paths)
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    dub  =/  du  (du:sss b sss-paths)
+    dub  =/  du  (du:sss bur sss-paths)
          (du pubs bowl -:!>(*result:du))
-::
 ++  all-rocks
-  ^-  (map [ship sss-paths] rock:b)
+  ^-  (map [ship sss-paths] rock:bur)
   %-  %~  uni  by
       ::  pubs
-      %-  ~(gas by *(map [ship sss-paths] rock:b))
+      %-  ~(gas by *(map [ship sss-paths] rock:bur))
       %+  turn  ~(tap by read:dub)
-      |=  [=sss-paths * =rock:b]
+      |=  [=sss-paths * =rock:bur]
       [[our.bowl sss-paths] rock]
   ::  subs
-  %-  ~(gas by *(map [ship sss-paths] rock:b))
+  %-  ~(gas by *(map [ship sss-paths] rock:bur))
   %+  turn  ~(tap by read:dab)
-  |=  [[=ship * =sss-paths] * * =rock:b]
+  |=  [[=ship * =sss-paths] * * =rock:bur]
   [[ship sss-paths] rock]
+::
+::  see +branch
+::
+++  ba-core
+  |=  [who=@p pax=sss-paths]
+  =;  ban  bil(branch ban)
+  (~(gut by all-rocks) [who pax] *branch)
 ::
 ++  handle-action
   |=  act=action
@@ -216,51 +217,25 @@
       (give:dub [repo branch ~]:act %commit our.bowl now.bowl snap.act)
     [cards state]
   ::
-      %delete
-    =^  cards  pubs  (give:dub [repo branch ~]:act [%delete ~])
-    =.  pubs  (kill:dub [repo branch ~]:act ~)
-    =.  pubs  (wipe:dub [repo branch ~]:act)
+      %merge
+    =^  cards  pubs
+      %+  give:dub  [repo branch ~]:act
+      :^  %merge  our.bowl  now.bowl
+      (~(got by all-rocks) [host repo incoming ~]:act)
+    [cards state]
+  ::
+      %squash
+    =^  cards  pubs  (give:dub [repo branch ~]:act squash+hash.act)
     [cards state]
   ::
       %reset
     =^  cards  pubs  (give:dub [repo branch ~]:act reset+hash.act)
     [cards state]
   ::
-      %merge
-    =/  ali  (ba our.bowl [repo branch ~]:act)
-    =/  bob  (ba from.act [repo incoming ~]:act)
-    =/  base=hash
-      =/  boh        history:bob
-      =/  alh  (silt history:ali)
-      |-
-      ?~  boh
-        ~|("%linedb: merge: no common base for {<branch.act>} and {<incoming.act>}" !!)
-      ?:  (~(has in alh) i.boh)
-        i.boh
-      $(boh t.boh)
-    =/  ali-diffs=(map path diff)
-      %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.ali) base)
-        snap:(~(got by hash-index.ali) head.ali)
-    =/  bob-diffs=(map path diff)
-      %+  diff-snaps:di:ldb
-        snap:(~(got by hash-index.bob) base)
-        snap:(~(got by hash-index.bob) head.bob)
-    =/  diffs=(map path diff)
-      %-  ~(urn by (~(uni by ali-diffs) bob-diffs))
-      |=  [=path *]
-      ^-  diff
-      %+  three-way-merge:di:ldb
-        [branch.act (~(gut by ali-diffs) path *diff)]
-      [incoming.act (~(gut by bob-diffs) path *diff)]
-    =/  new-snap=snap
-      ?@  commits.ali  *snap
-      %-  ~(urn by snap.i.commits.ali)
-      |=  [=path =file]
-      =+  dif=(~(got by diffs) path)
-      (apply-diff:di:ldb file dif)
-    =^  cards  pubs
-      (give:dub [repo branch ~]:act %commit our.bowl now.bowl new-snap)
+      %delete
+    =^  cards  pubs  (give:dub [repo branch ~]:act [%delete ~])
+    =.  pubs  (kill:dub [repo branch ~]:act ~)
+    =.  pubs  (wipe:dub [repo branch ~]:act)
     [cards state]
   ::
       %branch
@@ -276,15 +251,26 @@
     [cards state]
   ::
       %install
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  build-cache
-      (build-park [from repo branch bill]:act)
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =+  !<  bill=(list dude:gall)
+        %+  slap  !>(~)
+        %-  ream
+        %-  of-wain:format
+        (~(gut by snap) /desk/bill ~)
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap repo.act bill)
     :_  state
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
   ::
       %make-install-args
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  build-cache
-      (build-park [from repo branch bill]:act)
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap [repo bill]:act)
     :_  state
     ?~  poke-src.act  ~
     :_  ~
@@ -305,9 +291,11 @@
       %build
     =/  [built-file=(each vase @t) =build-state]
       %.  file.act
-      %~  build-file  ub:(ba [from repo branch ~]:act)
-      [build-cache ~]
-    :_  state(build-cache build-cache.build-state)
+      %~  build-file  ub
+      :_  [cache ~]
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    :_  state(cache cache.build-state)
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
@@ -326,24 +314,22 @@
   ==
 ::
 ++  build-park
-  |=  $:  from=@p
-          repo=@tas
-          branch=@tas
+  |=  $:  =snap
+          desk-name=@tas
           bill=(list dude:gall)
       ==
-  ^-  [(each [@tas yoki:clay rang:clay] @t) _build-cache]
-  =^  vases=(list [dude:gall (each vase @t)])  build-cache
+  ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
+  =^  vases=(list [dude:gall (each vase @t)])  cache
     =|  res=(list [dude:gall (each vase @t)])
     |-
-    ?~  bill  [res build-cache]
+    ?~  bill  [res cache]
     =/  [built-file=(each vase @t) =build-state]
       %.  /app/[i.bill]/hoon
-      %~  build-file  ub:(ba [from repo branch ~])
-      [build-cache ~]
+      ~(build-file ub snap cache ~)
     %=  $
-      bill         t.bill
-      res          [[i.bill built-file] res]
-      build-cache  build-cache.build-state
+      bill   t.bill
+      res    [[i.bill built-file] res]
+      cache  cache.build-state
     ==
   =/  did-vase-build-succeed=(each ~ @t)
     |- :: if anything failed then don't commit
@@ -352,12 +338,12 @@
       ~&  build-failed+app+-.i.vases  [%| -.i.vases]
     $(vases t.vases)
   ?:  ?=(%| -.did-vase-build-succeed)
-    :_  build-cache
+    :_  cache
     :-  %|
     (cat 3 'linedb: build failed for app ' p.did-vase-build-succeed)
   =/  all-files=(list [path %& page])
     %+  welp  boilerplate-files:ldb
-    %+  turn  ~(tap by head-snap:(ba [from repo branch ~]))
+    %+  turn  ~(tap by snap)
     |=  [=path =file]
     ::  files are stored as `wain`s, and transformed here into atoms.
     ::   binary files are stored as a length-1 list of the atom's bytes,
@@ -370,8 +356,8 @@
     =*  file-atom  (of-wain:format file)
     :+  path  %&
     [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
-  :_  build-cache
-  :^  %&  repo
+  :_  cache
+  :^  %&  desk-name
     ^-  yoki:clay
     :+  %&  ~
     %-  ~(gas by *(map path (each page lobe:clay)))
@@ -386,283 +372,4 @@
         [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
     ==
   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
-::
-::  branch engine
-::
-++  ba
-  |=  [from=@p ban=sss-paths]
-  =+  (~(gut by all-rocks) [from ban] *branch) :: not sure if +gut is good here
-  =*  branch  -
-  ::
-  |%
-  ::  read arms
-  ::
-  ++  get-commit   |=(h=hash (~(get by hash-index.branch) h))
-  ++  get-snap     |=(h=hash snap:(need (get-commit h)))
-  ++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
-  ++  get-directory :: TODO this gets a lot more efficient with an +axal
-    |=  [=hash nedl=path]
-    ^-  (list [path file])
-    %+  murn  ~(tap by (get-snap hash))
-    |=  [hstk=path =file]
-    ?.  =(`0 (find nedl hstk))  ~
-    `[hstk file]
-  ::
-  ++  head-commit  ?>(?=(^ commits.branch) i.commits.branch)
-  ++  head-snap    snap:head-commit
-  ++  head-file    |=(p=path (of-wain:format (~(gut by head-snap) p *file)))
-  ++  head-directory
-    |=  nedl=path
-    ^-  (list [path file])
-    %+  murn  ~(tap by head-snap)
-    |=  [hstk=path =file]
-    ?.  =(`0 (find nedl hstk))  ~
-    `[hstk file]
-  ::
-  ++  history          (turn commits.branch |=(=commit hash.commit))
-  ++  log
-    ^-  (list [hash hash @p @da])
-    %+  turn  commits.branch
-    |=(c=commit [hash parent author time]:c)
-  ::
-  ::  uqbuild engine
-  ::
-  ++  ub
-    =|  build-state :: [build-cache=(map @ux vase) cycle=(set seen-file)]
-    =*  build-state  -
-    |%
-    ++  read-file  |=(=path (head-file path))
-    ++  build-dependency
-      |=  dep=(each [dir=path fil=path] path)
-      ^-  [(each vase @t) ^build-state]
-      =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-      ~&  %bd^%start^p
-      ~|  %error-building^p
-      :: ?:  (~(has in cycle) build+p)
-      ::   ~|(cycle+file+p^cycle !!)
-      :: =.  cycle  (~(put in cycle) build+p)
-      ?>  =(%hoon (rear p))
-      =/  file-text=@t   (read-file p)
-      =/  file-hash=@ux  (shax file-text)
-      ?^  cax=(~(get by build-cache) file-hash)
-        [%&^u.cax build-state]
-      =/  =pile:clay  (parse-pile p (trip file-text))
-      =^  subject=vase  build-state  (run-prelude pile)
-      =/  build-result  (mule |.((slap subject hoon.pile)))
-      ?:  ?=(%| -.build-result)
-        :_  build-state
-        :-  %|
-        %-  of-wain:format
-        %+  turn  p.build-result
-        |=(=tank (crip ~(ram re tank)))
-      =.  build-cache
-        (~(put by build-cache) file-hash p.build-result)
-      ~&  %bd^%done^p
-      [%&^p.build-result build-state]
-    ::
-    ++  build-file
-      |=  =path
-      ^-  [(each vase @t) ^build-state]
-      (build-dependency |+path)
-    ::
-    ++  parse-pile
-      |=  [pax=path tex=tape]
-      ^-  pile:clay
-      =/  [=hair res=(unit [=pile:clay =nail])]  ((pile-rule pax) [1 1] tex)
-      ?^  res  pile.u.res
-      %-  mean  %-  flop
-      =/  lyn  p.hair
-      =/  col  q.hair
-      ^-  (list tank)
-      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-        ::
-          =/  =wain  (to-wain:format (crip tex))
-          ?:  (gth lyn (lent wain))
-            '<<end of file>>'
-          (snag (dec lyn) wain)
-        ::
-          leaf+(runt [(dec col) '-'] "^")
-      ==
-    ::
-    ++  pile-rule
-      |=  pax=path
-      %-  full
-      %+  ifix
-        :_  gay
-        ::  parse optional /? and ignore
-        ::
-        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      |^
-      ;~  plug
-        %+  cook  (bake zing (list (list taut:clay)))
-        %+  rune  hep
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  (bake zing (list (list taut:clay)))
-        %+  rune  lus
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
-      ::
-        %+  rune  sig
-        ;~((glue gap) sym wyde:vast stap)
-      ::
-        %+  rune  cen
-        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-      ::
-        %+  rune  buc
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix cen sym)
-        ==
-      ::
-        %+  rune  tar
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix stap)
-        ==
-      ::
-        %+  stag  %tssg
-        (most gap tall:(vang & pax))
-      ==
-      ::
-      ++  pant
-        :: |*  fel=^rule
-        |*  fel=rule
-        ;~(pose fel (easy ~))
-      ::
-      ++  mast
-        :: |*  [bus=^rule fel=^rule]
-        |*  [bus=rule fel=rule]
-        ;~(sfix (more bus fel) bus)
-      ::
-      ++  rune
-        :: |*  [bus=^rule fel=^rule]
-        |*  [bus=rule fel=rule]
-        %-  pant
-        %+  mast  gap
-        ;~(pfix fas bus gap fel)
-      --
-    ::
-    ++  taut-rule
-      %+  cook  |=(taut:clay +<)
-      ;~  pose
-        (stag ~ ;~(pfix tar sym))
-        ;~(plug (stag ~ sym) ;~(pfix tis sym))
-        (cook |=(a=term [`a a]) sym)
-      ==
-    ::
-    ++  run-prelude
-      |=  =pile:clay
-      ^-  [vase ^build-state]
-      =/  sut=vase  !>(..zuse)  :: TODO: cache?
-      =^  sut=vase  build-state  (run-tauts sut %sur sur.pile)
-      =^  sut=vase  build-state  (run-tauts sut %lib lib.pile)
-      =^  sut=vase  build-state  (run-raw sut raw.pile)
-      :: =^  sut=vase  build-state  (run-raz sut raz.pile)
-      :: =^  sut=vase  build-state  (run-maz sut maz.pile)
-      :: =^  sut=vase  build-state  (run-caz sut caz.pile)
-      =^  sut=vase  build-state  (run-bar sut bar.pile)
-      [sut build-state]
-    ::
-    ++  run-tauts
-      |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
-      ^-  [vase ^build-state]
-      ?~  taz  [sut build-state]
-      =^  pin=(each vase @t)  build-state  (build-fit wer pax.i.taz)
-      ?:  ?=(%| -.pin)  ~&  'build-failed'  $(taz t.taz)
-      =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
-      $(sut (slop p.pin sut), taz t.taz)
-    ::
-    ++  run-raw
-      |=  [sut=vase raw=(list [face=term =path])]
-      ^-  [vase ^build-state]
-      ?~  raw  [sut build-state]
-      =^  pin=(each vase @t)  build-state  (build-file (snoc path.i.raw %hoon))
-      ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
-      =.  p.p.pin  [%face face.i.raw p.p.pin]
-      $(sut (slop p.pin sut), raw t.raw)
-    :: ::
-    :: ++  run-raz
-    ::   |=  [sut=vase raz=(list [face=term =spec =path])]
-    ::   ^-  [vase state]
-    ::   ?~  raz  [sut build-state]
-    ::   =^  res=(map @ta vase)  build-state
-    ::     (build-directory path.i.raz)
-    ::   =;  pin=vase
-    ::     =.  p.pin  [%face face.i.raz p.pin]
-    ::     $(sut (slop pin sut), raz t.raz)
-    ::   ::
-    ::   =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
-    ::   ::  ensure results nest in the specified type,
-    ::   ::  and produce a homogenous map containing that type.
-    ::   ::
-    ::   :-  %-  ~(play ut p.sut)
-    ::       [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
-    ::   |-
-    ::   ?~  res  ~
-    ::   ?.  (~(nest ut type) | p.q.n.res)
-    ::     ~|  [%nest-fail path.i.raz p.n.res]
-    ::     !!
-    ::   :-  [p.n.res q.q.n.res]
-    ::   [$(res l.res) $(res r.res)]
-    :: ::
-    :: ++  run-maz
-    ::   |=  [sut=vase maz=(list [face=term =mark])]
-    ::   ^-  [vase state]
-    ::   ?~  maz  [sut build-state]
-    ::   =^  pin=vase  build-state  (build-nave mark.i.maz)
-    ::   =.  p.pin  [%face face.i.maz p.pin]
-    ::   $(sut (slop pin sut), maz t.maz)
-    :: ::
-    :: ++  run-caz
-    ::   |=  [sut=vase caz=(list [face=term =mars:clay])]
-    ::   ^-  [vase state]
-    ::   ?~  caz  [sut build-state]
-    ::   =^  pin=vase  build-state  (build-cast mars.i.caz)
-    ::   =.  p.pin  [%face face.i.caz p.pin]
-    ::   $(sut (slop pin sut), caz t.caz)
-    ::
-    ++  run-bar  :: TODO extremely ugly
-      |=  [sut=vase bar=(list [face=term =mark =path])]
-      ^-  [vase ^build-state]
-      ~|  "uqbuild: cannot import {<mark>} with /*"
-      ?~  bar  [sut build-state]
-      ?>  =((rear path.i.bar) mark.i.bar)
-      =/  =cage
-        ?+  mark.i.bar  !!  :: TODO other marks
-          %noun  noun+!>((read-file path.i.bar))
-          %jam   jam+!>((read-file path.i.bar))
-        ==
-      =.  p.q.cage  [%face face.i.bar p.q.cage]
-      $(sut (slop q.cage sut), bar t.bar)
-    ::
-    ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
-    ::
-    ++  build-fit
-      |=  [pre=@tas pax=@tas]
-      ^-  [(each vase @t) ^build-state]
-      (build-file (fit-path pre pax))
-    ::
-    ::  +fit-path: find path, maybe converting '-'s to '/'s
-    ::
-    ::    Try '-' before '/', applied left-to-right through the path,
-    ::    e.g. 'a-foo/bar' takes precedence over 'a/foo-bar'.
-    ::
-    ++  fit-path
-      |=  [pre=@tas pax=@tas]
-      ^-  path
-      =/  paz  (segments:clay pax)
-      |-  ^-  path
-      ?~  paz
-        ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
-      =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by head-snap) pux)
-        pux
-      $(paz t.paz)
-    --
-  --
 --

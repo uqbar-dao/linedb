@@ -2,33 +2,27 @@
 ::
 ::  linedb structures
 ::
-+$  line  @ud
 +$  hash  @ux
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)
 +$  snap  (map path file) :: maybe use $axal and +of
-+$  commit
++$  ceta
   $:  =hash
       parent=hash
       author=@p
       time=@da
+  ==
++$  commit
+  $:  =ceta
       =snap
   ==
 +$  branch
-  $:  head=hash
-      commits=(list commit) :: TODO ((mop @da commit) gth)
-      :: TODO label-index=(map label commit)
-      hash-index=(map hash commit)
+  $:  log=(list ceta)
+      commits=(map hash commit)
   ==
 ++  sss-paths  ,[@tas @tas ~] :: /repo/branch
 ::
 ::  uqbuild structures
-::
-+$  build-cache  (map @ux vase)
-::
-+$  seen-file
-  $%  [%build =path]
-  ==
 ::
 +$  poke-src
   $@  ~
@@ -37,30 +31,32 @@
   ==
 ::
 +$  build-state
-  $:  =build-cache
-      cycle=(set seen-file)
+  $:  =snap
+      cache=(map @ux vase)
+      cycle=(set path)
   ==
 ::
 +$  action
   $%  ::  %linedb actions
       ::
       [%commit repo=@tas branch=@tas =snap]
+      [%merge from=@p repo=@tas branch=@tas host=@p incoming=@tas]
+      [%squash from=@p repo=@tas branch=@tas =hash]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
-      [%merge from=@p repo=@tas branch=@tas incoming=@tas]
       [%branch from=@p repo=@tas branch=@tas name=@tas]
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
-      [%install from=@p repo=@tas branch=@tas bill=(list dude:gall)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas bill=(list dude:gall) =poke-src]
+      [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
+      [%make-install-args from=@p repo=@tas branch=@tas bill=(list dude:gall) hash=(unit hash) =poke-src]
       $:  %build 
           from=@p
           repo=@tas
           branch=@tas
+          hash=(unit hash)
           file=path
           =poke-src
-          :: commit-hash=(unit @ux)
       ==
   ==
 +$  update

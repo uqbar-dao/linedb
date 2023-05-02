@@ -22,6 +22,7 @@
       --
     --
     '''
+::
 ++  hoon-mark
   '''
   ::::  /hoon/hoon/mar
@@ -74,6 +75,7 @@
   ++  grad  %txt
   --
   '''
+::
 ++  kelvin-mark
   '''
   |_  kal=waft:clay
@@ -105,6 +107,7 @@
   ++  grad  %noun
   --
   '''
+::
 ++  bill-mark
   '''
   |_  bil=(list dude:gall)
@@ -142,6 +145,7 @@
   ++  grad  %noun
   --
   '''
+::
 ++  vase-mark
   '''
   /?    310
@@ -158,6 +162,7 @@
   ++  grad  %noun
   --
   '''
+::
 ++  boilerplate-files
   ^-  (list [path %& page])
   :~  [/sys/kelvin %& %kelvin zuse+zuse]
@@ -167,6 +172,7 @@
       [/mar/bill/hoon %& %hoon bill-mark]
       [/mar/vase/hoon %& %hoon vase-mark]
   ==
+::
 ++  gen-app
   |=  p=path
   ^-  @t
@@ -184,35 +190,34 @@
   ++  apply-diff  |=([=file =diff] (lurk file diff))
   ::
   ++  line-mapping
-    ::  TODO we need a more advanced diff algo if we want individual lines edited...diff could be an (urge tape)
     |=  =diff
-    ^-  (map line line)
-    =|  iold=@ud
-    =|  inew=@ud
-    =|  new-lines=(list (pair line line))
+    ^-  (map @ud @ud)
+    =|  io=@ud  ::  old
+    =|  in=@ud  ::  new
+    =|  new-lines=(list (pair @ud @ud))
     |-
-    ?~  diff  (~(gas by *(map line line)) new-lines)
+    ?~  diff  (~(gas by *(map @ud @ud)) new-lines)
     ?-    -.i.diff
         %&
       %=    $
-          iold  (add iold p.i.diff)
-          inew  (add inew p.i.diff)
+          io  (add io p.i.diff)
+          in  (add in p.i.diff)
           diff  t.diff
           new-lines
         |-
         ?:  =(0 p.i.diff)  new-lines
         %=  $
-          new-lines  [[+(iold) +(inew)] new-lines]
+          new-lines  [[+(io) +(in)] new-lines]
           p.i.diff   (dec p.i.diff)
-          iold       +(iold)
-          inew       +(inew)
+          io       +(io)
+          in       +(in)
         ==
       ==
     ::
         %|
       %=  $
-        iold  (add iold (lent p.i.diff))
-        inew  (add inew (lent q.i.diff))
+        io  (add io (lent p.i.diff))
+        in  (add in (lent q.i.diff))
         diff  t.diff
       ==
     ==
@@ -437,13 +442,14 @@
     ~
   ::
   ++  merge
-    ^-  $-(json [@p @tas @tas @tas])
+    ^-  $-(json [@p @tas @tas @p @tas])
     %-  ot
     :-  [%from (se %p)]
-    :^    [%repo (se %tas)]
+    :~  [%repo (se %tas)]
         [%branch (se %tas)]
-      [%incoming (se %tas)]
-    ~
+        [%host (se %p)]
+        [%incoming (se %tas)]
+    ==
   ::
   ++  branch
     ^-  $-(json [@p @tas @tas @tas])
