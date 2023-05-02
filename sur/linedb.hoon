@@ -46,9 +46,10 @@
   $%  ::  %linedb actions
       ::
       [%commit repo=@tas branch=@tas =snap]
+      [%merge from=@p repo=@tas branch=@tas incoming=@tas]
+      [%squash from=@p repo=@tas branch=@tas =hash]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
-      [%merge from=@p repo=@tas branch=@tas incoming=@tas]
       [%branch from=@p repo=@tas branch=@tas name=@tas]
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
