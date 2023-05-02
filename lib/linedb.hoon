@@ -4,15 +4,6 @@
 =,  differ
 |%
 ::
-++  gen-app
-  |=  p=path
-  ^-  @t
-  %-  crip
-  """
-  /*  built  %vase  {<`path`p>}
-  !<(agent:gall built)
-  """
-::
 ::  diff operations
 ::
 ++  di
@@ -21,35 +12,34 @@
   ++  apply-diff  |=([=file =diff] (lurk file diff))
   ::
   ++  line-mapping
-    ::  TODO we need a more advanced diff algo if we want individual lines edited...diff could be an (urge tape)
     |=  =diff
-    ^-  (map line line)
-    =|  iold=@ud
-    =|  inew=@ud
-    =|  new-lines=(list (pair line line))
+    ^-  (map @ud @ud)
+    =|  io=@ud  ::  old
+    =|  in=@ud  ::  new
+    =|  new-lines=(list (pair @ud @ud))
     |-
-    ?~  diff  (~(gas by *(map line line)) new-lines)
+    ?~  diff  (~(gas by *(map @ud @ud)) new-lines)
     ?-    -.i.diff
         %&
       %=    $
-          iold  (add iold p.i.diff)
-          inew  (add inew p.i.diff)
+          io  (add io p.i.diff)
+          in  (add in p.i.diff)
           diff  t.diff
           new-lines
         |-
         ?:  =(0 p.i.diff)  new-lines
         %=  $
-          new-lines  [[+(iold) +(inew)] new-lines]
+          new-lines  [[+(io) +(in)] new-lines]
           p.i.diff   (dec p.i.diff)
-          iold       +(iold)
-          inew       +(inew)
+          io       +(io)
+          in       +(in)
         ==
       ==
     ::
         %|
       %=  $
-        iold  (add iold (lent p.i.diff))
-        inew  (add inew (lent q.i.diff))
+        io  (add io (lent p.i.diff))
+        in  (add in (lent q.i.diff))
         diff  t.diff
       ==
     ==

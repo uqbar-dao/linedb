@@ -2,7 +2,6 @@
 ::
 ::  linedb structures
 ::
-+$  line  @ud
 +$  hash  @ux
 +$  file  wain :: ((mop line cord) lth) - doesn't help unless we rewrite clay to be mop based instead of wain based
 +$  diff  (urge:clay cord)

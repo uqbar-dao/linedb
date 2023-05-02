@@ -1,5 +1,5 @@
-/-  *linedb, b=branch
-/+  ldb=linedb, br=branch, sss, default-agent, verb, dbug
+/-  *linedb, bur=branch
+/+  ldb=linedb, bil=branch, sss, default-agent, verb, dbug
 ::
 =>  |%
     +$  versioned-state
@@ -7,8 +7,8 @@
       ==
     +$  state-0
       $:  %0
-          subs=_(mk-subs:sss b sss-paths)
-          pubs=_(mk-pubs:sss b sss-paths)
+          subs=_(mk-subs:sss bur sss-paths)
+          pubs=_(mk-pubs:sss bur sss-paths)
           =build-cache
       ==
     +$  card  $+(card card:agent:gall)
@@ -23,9 +23,9 @@
     +*  this  .
         hc    ~(. +> bowl)
         def   ~(. (default-agent this %|) bowl)
-        dab   =/  da  (da:sss b sss-paths)
+        dab   =/  da  (da:sss bur sss-paths)
               (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-        dub   =/  du  (du:sss b sss-paths)
+        dub   =/  du  (du:sss bur sss-paths)
               (du pubs bowl -:!>(*result:du))
     ++  on-init  on-init:def
     ++  on-save  !>(state)
@@ -156,30 +156,30 @@
     --
 ::
 |_  =bowl:gall
-+*  dab  =/  da  (da:sss b sss-paths)
++*  dab  =/  da  (da:sss bur sss-paths)
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
-    dub  =/  du  (du:sss b sss-paths)
+    dub  =/  du  (du:sss bur sss-paths)
          (du pubs bowl -:!>(*result:du))
 ::
 ++  all-rocks
-  ^-  (map [ship sss-paths] rock:b)
+  ^-  (map [ship sss-paths] rock:bur)
   %-  %~  uni  by
       ::  pubs
-      %-  ~(gas by *(map [ship sss-paths] rock:b))
+      %-  ~(gas by *(map [ship sss-paths] rock:bur))
       %+  turn  ~(tap by read:dub)
-      |=  [=sss-paths * =rock:b]
+      |=  [=sss-paths * =rock:bur]
       [[our.bowl sss-paths] rock]
   ::  subs
-  %-  ~(gas by *(map [ship sss-paths] rock:b))
+  %-  ~(gas by *(map [ship sss-paths] rock:bur))
   %+  turn  ~(tap by read:dab)
-  |=  [[=ship * =sss-paths] * * =rock:b]
+  |=  [[=ship * =sss-paths] * * =rock:bur]
   [[ship sss-paths] rock]
 ::
 ::  thin wrapper around +branch
 ::
 ++  ba-core
   |=  [who=@p pax=sss-paths]
-  =;  ban  (ba:br ban)
+  =;  ban  (ba:bil ban)
   (~(gut by all-rocks) [who pax] *branch)
 ::
 ++  handle-action
@@ -262,7 +262,12 @@
       |=  [=dude:gall vaz=(each vase @t)]
       ?>  =(%& -.vaz)
       :~  [/app/[dude]/vase %& %vase p.vaz]
-          [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
+          :^  /app/[dude]/hoon  %&  %hoon 
+          %-  crip
+          """
+          /*  built  %vase  {<`path`/app/[dude]/vase>}
+          !<(agent:gall built)
+          """
       ==
     .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
   ::
