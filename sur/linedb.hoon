@@ -40,7 +40,7 @@
   $%  ::  %linedb actions
       ::
       [%commit repo=@tas branch=@tas =snap]
-      [%merge from=@p repo=@tas branch=@tas incoming=@tas]
+      [%merge from=@p repo=@tas branch=@tas host=@p incoming=@tas]
       [%squash from=@p repo=@tas branch=@tas =hash]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
@@ -48,12 +48,12 @@
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
-      [%install from=@p repo=@tas branch=@tas bill=(list dude:gall)] :: put into clay
+      [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
       $:  %build 
           from=@p
           repo=@tas
           branch=@tas
-          =hash
+          hash=(unit hash)
           file=path
           =poke-src
           :: commit-hash=(unit @ux)

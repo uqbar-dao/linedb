@@ -142,7 +142,7 @@
           [%x @ @tas @tas ~]                               ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        log:(~(gut by all-rocks) [who sss] *branch)
+        log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::
           [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
         =*  who          (slav %p i.t.path)
@@ -218,11 +218,14 @@
     [cards state]
   ::
       %merge
-    =^  cards  pubs  [~ pubs]  ::  (give:dub  [repo branch ~]:act merge+branch.act) :: TODO have to finish this
+    =^  cards  pubs
+      %+  give:dub  [repo branch ~]:act
+      :^  %merge  our.bowl  now.bowl
+      (~(got by all-rocks) [host repo incoming ~]:act)
     [cards state]
   ::
       %squash
-    =^  cards  pubs  [~ pubs]  :: (give:dub [repo branch ~]:act squash+hash.act)
+    =^  cards  pubs  (give:dub [repo branch ~]:act squash+hash.act)
     [cards state]
   ::
       %reset
@@ -248,22 +251,43 @@
     [cards state]
   ::
       %install
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =+  !<  bill=(list dude:gall)
+        %+  slap  !>(~)
+        %-  ream
+        %-  of-wain:format
+        ~|  "no desk.bill, nothing to build"
+        (~(got by snap) /desk/bill)
     =^  vases=(list [dude:gall (each vase @t)])  cache
       =|  res=(list [dude:gall (each vase @t)])
       |-
-      ?~  bill.act  [res cache]
+      ?~  bill  [res cache]
       =/  [built-file=(each vase @t) =build-state]
-        (~(build-file ub [*snap cache ~]) /app/[i.bill.act]/hoon)
-      %=  $
-        bill.act     t.bill.act
-        res          [[i.bill.act built-file] res]
-        cache  cache.build-state
-      ==
-    =/  all-files=(list [path %& page])        
-      %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
+        %.  /app/[i.bill]/hoon
+        %~  build-file  ub
+        :_  [cache ~]
+        ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+        (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+      $(bill t.bill, res [[i.bill built-file] res], cache cache.build-state)
+    =/  all-files=(list [path %& page])   
+      :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]     
+      %+  murn  ~(tap by snap)
       |=  [=path =file]
-      ?.  =(%hoon (rear path))  ~
-      `[path %& %hoon (of-wain:format file)]
+      ?+    (rear path)  ~
+          %hoon  `[path %& %hoon (of-wain:format file)]
+          %ship  `[path %& %ship (slav %p (snag 0 file))]
+          %bill
+        :^  ~  path  %& 
+        bill+!<((list dude:gall) (slap !>(~) (ream (of-wain:format file))))
+      ::
+          %kelvin
+        `[path %& %kelvin (cord-to-waft:clay (of-wain:format file))]
+      ::
+        ::   %docket-0 :: TODO
+        :: `[path %& %docket-0 !<(list)]
+      ==
     :_  state
     ?.  |- :: if anything failed then don't commit
         ?~  vases  %&
@@ -297,11 +321,11 @@
   ::
       %build
     =/  [built-file=(each vase @t) =build-state]
-      ?~  got=(~(get by all-rocks) [from repo branch ~]:act)
-        ~|("{<from.act>} {<[repo branch ~]:act>} does not exist" !!)
-      ?~  tog=(~(get by commits.u.got) hash.act)
-        ~|("{<hash.act>} does not exist" !!)
-      (~(build-file ub [snap.u.tog cache ~]) file.act)
+      %.  file.act
+      %~  build-file  ub
+      :_  [cache ~]
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     :_  state(cache cache.build-state)
     ?~  poke-src.act  ~
     :_  ~

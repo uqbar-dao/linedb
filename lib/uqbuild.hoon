@@ -3,12 +3,12 @@
 |_  bus=build-state
 ++  read-file
   |=  =path
-  (of-wain:format (~(gut by snap.bus) path *file))
+  (of-wain:format (~(got by snap.bus) path))
 ++  build-dependency
   |=  dep=(each [dir=path fil=path] path)
   ^-  [(each vase @t) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-  ~&  bd+star+p
+  ~&  bd+start+p
   ~|  error-building+p
   ?:  (~(has in cycle.bus) p)
     ~|(cycle+file+p^cycle.bus !!)
