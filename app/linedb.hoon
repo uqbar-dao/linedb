@@ -223,59 +223,60 @@
     [cards state]
   ::
       %install
-    :: =^  vases=(list [dude:gall (each vase @t)])  cache
-    ::   =|  res=(list [dude:gall (each vase @t)])
-    ::   |-
-    ::   ?~  bill.act  [res cache]
-    ::   =/  [built-file=(each vase @t) =build-state]
-    ::     %.  /app/[i.bill.act]/hoon
-    ::     %~  build-file  ub:(ba-core [from repo branch ~]:act)
-    ::     [cache ~]
-    ::   %=  $
-    ::     bill.act     t.bill.act
-    ::     res          [[i.bill.act built-file] res]
-    ::     cache  cache.build-state
-    ::   ==
-    :: =/  all-files=(list [path %& page])        
-    ::   %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
-    ::   |=  [=path =file]
-    ::   ?.  =(%hoon (rear path))  ~
-    ::   `[path %& %hoon (of-wain:format file)]
-    :: :_  state
-    :: ?.  |- :: if anything failed then don't commit
-    ::     ?~  vases  %&
-    ::     ?:  =(%| +<.i.vases)
-    ::       ~&  build-failed+app+-.i.vases  %|
-    ::     $(vases t.vases)
-    ::   ~
-    :: :_  ~
-    :: :^  %pass  /  %arvo
-    :: :-  %c
-    :: :^  %park  repo.act
-    ::   ^-  yoki:clay
-    ::   :+  %&  ~
-    ::   %-  ~(gas by *(map path (each page lobe:clay)))
-    ::   ^-  (list [path %& page])
-    ::   %+  weld  all-files
-    ::   ^-  (list [path %& page])
-    ::   %-  zing
-    ::   %+  turn  vases
-    ::   |=  [=dude:gall vaz=(each vase @t)]
-    ::   ?>  =(%& -.vaz)
-    ::   :~  [/app/[dude]/vase %& %vase p.vaz]
-    ::       :^  /app/[dude]/hoon  %&  %hoon 
-    ::       %-  crip
-    ::       """
-    ::       /*  built  %vase  {<`path`/app/[dude]/vase>}
-    ::       !<(agent:gall built)
-    ::       """
-    ::   ==
-    :: .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
-    `state
+    =^  vases=(list [dude:gall (each vase @t)])  cache
+      =|  res=(list [dude:gall (each vase @t)])
+      |-
+      ?~  bill.act  [res cache]
+      =/  [built-file=(each vase @t) =build-state]
+        (~(build-file ub [*snap cache ~]) /app/[i.bill.act]/hoon)
+      %=  $
+        bill.act     t.bill.act
+        res          [[i.bill.act built-file] res]
+        cache  cache.build-state
+      ==
+    =/  all-files=(list [path %& page])        
+      %+  murn  ~(tap by head-snap:(ba-core [from repo branch ~]:act))
+      |=  [=path =file]
+      ?.  =(%hoon (rear path))  ~
+      `[path %& %hoon (of-wain:format file)]
+    :_  state
+    ?.  |- :: if anything failed then don't commit
+        ?~  vases  %&
+        ?:  =(%| +<.i.vases)
+          ~&  build-failed+app+-.i.vases  %|
+        $(vases t.vases)
+      ~
+    :_  ~
+    :^  %pass  /  %arvo
+    :-  %c
+    :^  %park  repo.act
+      ^-  yoki:clay
+      :+  %&  ~
+      %-  ~(gas by *(map path (each page lobe:clay)))
+      ^-  (list [path %& page])
+      %+  weld  all-files
+      ^-  (list [path %& page])
+      %-  zing
+      %+  turn  vases
+      |=  [=dude:gall vaz=(each vase @t)]
+      ?>  =(%& -.vaz)
+      :~  [/app/[dude]/vase %& %vase p.vaz]
+          :^  /app/[dude]/hoon  %&  %hoon 
+          %-  crip
+          """
+          /*  built  %vase  {<`path`/app/[dude]/vase>}
+          !<(agent:gall built)
+          """
+      ==
+    .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
   ::
       %build
     =/  [built-file=(each vase @t) =build-state]
-      (~(build-file ub [*snap cache ~]) file.act)
+      ?~  got=(~(get by all-rocks) [from repo branch ~]:act)
+        ~|("{<from.act>} {<[repo branch ~]:act>} does not exist" !!)
+      ?~  tog=(~(get by commits.u.got) hash.act)
+        ~|("{<hash.act>} does not exist" !!)
+      (~(build-file ub [snap.u.tog cache ~]) file.act)
     :_  state(cache cache.build-state)
     ?~  poke-src.act  ~
     :_  ~

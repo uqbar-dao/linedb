@@ -8,8 +8,8 @@
   |=  dep=(each [dir=path fil=path] path)
   ^-  [(each vase @t) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-  ~&  %bd^%start^p
-  ~|  %error-building^p
+  ~&  bd+star+p
+  ~|  error-building+p
   ?:  (~(has in cycle.bus) p)
     ~|(cycle+file+p^cycle.bus !!)
   =.  cycle.bus  (~(put in cycle.bus) p)
@@ -29,7 +29,7 @@
     |=(=tank (crip ~(ram re tank)))
   =.  cache.bus
     (~(put by cache.bus) file-hash p.build-result)
-  ~&  %bd^%done^p
+  ~&  bd+done+p
   [%&^p.build-result bus]
 ::
 ++  build-file

@@ -53,11 +53,11 @@
           from=@p
           repo=@tas
           branch=@tas
+          =hash
           file=path
           =poke-src
           :: commit-hash=(unit @ux)
       ==
-
   ==
 +$  update
   $%  [%build result=(each vase @t)]
