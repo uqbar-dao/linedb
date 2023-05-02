@@ -3,8 +3,7 @@
 ::
 |%
 ++  ba
-  |=  =branch
-  |%
+  |_  =branch
   ::
   ::  write arms
   ::
@@ -94,9 +93,7 @@
   ::  uqbuild engine
   ::
   ++  ub
-    =|  build-state :: [build-cache=(map @ux vase) cycle=(set seen-file)]
-    =*  build-state  -
-    |%
+    |_  =build-state :: [build-cache=(map @ux vase) cycle=(set seen-file)]
     ++  read-file  |=(=path (head-file path))
     ++  build-dependency
       |=  dep=(each [dir=path fil=path] path)
@@ -152,6 +149,8 @@
     ::
     ++  pile-rule
       |=  pax=path
+      ::  TODO I believe we can delete a lot of this since we aren't parsing
+      ::    certain ford runes
       %-  full
       %+  ifix
         :_  gay
@@ -225,13 +224,10 @@
       |=  =pile:clay
       ^-  [vase ^build-state]
       =/  sut=vase  !>(..zuse)  :: TODO: cache?
-      =^  sut=vase  build-state  (run-tauts sut %sur sur.pile)
-      =^  sut=vase  build-state  (run-tauts sut %lib lib.pile)
-      =^  sut=vase  build-state  (run-raw sut raw.pile)
-      :: =^  sut=vase  build-state  (run-raz sut raz.pile)
-      :: =^  sut=vase  build-state  (run-maz sut maz.pile)
-      :: =^  sut=vase  build-state  (run-caz sut caz.pile)
-      =^  sut=vase  build-state  (run-bar sut bar.pile)
+      =^  sut=vase  build-state  (run-tauts sut %sur sur.pile)  ::  /-
+      =^  sut=vase  build-state  (run-tauts sut %lib lib.pile)  ::  /+
+      =^  sut=vase  build-state  (run-tis sut raw.pile)         ::  /=
+      =^  sut=vase  build-state  (run-tar sut bar.pile)         ::  /*
       [sut build-state]
     ::
     ++  run-tauts
@@ -243,7 +239,7 @@
       =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
       $(sut (slop p.pin sut), taz t.taz)
     ::
-    ++  run-raw
+    ++  run-tis
       |=  [sut=vase raw=(list [face=term =path])]
       ^-  [vase ^build-state]
       ?~  raw  [sut build-state]
@@ -251,48 +247,8 @@
       ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
       =.  p.p.pin  [%face face.i.raw p.p.pin]
       $(sut (slop p.pin sut), raw t.raw)
-    :: ::
-    :: ++  run-raz
-    ::   |=  [sut=vase raz=(list [face=term =spec =path])]
-    ::   ^-  [vase state]
-    ::   ?~  raz  [sut build-state]
-    ::   =^  res=(map @ta vase)  build-state
-    ::     (build-directory path.i.raz)
-    ::   =;  pin=vase
-    ::     =.  p.pin  [%face face.i.raz p.pin]
-    ::     $(sut (slop pin sut), raz t.raz)
-    ::   ::
-    ::   =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
-    ::   ::  ensure results nest in the specified type,
-    ::   ::  and produce a homogenous map containing that type.
-    ::   ::
-    ::   :-  %-  ~(play ut p.sut)
-    ::       [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
-    ::   |-
-    ::   ?~  res  ~
-    ::   ?.  (~(nest ut type) | p.q.n.res)
-    ::     ~|  [%nest-fail path.i.raz p.n.res]
-    ::     !!
-    ::   :-  [p.n.res q.q.n.res]
-    ::   [$(res l.res) $(res r.res)]
-    :: ::
-    :: ++  run-maz
-    ::   |=  [sut=vase maz=(list [face=term =mark])]
-    ::   ^-  [vase state]
-    ::   ?~  maz  [sut build-state]
-    ::   =^  pin=vase  build-state  (build-nave mark.i.maz)
-    ::   =.  p.pin  [%face face.i.maz p.pin]
-    ::   $(sut (slop pin sut), maz t.maz)
-    :: ::
-    :: ++  run-caz
-    ::   |=  [sut=vase caz=(list [face=term =mars:clay])]
-    ::   ^-  [vase state]
-    ::   ?~  caz  [sut build-state]
-    ::   =^  pin=vase  build-state  (build-cast mars.i.caz)
-    ::   =.  p.pin  [%face face.i.caz p.pin]
-    ::   $(sut (slop pin sut), caz t.caz)
     ::
-    ++  run-bar  :: TODO extremely ugly
+    ++  run-tar  :: TODO extremely ugly
       |=  [sut=vase bar=(list [face=term =mark =path])]
       ^-  [vase ^build-state]
       ~|  "uqbuild: cannot import {<mark>} with /*"

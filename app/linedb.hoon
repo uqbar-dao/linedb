@@ -87,7 +87,7 @@
           [~ %sss %scry-request @ @ @ @tas @tas ~]  (tell:dab |3:wire sign)
         ==
       [cards this]
-    ++  on-watch  on-watch:def
+    ::
     ++  on-peek
       |=  =path
       ^-  (unit (unit cage))
@@ -145,12 +145,14 @@
         ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
         [%| (crip "build not found for file-hash {<file-hash>}")]
       ==
+    ::
     ++  on-arvo
       |=  [=wire sign=sign-arvo]
       ^-  (quip card:agent:gall _this)
       ?+  wire  `this
         [~ %sss %behn @ @ @ @tas @tas ~]  [(behn:dab |3:wire) this]
       ==
+    ++  on-watch  on-watch:def
     ++  on-leave  on-leave:def
     ++  on-fail   on-fail:def
     --
@@ -160,7 +162,6 @@
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     dub  =/  du  (du:sss bur sss-paths)
          (du pubs bowl -:!>(*result:du))
-::
 ++  all-rocks
   ^-  (map [ship sss-paths] rock:bur)
   %-  %~  uni  by
@@ -175,7 +176,7 @@
   |=  [[=ship * =sss-paths] * * =rock:bur]
   [[ship sss-paths] rock]
 ::
-::  thin wrapper around +branch
+::  see +branch
 ::
 ++  ba-core
   |=  [who=@p pax=sss-paths]
