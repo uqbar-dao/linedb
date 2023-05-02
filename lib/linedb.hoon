@@ -3,6 +3,22 @@
 =,  format
 =,  differ
 |%
+++  vase-mark
+  '''
+  /?    310
+  !:
+  |_  v=vase
+  ++  grab  |%
+            ++  noun  |=(n=* !<(vase [-:!>(*vase) n]))
+            ++  mime  |=(a=@ !<(vase [-:!>(*vase) (cue a)]))
+            --
+  ++  grow  |%
+            ++  noun  v
+            ++  mime  [/application/x-urb-vase (as-octs:mimes:html (jam v))]
+            --
+  ++  grad  %noun
+  --
+  '''
 ::
 ::  diff operations
 ::
@@ -264,13 +280,14 @@
     ~
   ::
   ++  merge
-    ^-  $-(json [@p @tas @tas @tas])
+    ^-  $-(json [@p @tas @tas @p @tas])
     %-  ot
     :-  [%from (se %p)]
-    :^    [%repo (se %tas)]
+    :~  [%repo (se %tas)]
         [%branch (se %tas)]
-      [%incoming (se %tas)]
-    ~
+        [%host (se %p)]
+        [%incoming (se %tas)]
+    ==
   ::
   ++  branch
     ^-  $-(json [@p @tas @tas @tas])
