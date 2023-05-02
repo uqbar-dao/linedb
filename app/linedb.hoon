@@ -176,9 +176,6 @@
         :-  %build
         ?^  build=(~(get by build-cache) file-hash)  [%& u.build]
         [%| (crip "build not found for file-hash {<file-hash>}")]
-      ::
-          [%x %state ~]
-        `state-0`state
       ==
     ::
     ++  on-arvo
@@ -279,11 +276,31 @@
     [cards state]
   ::
       %install
-    =^  result=(unit [@tas yoki:clay rang:clay])  build-cache
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  build-cache
       (build-park [from repo branch bill]:act)
     :_  state
-    ?~  result  ~
-    [%pass / %arvo %c %park u.result]~
+    ?:  ?=(%| -.result)  ~
+    [%pass / %arvo %c %park p.result]~
+  ::
+      %make-install-args
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  build-cache
+      (build-park [from repo branch bill]:act)
+    :_  state
+    ?~  poke-src.act  ~
+    :_  ~
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+      !>(`update`[%make-install-args result])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %linedb-update
+      !>(`update`[%make-install-args result])
+    ==
   ::
       %build
     =/  [built-file=(each vase @t) =build-state]
@@ -314,7 +331,7 @@
           branch=@tas
           bill=(list dude:gall)
       ==
-  ^-  [(unit [@tas yoki:clay rang:clay]) _build-cache]
+  ^-  [(each [@tas yoki:clay rang:clay] @t) _build-cache]
   =^  vases=(list [dude:gall (each vase @t)])  build-cache
     =|  res=(list [dude:gall (each vase @t)])
     |-
@@ -328,6 +345,16 @@
       res          [[i.bill built-file] res]
       build-cache  build-cache.build-state
     ==
+  =/  did-vase-build-succeed=(each ~ @t)
+    |- :: if anything failed then don't commit
+    ?~  vases  [%& ~]
+    ?:  =(%| +<.i.vases)
+      ~&  build-failed+app+-.i.vases  [%| -.i.vases]
+    $(vases t.vases)
+  ?:  ?=(%| -.did-vase-build-succeed)
+    :_  build-cache
+    :-  %|
+    (cat 3 'linedb: build failed for app ' p.did-vase-build-succeed)
   =/  all-files=(list [path %& page])
     %+  welp  boilerplate-files:ldb
     %+  turn  ~(tap by head-snap:(ba [from repo branch ~]))
@@ -343,14 +370,8 @@
     =*  file-atom  (of-wain:format file)
     :+  path  %&
     [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
-  ?.  |- :: if anything failed then don't commit
-      ?~  vases  %&
-      ?:  =(%| +<.i.vases)
-        ~&  build-failed+app+-.i.vases  %|
-      $(vases t.vases)
-    [~ build-cache]
   :_  build-cache
-  :^  ~  repo
+  :^  %&  repo
     ^-  yoki:clay
     :+  %&  ~
     %-  ~(gas by *(map path (each page lobe:clay)))
