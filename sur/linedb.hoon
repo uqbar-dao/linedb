@@ -49,6 +49,7 @@
       ::  %uqbuild action
       ::
       [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
+      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src]
       $:  %build 
           from=@p
           repo=@tas
@@ -56,11 +57,12 @@
           hash=(unit hash)
           file=path
           =poke-src
-          :: commit-hash=(unit @ux)
       ==
   ==
 +$  update
+  $@  ~
   $%  [%build result=(each vase tang)]
+      [%make-install-args result=(each [@tas yoki:clay rang:clay] @t)]
       [%new-data =path]
 ==
 --

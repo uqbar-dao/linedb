@@ -118,43 +118,71 @@
     ++  on-peek
       |=  =path
       ^-  (unit (unit cage))
-      =-  ``noun+!>(-)
+      ?:  =(/x/dbug/state path)  ``noun+!>(`_state`state)
+      =;  scry-result
+        ?:  ?=(%& -.scry-result)  p.scry-result  ``noun+!>(~)
+      %-  mule
+      |.
       ?+    path  (on-peek:def path)
       ::
-          [%x ~]  ~(tap by ~(key by all-rocks:hc))         ::  list all repos
+          [%x ~]                                       ::  list all repos
+        :^  ~  ~  %noun
+        !>  ^-  (list [ship ^path])
+        ~(tap by ~(key by all-rocks:hc))
       ::
-          [%x @ ~]                                         ::  repos of ship
+          [%x @ ~]                                     ::  repos of ship
+        :^  ~  ~  %noun
+        !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         %+  murn  ~(tap by all-rocks:hc)
         |=  [[=ship =sss-paths] *]
         ?:(=(ship who) `sss-paths ~)
       ::
-          [%x @ @tas ~]                                    ::  branches of repo
+          [%x @ @tas ~]                                ::  branches of repo
         :: TODO this is not easy the way we have it set up with +ba
         ::   makes me think maybe we should do a refactor to make
         ::   repos "real"?
+        :^  ~  ~  %noun
+        !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         =*  repo  i.t.t.path
         %+  murn  ~(tap by all-rocks:hc)
         |=  [[=ship =sss-paths] *]
         ?:(&(=(ship who) =(-.sss-paths repo)) `sss-paths ~)
       ::
-          [%x @ @tas @tas ~]                               ::  log of branch
+          [%x @ @tas @tas ~]                           ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
+        :^  ~  ~  %noun
+        !>  ^-  (list ceta)
         log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::
-          [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
+          [%x @ @tas @tas ?(%head @) ~]
+        :^  ~  ~  %noun
+        !>  ^-  snap
         =*  who          (slav %p i.t.path)
         =*  repo                i.t.t.path
         =*  branch            i.t.t.t.path
-        %-  turn  :_  head
         ?-  hash=i.t.t.t.t.path
-          %head  ~(tap by head-snap:(ba-core:hc who [repo branch ~]))
-          @      ~(tap by (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash)))
+          %head  head-snap:(ba-core:hc who [repo branch ~])
+          @      (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash))
         ==
       ::
-          [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
+          [%x @ @tas @tas %diff @ @ ^]                 ::  diff two files
+        =*  who         `@p`(slav %p i.t.path)
+        =*  repo                   i.t.t.path
+        =*  branch               i.t.t.t.path
+        =*  haz    (slav %ux i.t.t.t.t.t.path)
+        =*  hax  (slav %ux i.t.t.t.t.t.t.path)
+        =*  fil            t.t.t.t.t.t.t.path
+        :^  ~  ~  %noun
+        !>  ^-  (urge:clay cord)
+        (get-diff:(ba-core:hc who repo branch ~) haz hax fil)
+      ::
+          [%x @ @tas @tas ?(%head @) ^]                ::  read a file
+        :^  ~  ~  %noun
+        !>  ^-  (unit @t)
+        :-  ~
         =*  who  (slav %p i.t.path)
         =*  repo        i.t.t.path
         =*  branch    i.t.t.t.path
@@ -254,76 +282,37 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    =+  !<  bill=(list dude:gall)
-        %+  slap  !>(~)
-        %-  ream
-        %-  of-wain:format
-        ~|  "no desk.bill, nothing to build"
-        (~(got by snap) /desk/bill)
-    =^  vases=(list [dude:gall (each vase tang)])  cache
-      =|  res=(list [dude:gall (each vase tang)])
-      |-
-      ?~  bill  [res cache]
-      =/  [built-file=(each vase tang) build-state=*] :: TODO integrate state into linedb state
-        %.  /app/[i.bill]/hoon
-        =<  build-file
-        %:  ub
-          ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-            (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-        ::
-          5  ~  ~  ~
-        ==
-      $(bill t.bill, res [[i.bill built-file] res]) :: TODO update caches 
-    =/  all-files=(list [path %& page])   
-      :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]     
-      %+  murn  ~(tap by snap)
-      |=  [=path =file]
-      ?+    (rear path)  ~
-          %hoon  `[path %& %hoon (of-wain:format file)]
-          %ship  `[path %& %ship (slav %p (snag 0 file))]
-          %bill
-        :^  ~  path  %& 
-        bill+!<((list dude:gall) (slap !>(~) (ream (of-wain:format file))))
-      ::
-          %kelvin
-        `[path %& %kelvin (cord-to-waft:clay (of-wain:format file))]
-      ::
-        ::   %docket-0 :: TODO
-        :: `[path %& %docket-0 !<(list)]
-      ==
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap repo.act)
     :_  state
-    ?.  |- :: if anything failed then don't commit
-        ?~  vases  %&
-        ?:  =(%| +<.i.vases)
-          ~&  build-failed+app+-.i.vases  %|
-        $(vases t.vases)
-      ~
+    ?:  ?=(%| -.result)  ~
+    [%pass / %arvo %c %park p.result]~
+  ::
+      %make-install-args
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap repo.act)
+    :_  state
+    ?~  poke-src.act  ~
     :_  ~
-    :^  %pass  /  %arvo
-    :-  %c
-    :^  %park  repo.act
-      ^-  yoki:clay
-      :+  %&  ~
-      %-  ~(gas by *(map path (each page lobe:clay)))
-      ^-  (list [path %& page])
-      %+  weld  all-files
-      ^-  (list [path %& page])
-      %-  zing
-      %+  turn  vases
-      |=  [=dude:gall vaz=(each vase tang)]
-      ?>  =(%& -.vaz)
-      :~  [/app/[dude]/vase %& %vase p.vaz]
-          :^  /app/[dude]/hoon  %&  %hoon 
-          %-  crip
-          """
-          /*  built  %vase  {<`path`/app/[dude]/vase>}
-          !<(agent:gall built)
-          """
-      ==
-    .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+      !>(`update`[%make-install-args result])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %linedb-update
+      !>(`update`[%make-install-args result])
+    ==
   ::
       %build
-    =/  [built-file=(each vase tang) build-state=*] :: TODO incorporate ford state
+    =/  [built-file=(each vase tang) =build-state]
       %.  file.act
       =<  build-file
       %-  ub
@@ -347,4 +336,76 @@
       !>(`update`[%build built-file])
     ==
   ==
+::
+++  build-park
+  |=  $:  =snap
+          desk-name=@tas
+      ==
+  ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
+  =/  bill=(list dude:gall)
+    %+  murn  ~(tap in ~(key by snap))
+    |=  p=path
+    ?~  p                  ~
+    ?.  =(%app i.p)        ~
+    ?.  =(%hoon (rear p))  ~
+    `(rear (snip `path`p))
+  =^  vases=(list [dude:gall (each vase tang)])  cache
+    =|  res=(list [dude:gall (each vase tang)])
+    |-
+    ?~  bill  [res cache]
+    =/  [built-file=(each vase tang) =build-state]
+      %.  /app/[i.bill]/hoon
+      ~(build-file ub snap cache ~)
+    %=  $
+      bill   t.bill
+      res    [[i.bill built-file] res]
+      cache  cache.build-state
+    ==
+  =/  vase-build-error=(unit @t)
+    |-
+    ?~  vases  ~
+    ?:  =(%| +<.i.vases)
+      ~&  build-failed+app+-.i.vases
+      `-.i.vases
+    $(vases t.vases)
+  ?^  vase-build-error
+    :_  cache
+    :-  %|
+    (cat 3 'linedb: build failed for app ' u.vase-build-error)
+  =/  all-files=(list [path %& page])
+    :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
+    %+  turn  ~(tap by snap)
+    |=  [=path =file]
+    ::  files are stored as `wain`s, and transformed here into atoms.
+    ::   binary files are stored as a length-1 list of the atom's bytes,
+    ::   which is effectively just a %mime, but without the mime-type
+    ::   and file length.
+    ::   here, we just read the file contents from %linedb into `%mime`s
+    ::   and let clay handle the markification:
+    ::   this requires that the files have marks to convert from
+    ::   `%mime` to the respective type
+    =*  file-atom  (of-wain:format file)
+    :+  path  %&
+    [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
+  :_  cache
+  :^  %&  desk-name
+    ^-  yoki:clay
+    :+  %&  ~
+    %-  ~(gas by *(map path (each page lobe:clay)))
+    ^-  (list [path %& page])
+    %+  weld  all-files
+    ^-  (list [path %& page])
+    %-  zing
+    %+  turn  vases
+    |=  [=dude:gall vaz=(each vase tang)]
+    ?>  =(%& -.vaz)
+    :~  [/app/[dude]/vase %& %vase p.vaz]
+        :^  /app/[dude]/hoon  %&  %hoon
+        %-  crip
+        """
+        /*  built  %vase  {<`path`/app/[dude]/vase>}
+        !<(agent:gall built)
+        """
+    ==
+  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
 --
