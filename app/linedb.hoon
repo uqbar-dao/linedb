@@ -340,16 +340,17 @@
       res    [[i.bill built-file] res]
       cache  cache.build-state
     ==
-  =/  did-vase-build-succeed=(each ~ @t)
-    |- :: if anything failed then don't commit
-    ?~  vases  [%& ~]
+  =/  vase-build-error=(unit @t)
+    |-
+    ?~  vases  ~
     ?:  =(%| +<.i.vases)
-      ~&  build-failed+app+-.i.vases  [%| -.i.vases]
+      ~&  build-failed+app+-.i.vases
+      `-.i.vases
     $(vases t.vases)
-  ?:  ?=(%| -.did-vase-build-succeed)
+  ?^  vase-build-error
     :_  cache
     :-  %|
-    (cat 3 'linedb: build failed for app ' p.did-vase-build-succeed)
+    (cat 3 'linedb: build failed for app ' u.vase-build-error)
   =/  all-files=(list [path %& page])
     :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
     %+  turn  ~(tap by snap)
