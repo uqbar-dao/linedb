@@ -351,7 +351,7 @@
     :-  %|
     (cat 3 'linedb: build failed for app ' p.did-vase-build-succeed)
   =/  all-files=(list [path %& page])
-    %+  welp  boilerplate-files:ldb
+    :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
     %+  turn  ~(tap by snap)
     |=  [=path =file]
     ::  files are stored as `wain`s, and transformed here into atoms.
