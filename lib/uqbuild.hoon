@@ -1,49 +1,110 @@
 /-  *linedb
 ::
-|_  bus=build-state
+=,  clay
+=>  |%
+    +$  leak                                           ::  cache key
+      ::  This includes all build inputs, transitives included
+      $~  [*path ~]
+      $:  =path
+          deps=(set leak)
+      ==
+    ::
+    +$  pour  (each vase tang)                         ::  build result
+    +$  flow  (map leak [refs=@ud =vase])              ::  global cache
+    ::
+    ::  $flue: per-branch cache
+    ::
+    ::     TODO not sure if we actually need the flue
+    +$  flue  [spill=(set leak) sprig=(map path [=leak =vase])]
+    +$  state
+      $:  cache=flow
+          flue
+          cycle=(set path)
+          stack=(list (set leak))
+      ==
+    +$  args
+      $:  files=(map path file)
+          verb=@
+          cache=flow
+          flue
+      ==
+    --
+|=  args
+::  nub: internal mutable state for this computation
+::
+=|  nub=state
+=.  cache.nub  cache
+=.  spill.nub  spill
+=.  sprig.nub  sprig
+|%
+::  +read-file: retrieve marked, validated file contents at path
+::
 ++  read-file
   |=  =path
-  (of-wain:format (~(got by snap.bus) path))
+  ^-  [vase state]
+  ~|  error-validating+path
+  =;  [pin=pour nob=state]
+    ?>  ?=(%& -.pin)
+    [p.pin nob]
+  %+  gain-sprig  path  |.
+  =.  stack.nub  [~ stack.nub]
+  ?:  (~(has in cycle.nub) vale+path)
+    ~|(cycle+path^cycle.nub !!)
+  =.  cycle.nub  (~(put in cycle.nub) path)
+  %+  gain-leak  path
+  |=  nob=state
+  ^-  [pour state]
+  =.  nub  nob
+  %-  (trace 1 |.("read file {(spud path)}"))
+  :_  nub
+  :-  %&
+  !>  %-  of-wain:format
+  ~|  file-not-found+path
+  (~(got by files) path)
 ::
-++  build-dependency
-  |=  dep=(each [dir=path fil=path] path)
-  ^-  [(each vase tang) build-state]
-  =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-  ~&  bd+start+p
-  ~|  error-building+p
-  :: ?:  (~(has in cycle.bus) p)
-  ::   ~|(cycle+file+p^cycle.bus !!)
-  :: =.  cycle.bus  (~(put in cycle.bus) p)
-  ?>  =(%hoon (rear p))
-  =/  file-text=@t   (read-file p)
-  =/  file-hash=@ux  (shax file-text)
-  ?^  cax=(~(get by cache.bus) file-hash)
-    ~&  bd+cache-hit+p
-    [%&^u.cax bus]
-  =/  =pile:clay  (parse-pile p (trip file-text))
-  =^  subject=vase  bus  (run-prelude pile)
-  =/  build-result  (mule |.((slap subject hoon.pile)))
-  ?:  ?=(%| -.build-result)
-    =*  error-message
-      %-  of-wain:format
-      %+  turn  p.build-result
-      |=(=tank (crip ~(ram re tank)))
-    ~&  bd+fail+error-message
-    [build-result bus]
-  =.  cache.bus
-    (~(put by cache.bus) file-hash p.build-result)
-  ~&  bd+done+p
-  [%&^p.build-result bus]
+++  prelude
+  |=  =path
+  ^-  vase
+  =^  vax=vase  nub  (read-file path)
+  =/  tex=tape   (trip !<(@t vax))
+  =/  =pile  (parse-pile path tex)
+  =.  hoon.pile  !,(*hoon .)
+  =^  res=vase  nub  (run-prelude pile)
+  res
 ::
 ++  build-file
   |=  =path
-  ^-  [(each vase tang) build-state]
-  (build-dependency |+path)
+  ^-  [pour state]
+  ~|  %error-building^path
+  %+  gain-sprig  path  |.
+  =.  stack.nub  [~ stack.nub]
+  %-  (trace 1 |.("make file {(spud path)}"))
+  ?:  (~(has in cycle.nub) file+path)
+    ~|(cycle+file+path^cycle.nub !!)
+  =.  cycle.nub  (~(put in cycle.nub) file+path)
+  =^  vax=vase  nub  (read-file path)
+  =/  tex=tape  (trip !<(@t vax))
+  =/  =pile  (parse-pile path tex)
+  =^  sut=vase  nub  (run-prelude pile)
+  %+  gain-leak  path
+  |=  nob=state
+  =.  nub  nob
+  =/  pin=pour  (mule |.((slap sut hoon.pile)))
+  [pin nub]
+::
+++  run-prelude
+  |=  =pile
+  =/  sut=vase  !>(..zuse)
+  =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
+  =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
+  =^  sut=vase  nub  (run-tis sut raw.pile)
+  :: =^  sut=vase  nub  (run-tar sut bar.pile)
+  [sut nub]
 ::
 ++  parse-pile
   |=  [pax=path tex=tape]
-  ^-  pile:clay
-  =/  [=hair res=(unit [=pile:clay =nail])]  ((pile-rule pax) [1 1] tex)
+  ^-  pile
+  =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
   ?^  res  pile.u.res
   %-  mean  %-  flop
   =/  lyn  p.hair
@@ -61,8 +122,6 @@
 ::
 ++  pile-rule
   |=  pax=path
-  ::  TODO I believe we can delete a lot of this since we aren't parsing
-  ::    certain ford runes
   %-  full
   %+  ifix
     :_  gay
@@ -71,11 +130,11 @@
     ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
   |^
   ;~  plug
-    %+  cook  (bake zing (list (list taut:clay)))
+    %+  cook  (bake zing (list (list taut)))
     %+  rune  hep
     (most ;~(plug com gaw) taut-rule)
   ::
-    %+  cook  (bake zing (list (list taut:clay)))
+    %+  cook  (bake zing (list (list taut)))
     %+  rune  lus
     (most ;~(plug com gaw) taut-rule)
   ::
@@ -107,79 +166,59 @@
   ==
   ::
   ++  pant
-    :: |*  fel=^rule
-    |*  fel=rule
+    |*  fel=^rule
     ;~(pose fel (easy ~))
   ::
   ++  mast
-    :: |*  [bus=^rule fel=^rule]
-    |*  [bus=rule fel=rule]
+    |*  [bus=^rule fel=^rule]
     ;~(sfix (more bus fel) bus)
   ::
   ++  rune
-    :: |*  [bus=^rule fel=^rule]
-    |*  [bus=rule fel=rule]
+    |*  [bus=^rule fel=^rule]
     %-  pant
     %+  mast  gap
     ;~(pfix fas bus gap fel)
   --
 ::
 ++  taut-rule
-  %+  cook  |=(taut:clay +<)
+  %+  cook  |=(taut +<)
   ;~  pose
     (stag ~ ;~(pfix tar sym))
     ;~(plug (stag ~ sym) ;~(pfix tis sym))
     (cook |=(a=term [`a a]) sym)
   ==
 ::
-++  run-prelude
-  |=  =pile:clay
-  ^-  [vase build-state]
-  =/  sut=vase  !>(..zuse)  :: TODO: cache?
-  =^  sut=vase  bus  (run-tauts sut %sur sur.pile)  ::  /-
-  =^  sut=vase  bus  (run-tauts sut %lib lib.pile)  ::  /+
-  =^  sut=vase  bus  (run-tis sut raw.pile)         ::  /=
-  =^  sut=vase  bus  (run-tar sut bar.pile)         ::  /*
-  [sut bus]
-::
 ++  run-tauts
-  |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
-  ^-  [vase build-state]
-  ?~  taz  [sut bus]
-  =^  pin=(each vase tang)  bus  (build-fit wer pax.i.taz)
-  ?:  ?=(%| -.pin)  ~&  'build-failed'  $(taz t.taz)
+  |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
+  ^-  [vase state]
+  ?~  taz  [sut nub]
+  =^  pin=pour  nub  (build-file (fit-path wer pax.i.taz))
+  ?:  ?=(%| -.pin)  ~&  build-failed+pax.i.taz  !!
   =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
   $(sut (slop p.pin sut), taz t.taz)
 ::
 ++  run-tis
   |=  [sut=vase raw=(list [face=term =path])]
-  ^-  [vase build-state]
-  ?~  raw  [sut bus]
-  =^  pin=(each vase tang)  bus  (build-file (snoc path.i.raw %hoon))
-  ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
+  ^-  [vase state]
+  ?~  raw  [sut nub]
+  =^  pin=pour  nub  (build-file (snoc path.i.raw %hoon))
+  ?:  ?=(%| -.pin)  ~&  build-failed+path.i.raw  !!
   =.  p.p.pin  [%face face.i.raw p.p.pin]
   $(sut (slop p.pin sut), raw t.raw)
 ::
-++  run-tar  :: TODO extremely ugly
-  |=  [sut=vase bar=(list [face=term =mark =path])]
-  ^-  [vase build-state]
-  ~|  "uqbuild: cannot import {<mark>} with /*"
-  ?~  bar  [sut bus]
-  ?>  =((rear path.i.bar) mark.i.bar)
-  =/  =cage
-    ?+  mark.i.bar  !!  :: TODO other marks
-      %noun  noun+!>((read-file path.i.bar))
-      %jam   jam+!>((read-file path.i.bar))
-    ==
-  =.  p.q.cage  [%face face.i.bar p.q.cage]
-  $(sut (slop q.cage sut), bar t.bar)
-::
-::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
-::
-++  build-fit
-  |=  [pre=@tas pax=@tas]
-  ^-  [(each vase tang) build-state]
-  (build-file (fit-path pre pax))
+:: ++  run-tar :: TODO
+::   |=  [sut=vase bar=(list [face=term =mark =path])]
+::   ^-  [vase state]
+::   ~|  "uqbuild: cannot import {<mark>} with /*"
+::   ?~  bar  [sut nub]
+::   ?>  =((rear path.i.bar) mark.i.bar)
+::   =/  =vase
+::     ?+  mark.i.bar  !!  :: TODO other marks
+::       %noun  noun+!>((crip ((read-file path.i.bar)) :: TODO I think read-file is wrong here
+::       %jam   jam+!>((read-file path.i.bar))
+::     ==
+::   =.  p.q.cage  [%face face.i.bar p.cage]
+::   $(sut (slop q.vase sut), bar t.bar)
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
 ::
@@ -189,13 +228,78 @@
 ++  fit-path
   |=  [pre=@tas pax=@tas]
   ^-  path
-  =/  paz  (segments:clay pax)
+  =/  paz  (segments pax)
   |-  ^-  path
   ?~  paz
-    ~&  "no files match /{(trip pre)}/{(trip pax)}/hoon"
-    !!
+    ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
   =/  pux=path  pre^(snoc i.paz %hoon)
-  ?:  (~(has by snap.bus) pux)
+  ?:  (~(has by files) pux)
     pux
   $(paz t.paz)
+::
+++  trace
+  |=  [pri=@ print=(trap tape)]
+  ?:  (lth verb pri)
+    same
+  (slog leaf+"uqbuild: {(print)}")
+::
+::  +gain-sprig: if path is in the sprig cache, put it on the stack, otherwise call $
+::
+++  gain-sprig
+  |=  [=path next=(trap [pour state])]
+  ^-  [pour state]
+  ?~  got=(~(get by sprig.nub) path)
+    $:next
+  =?  stack.nub  ?=(^ stack.nub)
+    stack.nub(i (~(put in i.stack.nub) leak.u.got))
+  [%&^vase.u.got nub]
+::
+::  +gain-leak:
+::    pop top off the stack to create a new leak (key)
+::    delete path from cycle (why here?)
+::    add this key to i.stack if it exists
+::    if the key is in the spill, then put it in the cache as well
+::    other wise create a new entry in the cache, remembering to bump refs of all it's dependencies
+::
+++  gain-leak
+  |=  [=path next=$-(state [pour state])]
+  ^-  [pour state]
+  =^  top=(set leak)  stack.nub  stack.nub
+  =/  =leak  [path top]
+  =.  cycle.nub  (~(del in cycle.nub) path)
+  =?  stack.nub  ?=(^ stack.nub)
+    stack.nub(i (~(put in i.stack.nub) leak))
+  =/  spilt  (~(has in spill.nub) leak)
+  =^  =vase  nub
+    ?^  got=(~(get by cache.nub) leak)
+      %-  %+  trace  3  |.
+          =/  refs    ?:(spilt 0 1)
+          %+  welp  "cache {<path.leak>}: adding {<refs>}, "
+          "giving {<(add refs refs.u.got)>}"
+      =?  cache.nub  !spilt
+        (~(put by cache.nub) leak [+(refs.u.got) vase.u.got])
+      [vase.u.got nub]
+    %-  (trace 2 |.("cache {<path.leak>}: creating"))
+    =^  pin=pour  nub  (next nub)
+    =/  =vase  ?>(?=(%& -.pin) p.pin)
+    =.  cache.nub  (~(put by cache.nub) leak [1 vase])
+    ::  If we're creating a cache entry, add refs to our dependencies
+    ::
+    =/  deps  ~(tap in deps.leak)
+    |-
+    ?~  deps
+      [vase nub]
+    =/  got  (~(got by cache.nub) i.deps)
+    %-  %+  trace  3  |.
+        %+  welp  "cache {<path.leak>} for {<path.i.deps>}"
+        ": bumping to ref {<refs.got>}"
+    =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
+    $(deps t.deps)
+  ?:  spilt
+    [%&^vase nub]
+  %-  (trace 3 |.("spilt {<path>}"))
+  =:  spill.nub  (~(put in spill.nub) leak)
+      sprig.nub  (~(put by sprig.nub) path leak vase)
+    ==
+  [%&^vase nub]
 --

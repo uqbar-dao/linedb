@@ -1,5 +1,5 @@
 /-  *linedb, bur=branch
-/+  ldb=linedb, bil=branch, ub=uqbuild-2, sss, default-agent, verb, dbug
+/+  ldb=linedb, bil=branch, ub=uqbuild, sss, default-agent, verb, dbug
 ::
 =>  |%
     +$  versioned-state
