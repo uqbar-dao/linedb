@@ -4,6 +4,7 @@
 ++  read-file
   |=  =path
   (of-wain:format (~(got by snap.bus) path))
+::
 ++  build-dependency
   |=  dep=(each [dir=path fil=path] path)
   ^-  [(each vase @t) build-state]

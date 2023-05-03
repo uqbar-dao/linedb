@@ -267,66 +267,35 @@
         %+  slap  !>(~)
         %-  ream
         %-  of-wain:format
-        ~|  "no desk.bill, nothing to build"
-        (~(got by snap) /desk/bill)
-    =^  vases=(list [dude:gall (each vase @t)])  cache
-      =|  res=(list [dude:gall (each vase @t)])
-      |-
-      ?~  bill  [res cache]
-      =/  [built-file=(each vase @t) =build-state]
-        %.  /app/[i.bill]/hoon
-        %~  build-file  ub
-        :_  [cache ~]
-        ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-        (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-      $(bill t.bill, res [[i.bill built-file] res], cache cache.build-state)
-    =/  all-files=(list [path %& page])   
-      :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]     
-      %+  murn  ~(tap by snap)
-      |=  [=path =file]
-      ?+    (rear path)  ~
-          %hoon  `[path %& %hoon (of-wain:format file)]
-          %ship  `[path %& %ship (slav %p (snag 0 file))]
-          %bill
-        :^  ~  path  %& 
-        bill+!<((list dude:gall) (slap !>(~) (ream (of-wain:format file))))
-      ::
-          %kelvin
-        `[path %& %kelvin (cord-to-waft:clay (of-wain:format file))]
-      ::
-        ::   %docket-0 :: TODO
-        :: `[path %& %docket-0 !<(list)]
-      ==
+        (~(gut by snap) /desk/bill ~)
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap repo.act bill)
     :_  state
-    ?.  |- :: if anything failed then don't commit
-        ?~  vases  %&
-        ?:  =(%| +<.i.vases)
-          ~&  build-failed+app+-.i.vases  %|
-        $(vases t.vases)
-      ~
+    ?:  ?=(%| -.result)  ~
+    [%pass / %arvo %c %park p.result]~
+  ::
+      %make-install-args
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+      (build-park snap [repo bill]:act)
+    :_  state
+    ?~  poke-src.act  ~
     :_  ~
-    :^  %pass  /  %arvo
-    :-  %c
-    :^  %park  repo.act
-      ^-  yoki:clay
-      :+  %&  ~
-      %-  ~(gas by *(map path (each page lobe:clay)))
-      ^-  (list [path %& page])
-      %+  weld  all-files
-      ^-  (list [path %& page])
-      %-  zing
-      %+  turn  vases
-      |=  [=dude:gall vaz=(each vase @t)]
-      ?>  =(%& -.vaz)
-      :~  [/app/[dude]/vase %& %vase p.vaz]
-          :^  /app/[dude]/hoon  %&  %hoon 
-          %-  crip
-          """
-          /*  built  %vase  {<`path`/app/[dude]/vase>}
-          !<(agent:gall built)
-          """
-      ==
-    .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+    ?-    -.poke-src.act
+        %app
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl p.poke-src.act]  %poke  %linedb-update
+      !>(`update`[%make-install-args result])
+    ::
+        %ted
+      :^  %pass  /pokeback/[p.poke-src.act]  %agent
+      :^  [our.bowl %spider]  %poke  %spider-input
+      !>  ^-  [@tatid cage]
+      :+  p.poke-src.act  %linedb-update
+      !>(`update`[%make-install-args result])
+    ==
   ::
       %build
     =/  [built-file=(each vase @t) =build-state]
@@ -352,4 +321,70 @@
       !>(`update`[%build built-file])
     ==
   ==
+::
+++  build-park
+  |=  $:  =snap
+          desk-name=@tas
+          bill=(list dude:gall)
+      ==
+  ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
+  =^  vases=(list [dude:gall (each vase @t)])  cache
+    =|  res=(list [dude:gall (each vase @t)])
+    |-
+    ?~  bill  [res cache]
+    =/  [built-file=(each vase @t) =build-state]
+      %.  /app/[i.bill]/hoon
+      ~(build-file ub snap cache ~)
+    %=  $
+      bill   t.bill
+      res    [[i.bill built-file] res]
+      cache  cache.build-state
+    ==
+  =/  vase-build-error=(unit @t)
+    |-
+    ?~  vases  ~
+    ?:  =(%| +<.i.vases)
+      ~&  build-failed+app+-.i.vases
+      `-.i.vases
+    $(vases t.vases)
+  ?^  vase-build-error
+    :_  cache
+    :-  %|
+    (cat 3 'linedb: build failed for app ' u.vase-build-error)
+  =/  all-files=(list [path %& page])
+    :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
+    %+  turn  ~(tap by snap)
+    |=  [=path =file]
+    ::  files are stored as `wain`s, and transformed here into atoms.
+    ::   binary files are stored as a length-1 list of the atom's bytes,
+    ::   which is effectively just a %mime, but without the mime-type
+    ::   and file length.
+    ::   here, we just read the file contents from %linedb into `%mime`s
+    ::   and let clay handle the markification:
+    ::   this requires that the files have marks to convert from
+    ::   `%mime` to the respective type
+    =*  file-atom  (of-wain:format file)
+    :+  path  %&
+    [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
+  :_  cache
+  :^  %&  desk-name
+    ^-  yoki:clay
+    :+  %&  ~
+    %-  ~(gas by *(map path (each page lobe:clay)))
+    ^-  (list [path %& page])
+    %+  weld  all-files
+    ^-  (list [path %& page])
+    %-  zing
+    %+  turn  vases
+    |=  [=dude:gall vaz=(each vase @t)]
+    ?>  =(%& -.vaz)
+    :~  [/app/[dude]/vase %& %vase p.vaz]
+        :^  /app/[dude]/hoon  %&  %hoon
+        %-  crip
+        """
+        /*  built  %vase  {<`path`/app/[dude]/vase>}
+        !<(agent:gall built)
+        """
+    ==
+  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
 --
