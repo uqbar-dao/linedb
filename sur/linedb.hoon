@@ -48,8 +48,8 @@
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
-      [%install from=@p repo=@tas branch=@tas hash=(unit hash) bill=(list dude:gall)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) bill=(list dude:gall) =poke-src]
+      [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
+      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src]
       $:  %build 
           from=@p
           repo=@tas

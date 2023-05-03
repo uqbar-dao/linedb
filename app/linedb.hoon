@@ -284,7 +284,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act bill.act)
+      (build-park snap repo.act)
     :_  state
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
@@ -294,7 +294,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act bill.act)
+      (build-park snap repo.act)
     :_  state
     ?~  poke-src.act  ~
     :_  ~
@@ -340,17 +340,15 @@
 ++  build-park
   |=  $:  =snap
           desk-name=@tas
-          additional-bill=(list dude:gall)
       ==
   ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
   =/  bill=(list dude:gall)
-    %-  weld  :_  additional-bill
-    !<  (list dude:gall)
-    %+  slap  !>(~)
-    %-  ream
-    %-  of-wain:format
-    (~(gut by snap) /desk/bill ~)
-  ~&  linedb+build-park+bill+bill
+    %+  murn  ~(tap in ~(key by snap))
+    |=  p=path
+    ?~  p                  ~
+    ?.  =(%app i.p)        ~
+    ?.  =(%hoon (rear p))  ~
+    `(rear (snip `path`p))
   =^  vases=(list [dude:gall (each vase tang)])  cache
     =|  res=(list [dude:gall (each vase tang)])
     |-
