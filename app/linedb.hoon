@@ -9,7 +9,8 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          cache=(map @ux vase)
+          =flue
+          =flow
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -192,13 +193,14 @@
           @      (get-file:(ba-core:hc who [repo branch ~]) (slav %ux hash) file)
         ==
       ::
-          [%x %build-result @ ~]
-        =*  file-hash=@ux  (slav %ux i.t.t.path)
-        :^  ~  ~  %uqbuild-update
-        !>  ^-  update
-        :-  %build
-        ?^  build=(~(get by cache) file-hash)  [%& u.build]
-        %|^~[leaf+"build not found for file-hash {<file-hash>}"]
+        :: TODO this is wrong - just build the file
+        ::   [%x %build-result @ ~]
+        :: =*  file-hash=@ux  (slav %ux i.t.t.path)
+        :: :^  ~  ~  %uqbuild-update
+        :: !>  ^-  update
+        :: :-  %build
+        :: ?^  build=(~(get by cache) file-hash)  [%& u.build]
+        :: %|^~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
     ::
     ++  on-arvo
@@ -282,9 +284,9 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+    =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
       (build-park snap repo.act)
-    :_  state
+    :_  state(flow fow, flue fue)
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
   ::
@@ -292,9 +294,9 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
+    =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
       (build-park snap repo.act)
-    :_  state
+    :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
@@ -312,16 +314,16 @@
     ==
   ::
       %build
-    =/  [built-file=(each vase tang) build-state=*] :: TODO fix cache upgrades
+    =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
       %.  file.act
       =<  build-file
       %:  ub
         ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
         (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
       ::
-        5  ~  ~  ~
+        5  flow  flue
       ==
-    :_  state :: TODO update cache
+    :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
@@ -343,7 +345,7 @@
   |=  $:  =snap
           desk-name=@tas
       ==
-  ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
+  ^-  [(each [@tas yoki:clay rang:clay] @t) ^flow ^flue]
   =/  bill=(list dude:gall)
     %+  murn  ~(tap in ~(key by snap))
     |=  p=path
@@ -351,16 +353,17 @@
     ?.  =(%app i.p)        ~
     ?.  =(%hoon (rear p))  ~
     `(rear (snip `path`p))
-  =^  vases=(list [dude:gall (each vase tang)])  cache
+  =/  [vases=(list [dude:gall (each vase tang)]) fow=^flow fue=^flue]
     =|  res=(list [dude:gall (each vase tang)])
     |-
-    ?~  bill  [res cache]
-    =/  [built-file=(each vase tang) build-state=*] :: TODO fix state chagnes to app
-      (build-file:(ub snap 5 ~ ~ ~) /app/[i.bill]/hoon)
+    ?~  bill  [res flow flue]
+    =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
+      (build-file:(ub snap 5 flow flue) /app/[i.bill]/hoon)
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]
-      :: cache  cache.build-state
+      flow   fow
+      flue   fue
     ==
   =/  vase-build-error=(unit @t)
     |-
@@ -370,7 +373,7 @@
       `-.i.vases
     $(vases t.vases)
   ?^  vase-build-error
-    :_  cache
+    :_  [fow fue]
     :-  %|
     (cat 3 'linedb: build failed for app ' u.vase-build-error)
   =/  all-files=(list [path %& page])
@@ -388,7 +391,7 @@
     =*  file-atom  (of-wain:format file)
     :+  path  %&
     [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
-  :_  cache
+  :_  [fow fue]
   :^  %&  desk-name
     ^-  yoki:clay
     :+  %&  ~

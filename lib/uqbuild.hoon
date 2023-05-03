@@ -1,21 +1,6 @@
 /-  *linedb
 ::
-=,  clay
 =>  |%
-    +$  leak                                           ::  cache key
-      ::  This includes all build inputs, transitives included
-      $~  [*path ~]
-      $:  =path
-          deps=(set leak)
-      ==
-    ::
-    +$  pour  (each vase tang)                         ::  build result
-    +$  flow  (map leak [refs=@ud =vase])              ::  global cache
-    ::
-    ::  $flue: per-branch cache
-    ::
-    ::     TODO not sure if we actually need the flue
-    +$  flue  [spill=(set leak) sprig=(map path [=leak =vase])]
     +$  state
       $:  cache=flow
           flue
@@ -67,7 +52,7 @@
   ^-  vase
   =^  vax=vase  nub  (read-file path)
   =/  tex=tape   (trip !<(@t vax))
-  =/  =pile  (parse-pile path tex)
+  =/  =pile:clay  (parse-pile path tex)
   =.  hoon.pile  !,(*hoon .)
   =^  res=vase  nub  (run-prelude pile)
   res
@@ -84,7 +69,7 @@
   =.  cycle.nub  (~(put in cycle.nub) file+path)
   =^  vax=vase  nub  (read-file path)
   =/  tex=tape  (trip !<(@t vax))
-  =/  =pile  (parse-pile path tex)
+  =/  =pile:clay  (parse-pile path tex)
   =^  sut=vase  nub  (run-prelude pile)
   %+  gain-leak  path
   |=  nob=state
@@ -93,7 +78,7 @@
   [pin nub]
 ::
 ++  run-prelude
-  |=  =pile
+  |=  =pile:clay
   =/  sut=vase  !>(..zuse)
   =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
   =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
@@ -103,8 +88,8 @@
 ::
 ++  parse-pile
   |=  [pax=path tex=tape]
-  ^-  pile
-  =/  [=hair res=(unit [=pile =nail])]  ((pile-rule pax) [1 1] tex)
+  ^-  pile:clay
+  =/  [=hair res=(unit [=pile:clay =nail])]  ((pile-rule pax) [1 1] tex)
   ?^  res  pile.u.res
   %-  mean  %-  flop
   =/  lyn  p.hair
@@ -130,11 +115,11 @@
     ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
   |^
   ;~  plug
-    %+  cook  (bake zing (list (list taut)))
+    %+  cook  (bake zing (list (list taut:clay)))
     %+  rune  hep
     (most ;~(plug com gaw) taut-rule)
   ::
-    %+  cook  (bake zing (list (list taut)))
+    %+  cook  (bake zing (list (list taut:clay)))
     %+  rune  lus
     (most ;~(plug com gaw) taut-rule)
   ::
@@ -181,7 +166,7 @@
   --
 ::
 ++  taut-rule
-  %+  cook  |=(taut +<)
+  %+  cook  |=(taut:clay +<)
   ;~  pose
     (stag ~ ;~(pfix tar sym))
     ;~(plug (stag ~ sym) ;~(pfix tis sym))
@@ -189,7 +174,7 @@
   ==
 ::
 ++  run-tauts
-  |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
+  |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
   ^-  [vase state]
   ?~  taz  [sut nub]
   =^  pin=pour  nub  (build-file (fit-path wer pax.i.taz))
@@ -228,7 +213,7 @@
 ++  fit-path
   |=  [pre=@tas pax=@tas]
   ^-  path
-  =/  paz  (segments pax)
+  =/  paz  (segments:clay pax)
   |-  ^-  path
   ?~  paz
     ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
