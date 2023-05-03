@@ -170,6 +170,18 @@
           @      ~(tap by (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash)))
         ==
       ::
+          [%x %snap @ @tas @tas ?(%head @) ~]
+        :^  ~  ~  %noun
+        !>  ^-  (unit snap)
+        :-  ~
+        =*  who          (slav %p i.t.t.path)
+        =*  repo                i.t.t.t.path
+        =*  branch            i.t.t.t.t.path
+        ?-  hash=i.t.t.t.t.t.path
+          %head  head-snap:(ba-core:hc who [repo branch ~])
+          @      (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash))
+        ==
+      ::
           [%x @ @tas @tas %diff @ @ ^]                 ::  diff two files
         =*  who         `@p`(slav %p i.t.path)
         =*  repo                   i.t.t.path
@@ -192,18 +204,6 @@
         ?-  hash=i.t.t.t.t.path
           %head  (head-file:(ba-core:hc who [repo branch ~]) file)
           @      (get-file:(ba-core:hc who [repo branch ~]) (slav %ux hash) file)
-        ==
-      ::
-          [%x %snap @ @tas @tas ?(%head @) ~]
-        :^  ~  ~  %noun
-        !>  ^-  (unit snap)
-        :-  ~
-        =*  who          (slav %p i.t.path)
-        =*  repo                i.t.t.path
-        =*  branch            i.t.t.t.path
-        ?-  hash=i.t.t.t.t.path
-          %head  head-snap:(ba-core:hc who [repo branch ~])
-          @      (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash))
         ==
       ::
           [%x %build-result @ ~]
