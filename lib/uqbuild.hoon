@@ -7,27 +7,29 @@
 ::
 ++  build-dependency
   |=  dep=(each [dir=path fil=path] path)
-  ^-  [(each vase @t) build-state]
+  ^-  [(each vase tang) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
   ~&  bd+start+p
   ~|  error-building+p
-  ?:  (~(has in cycle.bus) p)
-    ~|(cycle+file+p^cycle.bus !!)
-  =.  cycle.bus  (~(put in cycle.bus) p)
+  :: ?:  (~(has in cycle.bus) p)
+  ::   ~|(cycle+file+p^cycle.bus !!)
+  :: =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
   ?^  cax=(~(get by cache.bus) file-hash)
+    ~&  bd+cache-hit+p
     [%&^u.cax bus]
   =/  =pile:clay  (parse-pile p (trip file-text))
   =^  subject=vase  bus  (run-prelude pile)
   =/  build-result  (mule |.((slap subject hoon.pile)))
   ?:  ?=(%| -.build-result)
-    :_  bus
-    :-  %|
-    %-  of-wain:format
-    %+  turn  p.build-result
-    |=(=tank (crip ~(ram re tank)))
+    =*  error-message
+      %-  of-wain:format
+      %+  turn  p.build-result
+      |=(=tank (crip ~(ram re tank)))
+    ~&  bd+fail+error-message
+    [build-result bus]
   =.  cache.bus
     (~(put by cache.bus) file-hash p.build-result)
   ~&  bd+done+p
@@ -35,7 +37,7 @@
 ::
 ++  build-file
   |=  =path
-  ^-  [(each vase @t) build-state]
+  ^-  [(each vase tang) build-state]
   (build-dependency |+path)
 ::
 ++  parse-pile
@@ -144,7 +146,7 @@
   |=  [sut=vase wer=?(%lib %sur) taz=(list taut:clay)]
   ^-  [vase build-state]
   ?~  taz  [sut bus]
-  =^  pin=(each vase @t)  bus  (build-fit wer pax.i.taz)
+  =^  pin=(each vase tang)  bus  (build-fit wer pax.i.taz)
   ?:  ?=(%| -.pin)  ~&  'build-failed'  $(taz t.taz)
   =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
   $(sut (slop p.pin sut), taz t.taz)
@@ -153,7 +155,7 @@
   |=  [sut=vase raw=(list [face=term =path])]
   ^-  [vase build-state]
   ?~  raw  [sut bus]
-  =^  pin=(each vase @t)  bus  (build-file (snoc path.i.raw %hoon))
+  =^  pin=(each vase tang)  bus  (build-file (snoc path.i.raw %hoon))
   ?:  ?=(%| -.pin)  ~&  'build-failed'  $(raw t.raw)
   =.  p.p.pin  [%face face.i.raw p.p.pin]
   $(sut (slop p.pin sut), raw t.raw)
@@ -176,7 +178,7 @@
 ::
 ++  build-fit
   |=  [pre=@tas pax=@tas]
-  ^-  [(each vase @t) build-state]
+  ^-  [(each vase tang) build-state]
   (build-file (fit-path pre pax))
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
@@ -190,7 +192,8 @@
   =/  paz  (segments:clay pax)
   |-  ^-  path
   ?~  paz
-    ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
+    ~&  "no files match /{(trip pre)}/{(trip pax)}/hoon"
+    !!
   =/  pux=path  pre^(snoc i.paz %hoon)
   ?:  (~(has by snap.bus) pux)
     pux

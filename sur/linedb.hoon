@@ -48,8 +48,8 @@
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
-      [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas bill=(list dude:gall) hash=(unit hash) =poke-src]
+      [%install from=@p repo=@tas branch=@tas hash=(unit hash) bill=(list dude:gall)] :: put into clay
+      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) bill=(list dude:gall) =poke-src]
       $:  %build 
           from=@p
           repo=@tas
@@ -60,7 +60,8 @@
       ==
   ==
 +$  update
-  $%  [%build result=(each vase @t)]
+  $@  ~
+  $%  [%build result=(each vase tang)]
       [%make-install-args result=(each [@tas yoki:clay rang:clay] @t)]
       [%new-data =path]
 ==
