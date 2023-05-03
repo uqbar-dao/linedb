@@ -127,13 +127,12 @@
       ::
           [%x ~]                                       ::  list all repos
         :^  ~  ~  %noun
-        !>  ^-  (unit (list [ship ^path]))
-        `~(tap by ~(key by all-rocks:hc))
+        !>  ^-  (list [ship ^path])
+        ~(tap by ~(key by all-rocks:hc))
       ::
           [%x @ ~]                                     ::  repos of ship
         :^  ~  ~  %noun
-        !>  ^-  (unit (list ^path))
-        :-  ~
+        !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         %+  murn  ~(tap by all-rocks:hc)
         |=  [[=ship =sss-paths] *]
@@ -144,8 +143,7 @@
         ::   makes me think maybe we should do a refactor to make
         ::   repos "real"?
         :^  ~  ~  %noun
-        !>  ^-  (unit (list ^path))
-        :-  ~
+        !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         =*  repo  i.t.t.path
         %+  murn  ~(tap by all-rocks:hc)
@@ -155,29 +153,17 @@
           [%x @ @tas @tas ~]                           ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        ``noun+!>(`log:(~(gut by all-rocks:hc) [who sss] *branch))
-      ::
-          [%x @ @tas @tas ?(%head @) ~]                ::  get a list of files
         :^  ~  ~  %noun
-        !>  ^-  (unit (list ^path))
-        :-  ~
+        !>  ^-  (list ceta)
+        log:(~(gut by all-rocks:hc) [who sss] *branch)
+      ::
+          [%x @ @tas @tas ?(%head @) ~]
+        :^  ~  ~  %noun
+        !>  ^-  snap
         =*  who          (slav %p i.t.path)
         =*  repo                i.t.t.path
         =*  branch            i.t.t.t.path
-        %-  turn  :_  head
         ?-  hash=i.t.t.t.t.path
-          %head  ~(tap by head-snap:(ba-core:hc who [repo branch ~]))
-          @      ~(tap by (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash)))
-        ==
-      ::
-          [%x %snap @ @tas @tas ?(%head @) ~]
-        :^  ~  ~  %noun
-        !>  ^-  (unit snap)
-        :-  ~
-        =*  who          (slav %p i.t.t.path)
-        =*  repo                i.t.t.t.path
-        =*  branch            i.t.t.t.t.path
-        ?-  hash=i.t.t.t.t.t.path
           %head  head-snap:(ba-core:hc who [repo branch ~])
           @      (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash))
         ==
@@ -190,7 +176,7 @@
         =*  hax  (slav %ux i.t.t.t.t.t.t.path)
         =*  fil            t.t.t.t.t.t.t.path
         :^  ~  ~  %noun
-        !>
+        !>  ^-  (urge:clay cord)
         (get-diff:(ba-core:hc who repo branch ~) haz hax fil)
       ::
           [%x @ @tas @tas ?(%head @) ^]                ::  read a file
