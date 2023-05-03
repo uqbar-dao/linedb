@@ -377,18 +377,19 @@
       res    [[i.bill built-file] res]
       cache  cache.build-state
     ==
-  =/  did-vase-build-succeed=(each ~ @t)
-    |- :: if anything failed then don't commit
-    ?~  vases  [%& ~]
+  =/  vase-build-error=(unit @t)
+    |-
+    ?~  vases  ~
     ?:  =(%| +<.i.vases)
-      ~&  build-failed+app+-.i.vases  [%| -.i.vases]
+      ~&  build-failed+app+-.i.vases
+      `-.i.vases
     $(vases t.vases)
-  ?:  ?=(%| -.did-vase-build-succeed)
+  ?^  vase-build-error
     :_  cache
     :-  %|
-    (cat 3 'linedb: build failed for app ' p.did-vase-build-succeed)
+    (cat 3 'linedb: build failed for app ' u.vase-build-error)
   =/  all-files=(list [path %& page])
-    %+  welp  boilerplate-files:ldb
+    :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
     %+  turn  ~(tap by snap)
     |=  [=path =file]
     ::  files are stored as `wain`s, and transformed here into atoms.
@@ -415,7 +416,12 @@
     |=  [=dude:gall vaz=(each vase tang)]
     ?>  =(%& -.vaz)
     :~  [/app/[dude]/vase %& %vase p.vaz]
-        [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
+        :^  /app/[dude]/hoon  %&  %hoon
+        %-  crip
+        """
+        /*  built  %vase  {<`path`/app/[dude]/vase>}
+        !<(agent:gall built)
+        """
     ==
   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
 --
