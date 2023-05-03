@@ -226,7 +226,7 @@
   |=  [pri=@ print=(trap tape)]
   ?:  (lth verb pri)
     same
-  (slog leaf+"uqbuild: {(print)}")
+  (slog (crip "uqbuild: {(print)}") ~) :: TODO idk if this is correct +slogging
 ::
 ::  +gain-sprig: if path is in the sprig cache, put it on the stack, otherwise call $
 ::

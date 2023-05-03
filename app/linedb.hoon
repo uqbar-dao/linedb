@@ -9,8 +9,8 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          =flue
           =flow
+          =flue
       ==
     +$  card  $+(card card:agent:gall)
     --
