@@ -20,15 +20,6 @@
   --
   '''
 ::
-++  gen-app
-  |=  p=path
-  ^-  @t
-  %-  crip
-  """
-  /*  built  %vase  {<`path`p>}
-  !<(agent:gall built)
-  """
-::
 ::  diff operations
 ::
 ++  di

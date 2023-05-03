@@ -379,7 +379,12 @@
     |=  [=dude:gall vaz=(each vase @t)]
     ?>  =(%& -.vaz)
     :~  [/app/[dude]/vase %& %vase p.vaz]
-        [/app/[dude]/hoon %& %hoon (gen-app:ldb /app/[dude]/vase)]
+        :^  /app/[dude]/hoon  %&  %hoon
+        %-  crip
+        """
+        /*  built  %vase  {<`path`/app/[dude]/vase>}
+        !<(agent:gall built)
+        """
     ==
   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
 --
