@@ -125,12 +125,12 @@
       |.
       ?+    path  (on-peek:def path)
       ::
-          [%x ~]                                           ::  list all repos
+          [%x ~]                                       ::  list all repos
         :^  ~  ~  %noun
         !>  ^-  (unit (list [ship ^path]))
         `~(tap by ~(key by all-rocks:hc))
       ::
-          [%x @ ~]                                         ::  repos of ship
+          [%x @ ~]                                     ::  repos of ship
         :^  ~  ~  %noun
         !>  ^-  (unit (list ^path))
         :-  ~
@@ -139,7 +139,7 @@
         |=  [[=ship =sss-paths] *]
         ?:(=(ship who) `sss-paths ~)
       ::
-          [%x @ @tas ~]                                    ::  branches of repo
+          [%x @ @tas ~]                                ::  branches of repo
         :: TODO this is not easy the way we have it set up with +ba
         ::   makes me think maybe we should do a refactor to make
         ::   repos "real"?
@@ -152,12 +152,12 @@
         |=  [[=ship =sss-paths] *]
         ?:(&(=(ship who) =(-.sss-paths repo)) `sss-paths ~)
       ::
-          [%x @ @tas @tas ~]                               ::  log of branch
+          [%x @ @tas @tas ~]                           ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
         ``noun+!>(`log:(~(gut by all-rocks:hc) [who sss] *branch))
       ::
-          [%x @ @tas @tas ?(%head @) ~]                    ::  get a list of files
+          [%x @ @tas @tas ?(%head @) ~]                ::  get a list of files
         :^  ~  ~  %noun
         !>  ^-  (unit (list ^path))
         :-  ~
@@ -170,7 +170,18 @@
           @      ~(tap by (get-snap:(ba-core:hc who [repo branch ~]) (slav %ux hash)))
         ==
       ::
-          [%x @ @tas @tas ?(%head @) ^]                    ::  read a file
+          [%x @ @tas @tas %diff @ @ ^]                 ::  diff two files
+        =*  who         `@p`(slav %p i.t.path)
+        =*  repo                   i.t.t.path
+        =*  branch               i.t.t.t.path
+        =*  haz    (slav %ux i.t.t.t.t.t.path)
+        =*  hax  (slav %ux i.t.t.t.t.t.t.path)
+        =*  fil            t.t.t.t.t.t.t.path
+        :^  ~  ~  %noun
+        !>
+        (get-diff:(ba-core:hc who repo branch ~) haz hax fil)
+      ::
+          [%x @ @tas @tas ?(%head @) ^]                ::  read a file
         :^  ~  ~  %noun
         !>  ^-  (unit @t)
         :-  ~
