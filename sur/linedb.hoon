@@ -60,7 +60,7 @@
       ==
   ==
 +$  update
-  $%  [%build result=(each vase @t)]
+  $%  [%build result=(each vase tang)]
       [%new-data =path]
 ==
 --

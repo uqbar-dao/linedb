@@ -2,13 +2,19 @@
 ::
 =,  clay
 =>  |%
-    +$  leak
+    +$  leak                                           ::  cache key
+      ::  This includes all build inputs, transitives included
       $~  [*path ~]
       $:  =path
           deps=(set leak)
       ==
-    +$  flow  (map leak [refs=@ud =vase])
-    :: TODO not sure if we actually need the flue
+    ::
+    +$  pour  (each vase tang)                         ::  build result
+    +$  flow  (map leak [refs=@ud =vase])              ::  global cache
+    ::
+    ::  $flue: per-branch cache
+    ::
+    ::     TODO not sure if we actually need the flue
     +$  flue  [spill=(set leak) sprig=(map path [=leak =vase])]
     +$  state
       $:  cache=flow
@@ -36,7 +42,10 @@
 ++  read-file
   |=  =path
   ^-  [vase state]
-  ~|  %error-validating^path
+  ~|  error-validating+path
+  =;  [pin=pour nob=state]
+    ?>  ?=(%& -.pin)
+    [p.pin nob]
   %+  gain-sprig  path  |.
   =.  stack.nub  [~ stack.nub]
   ?:  (~(has in cycle.nub) vale+path)
@@ -44,11 +53,13 @@
   =.  cycle.nub  (~(put in cycle.nub) path)
   %+  gain-leak  path
   |=  nob=state
+  ^-  [pour state]
   =.  nub  nob
   %-  (trace 1 |.("read file {(spud path)}"))
   :_  nub
+  :-  %&
   !>  %-  of-wain:format
-  ~|  %file-not-found^path
+  ~|  file-not-found+path
   (~(got by files) path)
 ::
 ++  prelude
@@ -61,9 +72,9 @@
   =^  res=vase  nub  (run-prelude pile)
   res
 ::
-++  build-dependency
+++  build-file
   |=  =path
-  ^-  [vase state]
+  ^-  [pour state]
   ~|  %error-building^path
   %+  gain-sprig  path  |.
   =.  stack.nub  [~ stack.nub]
@@ -78,8 +89,8 @@
   %+  gain-leak  path
   |=  nob=state
   =.  nub  nob
-  =/  res=vase  (slap sut hoon.pile)
-  [res nub]
+  =/  pin=pour  (mule |.((slap sut hoon.pile)))
+  [pin nub]
 ::
 ++  run-prelude
   |=  =pile
@@ -181,17 +192,19 @@
   |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
   ^-  [vase state]
   ?~  taz  [sut nub]
-  =^  pin=vase  nub  (build-fit wer pax.i.taz)
-  =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
-  $(sut (slop pin sut), taz t.taz)
+  =^  pin=pour  nub  (build-file (fit-path wer pax.i.taz))
+  ?:  ?=(%| -.pin)  ~&  build-failed+pax.i.taz  !!
+  =?  p.p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.p.pin]
+  $(sut (slop p.pin sut), taz t.taz)
 ::
 ++  run-tis
   |=  [sut=vase raw=(list [face=term =path])]
   ^-  [vase state]
   ?~  raw  [sut nub]
-  =^  pin=vase  nub  (build-dependency (snoc path.i.raw %hoon))
-  =.  p.pin  [%face face.i.raw p.pin]
-  $(sut (slop pin sut), raw t.raw)
+  =^  pin=pour  nub  (build-file (snoc path.i.raw %hoon))
+  ?:  ?=(%| -.pin)  ~&  build-failed+path.i.raw  !!
+  =.  p.p.pin  [%face face.i.raw p.p.pin]
+  $(sut (slop p.pin sut), raw t.raw)
 ::
 :: ++  run-tar :: TODO
 ::   |=  [sut=vase bar=(list [face=term =mark =path])]
@@ -206,13 +219,6 @@
 ::     ==
 ::   =.  p.q.cage  [%face face.i.bar p.cage]
 ::   $(sut (slop q.vase sut), bar t.bar)
-::
-::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
-::
-++  build-fit
-  |=  [pre=@tas pax=@tas]
-  ^-  [vase state]
-  (build-dependency (fit-path pre pax))
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
 ::
@@ -240,13 +246,13 @@
 ::  +gain-sprig: if path is in the sprig cache, put it on the stack, otherwise call $
 ::
 ++  gain-sprig
-  |=  [=path next=(trap [vase state])]
-  ^-  [vase state]
+  |=  [=path next=(trap [pour state])]
+  ^-  [pour state]
   ?~  got=(~(get by sprig.nub) path)
     $:next
   =?  stack.nub  ?=(^ stack.nub)
     stack.nub(i (~(put in i.stack.nub) leak.u.got))
-  [vase.u.got nub]
+  [%&^vase.u.got nub]
 ::
 ::  +gain-leak:
 ::    pop top off the stack to create a new leak (key)
@@ -256,8 +262,8 @@
 ::    other wise create a new entry in the cache, remembering to bump refs of all it's dependencies
 ::
 ++  gain-leak
-  |=  [=path next=$-(state [vase state])]
-  ^-  [vase state]
+  |=  [=path next=$-(state [pour state])]
+  ^-  [pour state]
   =^  top=(set leak)  stack.nub  stack.nub
   =/  =leak  [path top]
   =.  cycle.nub  (~(del in cycle.nub) path)
@@ -274,7 +280,8 @@
         (~(put by cache.nub) leak [+(refs.u.got) vase.u.got])
       [vase.u.got nub]
     %-  (trace 2 |.("cache {<path.leak>}: creating"))
-    =^  =vase  nub  (next nub)
+    =^  pin=pour  nub  (next nub)
+    =/  =vase  ?>(?=(%& -.pin) p.pin)
     =.  cache.nub  (~(put by cache.nub) leak [1 vase])
     ::  If we're creating a cache entry, add refs to our dependencies
     ::
@@ -289,10 +296,10 @@
     =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
     $(deps t.deps)
   ?:  spilt
-    [vase nub]
+    [%&^vase nub]
   %-  (trace 3 |.("spilt {<path>}"))
   =:  spill.nub  (~(put in spill.nub) leak)
       sprig.nub  (~(put by sprig.nub) path leak vase)
     ==
-  [vase nub]
+  [%&^vase nub]
 --

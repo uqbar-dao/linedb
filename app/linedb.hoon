@@ -1,5 +1,5 @@
 /-  *linedb, bur=branch
-/+  ldb=linedb, bil=branch, ub=uqbuild, sss, default-agent, verb, dbug
+/+  ldb=linedb, bil=branch, ub=uqbuild-2, sss, default-agent, verb, dbug
 ::
 =>  |%
     +$  versioned-state
@@ -170,7 +170,7 @@
         !>  ^-  update
         :-  %build
         ?^  build=(~(get by cache) file-hash)  [%& u.build]
-        [%| (crip "build not found for file-hash {<file-hash>}")]
+        %|^~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
     ::
     ++  on-arvo
@@ -260,17 +260,20 @@
         %-  of-wain:format
         ~|  "no desk.bill, nothing to build"
         (~(got by snap) /desk/bill)
-    =^  vases=(list [dude:gall (each vase @t)])  cache
-      =|  res=(list [dude:gall (each vase @t)])
+    =^  vases=(list [dude:gall (each vase tang)])  cache
+      =|  res=(list [dude:gall (each vase tang)])
       |-
       ?~  bill  [res cache]
-      =/  [built-file=(each vase @t) =build-state]
+      =/  [built-file=(each vase tang) build-state=*] :: TODO integrate state into linedb state
         %.  /app/[i.bill]/hoon
-        %~  build-file  ub
-        :_  [cache ~]
-        ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-        (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-      $(bill t.bill, res [[i.bill built-file] res], cache cache.build-state)
+        =<  build-file
+        %:  ub
+          ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+            (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+        ::
+          5  ~  ~  ~
+        ==
+      $(bill t.bill, res [[i.bill built-file] res]) :: TODO update caches 
     =/  all-files=(list [path %& page])   
       :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]     
       %+  murn  ~(tap by snap)
@@ -307,7 +310,7 @@
       ^-  (list [path %& page])
       %-  zing
       %+  turn  vases
-      |=  [=dude:gall vaz=(each vase @t)]
+      |=  [=dude:gall vaz=(each vase tang)]
       ?>  =(%& -.vaz)
       :~  [/app/[dude]/vase %& %vase p.vaz]
           :^  /app/[dude]/hoon  %&  %hoon 
@@ -320,13 +323,14 @@
     .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
   ::
       %build
-    =/  [built-file=(each vase @t) =build-state]
+    =/  [built-file=(each vase tang) build-state=*] :: TODO incorporate ford state
       %.  file.act
-      %~  build-file  ub
-      :_  [cache ~]
+      =<  build-file
+      %-  ub
+      :_  [5 ~ ~ ~]
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    :_  state(cache cache.build-state)
+    :_  state :: TODO update cache
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
