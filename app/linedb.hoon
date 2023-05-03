@@ -312,13 +312,15 @@
     ==
   ::
       %build
-    =/  [built-file=(each vase tang) =build-state]
+    =/  [built-file=(each vase tang) build-state=*] :: TODO fix cache upgrades
       %.  file.act
       =<  build-file
-      %-  ub
-      :_  [5 ~ ~ ~]
-      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+      %:  ub
+        ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+        (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+      ::
+        5  ~  ~  ~
+      ==
     :_  state :: TODO update cache
     ?~  poke-src.act  ~
     :_  ~
@@ -353,13 +355,12 @@
     =|  res=(list [dude:gall (each vase tang)])
     |-
     ?~  bill  [res cache]
-    =/  [built-file=(each vase tang) =build-state]
-      %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~)
+    =/  [built-file=(each vase tang) build-state=*] :: TODO fix state chagnes to app
+      (build-file:(ub snap 5 ~ ~ ~) /app/[i.bill]/hoon)
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]
-      cache  cache.build-state
+      :: cache  cache.build-state
     ==
   =/  vase-build-error=(unit @t)
     |-
