@@ -79,7 +79,7 @@
 ::
 ++  get-commit   |=(h=hash (~(gut by commits.branch) h *commit))
 ++  get-snap     |=(h=hash snap:(get-commit h))
-++  get-file     |=([h=hash p=path] (of-wain:format (~(gut by (get-snap h)) p *wain)))
+++  get-file     |=([h=hash p=path] (of-wain:format (~(got by (get-snap h)) p)))
 ++  get-directory :: TODO this gets a lot more efficient with an +axal
   |=  [=hash nedl=path]
   ^-  (list [path file])
