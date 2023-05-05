@@ -64,9 +64,9 @@
   %+  gain-sprig  path  |.
   =.  stack.nub  [~ stack.nub]
   %-  (trace 1 |.("make file {(spud path)}"))
-  ?:  (~(has in cycle.nub) file+path)
-    ~|(cycle+file+path^cycle.nub !!)
-  =.  cycle.nub  (~(put in cycle.nub) file+path)
+  ?:  (~(has in cycle.nub) path)
+    ~|(cycle+path^cycle.nub !!)
+  =.  cycle.nub  (~(put in cycle.nub) path)
   =^  vax=vase  nub  (read-file path)
   =/  tex=tape  (trip !<(@t vax))
   =/  =pile:clay  (parse-pile path tex)
@@ -228,7 +228,7 @@
     same
   (slog (crip "uqbuild: {(print)}") ~) :: TODO idk if this is correct +slogging
 ::
-::  +gain-sprig: if path is in the sprig cache, put it on the stack, otherwise call $
+::  +gain-sprig: check if path is in sprig cache before building
 ::
 ++  gain-sprig
   |=  [=path next=(trap [pour state])]
@@ -239,39 +239,48 @@
     stack.nub(i (~(put in i.stack.nub) leak.u.got))
   [%&^vase.u.got nub]
 ::
-::  +gain-leak:
-::    pop top off the stack to create a new leak (key)
-::    delete path from cycle (why here?)
-::    add this key to i.stack if it exists
-::    if the key is in the spill, then put it in the cache as well
-::    other wise create a new entry in the cache, remembering to bump refs of all it's dependencies
+::  +gain-leak
 ::
 ++  gain-leak
   |=  [=path next=$-(state [pour state])]
   ^-  [pour state]
+  ::  pop a set of dependencies off the stack
+  ::
   =^  top=(set leak)  stack.nub  stack.nub
   =/  =leak  [path top]
+  ::  delete this from the cycle
+  ::
   =.  cycle.nub  (~(del in cycle.nub) path)
+  ::  add it to the next set of deps on the stack
+  ::
   =?  stack.nub  ?=(^ stack.nub)
     stack.nub(i (~(put in i.stack.nub) leak))
   =/  spilt  (~(has in spill.nub) leak)
   =^  =vase  nub
     ?^  got=(~(get by cache.nub) leak)
+      ::  if leak is in the cache
+      ::
       %-  %+  trace  3  |.
           =/  refs    ?:(spilt 0 1)
           %+  welp  "cache {<path.leak>}: adding {<refs>}, "
           "giving {<(add refs refs.u.got)>}"
+      ::  update the cache entry
+      ::
       =?  cache.nub  !spilt
         (~(put by cache.nub) leak [+(refs.u.got) vase.u.got])
       [vase.u.got nub]
+    ::  otherwise create the cache entry
+    ::
     %-  (trace 2 |.("cache {<path.leak>}: creating"))
+    ::  TODO what is in next
+    ::
     =^  pin=pour  nub  (next nub)
     =/  =vase
       ?:  ?=(%& -.pin)  p.pin
       ~&  [%build-failed path.leak (turn p.pin |=(=tank ~(ram re tank)))]  !!
-    =.  cache.nub  (~(put by cache.nub) leak [1 vase])
-    ::  If we're creating a cache entry, add refs to our dependencies
+    ::  add the build to the cache, update refs to dependencies
     ::
+    =.  cache.nub  (~(put by cache.nub) leak [1 vase])
     =/  deps  ~(tap in deps.leak)
     |-
     ?~  deps
@@ -282,11 +291,44 @@
         ": bumping to ref {<refs.got>}"
     =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
     $(deps t.deps)
-  ?:  spilt
-    [%&^vase nub]
+  ::  if its in spill, continue
+  ::
+  ?:  spilt  [%&^vase nub]
+  ::  otherwise, update the flue
+  ::
   %-  (trace 3 |.("spilt {<path>}"))
   =:  spill.nub  (~(put in spill.nub) leak)
       sprig.nub  (~(put by sprig.nub) path leak vase)
     ==
   [%&^vase nub]
+::
+++  lose-leak
+  |=  [verb=@ fad=flow =leak]
+  ^-  flow
+  ?~  got=(~(get by fad) leak)
+    %-  (trace 0 |.("lose missing leak {<leak>}"))
+    fad
+  ?:  (lth 1 refs.u.got)
+    %-  (trace 3 |.("cache {<path.leak>}: decrementing from {<refs.u.got>}"))
+    =.  fad  (~(put by fad) leak u.got(refs (dec refs.u.got)))
+    fad
+  =+  ?.  =(0 refs.u.got)  ~
+      ((trace 0 |.("lose zero leak {<leak>}")) ~)
+  %-  (trace 2 |.("cache {<path.leak>}: freeing"))
+  =.  fad  (~(del by fad) leak)
+  =/  leaks  ~(tap in deps.leak)
+  |-  ^-  flow
+  ?~  leaks
+    fad
+  =.  fad  ^$(leak i.leaks)
+  $(leaks t.leaks)
+::
+++  lose-leaks
+  |=  [verb=@ fad=flow leaks=(set leak)]
+  ^-  flow
+  =/  leaks  ~(tap in leaks)
+  |-
+  ?~  leaks
+    fad
+  $(fad (lose-leak verb fad i.leaks), leaks t.leaks)
 --

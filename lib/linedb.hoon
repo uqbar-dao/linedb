@@ -69,6 +69,30 @@
       (~(gut by old) path *file)
     (~(gut by new) path *file)
   ::
+  ++  get-changes
+    |=  [old=snap new=snap]
+    ^-  [deletes=(set path) changes=(map path wain)]
+    :*  %-  silt  ^-  (list path)
+        %+  murn  ~(tap by (~(uni by old) new))
+        |=  [=path *]
+        ^-  (unit ^path)
+        =/  a  (~(get by new) path)
+        =/  b  (~(get by old) path)
+        ?:  |(=(a b) !=(~ a))
+          ~
+        `path
+      ::
+        %-  malt  ^-  (list [path wain])
+        %+  murn  ~(tap by (~(uni by old) new))
+        |=  [=path *]
+        ^-  (unit [^path wain])
+        =/  a  (~(get by new) path)
+        =/  b  (~(get by old) path)
+        ?:  |(=(a b) ?=(~ a))
+          ~
+        `[path u.a]
+    ==
+  ::
   ++  three-way-merge                                  ::  +mash in mar/txt/hoon
     |=  $:  [ald=@tas ali=diff]
             [bod=@tas bob=diff]

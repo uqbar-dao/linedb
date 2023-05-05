@@ -11,6 +11,7 @@
           pubs=_(mk-pubs:sss bur sss-paths)
           =flow
           =flue
+          builds=(map [who=@p sss-paths] snap)  ::  to know when to rebuild the cache
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -285,7 +286,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
-      (build-park snap repo.act)
+      (build-park from.act [repo branch ~]:act snap repo.act)
     :_  state(flow fow, flue fue)
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
@@ -295,7 +296,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
-      (build-park snap repo.act)
+      (build-park from.act [repo branch ~]:act snap repo.act)
     :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
@@ -314,6 +315,7 @@
     ==
   ::
       %build
+    ::  TODO promote cache here?
     =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
       %.  file.act
       =<  build-file
@@ -342,10 +344,18 @@
   ==
 ::
 ++  build-park
-  |=  $:  =snap
+  |=  $:  who=@p
+          pax=sss-paths
+          =snap
           desk-name=@tas
       ==
   ^-  [(each [@tas yoki:clay rang:clay] @t) ^flow ^flue]
+  =/  [deletes=(set path) changes=(map path wain)]
+    (get-changes:di:ldb (~(gut by builds) [who pax] *^snap) snap)
+  =/  invalid  (~(uni in deletes) ~(key by changes))
+  =.  flue
+    (promote-uqbuild flue invalid)
+  =.  builds  (~(put by builds) [who pax] snap)
   =/  bill=(list dude:gall)
     %+  murn  ~(tap in ~(key by snap))
     |=  p=path
@@ -412,4 +422,31 @@
         """
     ==
   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+::
+++  promote-uqbuild
+  |=  [fod=^flue invalid=(set path)]
+  ^-  ^flue
+  =/  old=(list leak)  ~(tap in spill.fod)
+  =|  new=^flue
+  |-  ^-  ^flue
+  ?~  old
+    new
+  =/  invalid
+    |-  ^-  ?
+    ?|  (~(has in invalid) path.i.old)
+    ::
+        =/  deps  ~(tap in deps.i.old)
+        |-  ^-  ?
+        ?~  deps  %|
+        ?|  ^$(i.old i.deps)
+            $(deps t.deps)
+        ==
+    ==
+  =?  new  !invalid
+    :-  (~(put in spill.new) i.old)
+    ?~  got=(~(get by sprig.fod) path.i.old)
+      sprig.new
+    (~(put by sprig.new) path.i.old u.got)
+  $(old t.old)
+::  
 --
