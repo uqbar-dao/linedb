@@ -83,7 +83,7 @@
   =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
   =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
   =^  sut=vase  nub  (run-tis sut raw.pile)
-  :: =^  sut=vase  nub  (run-tar sut bar.pile)
+  =^  sut=vase  nub  (run-tar sut bar.pile)
   [sut nub]
 ::
 ++  parse-pile
@@ -114,6 +114,8 @@
     ::
     ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
   |^
+  ::  TODO we can stop parsing runes we don't use
+  ::
   ;~  plug
     %+  cook  (bake zing (list (list taut:clay)))
     %+  rune  hep
@@ -191,19 +193,19 @@
   =.  p.p.pin  [%face face.i.raw p.p.pin]
   $(sut (slop p.pin sut), raw t.raw)
 ::
-:: ++  run-tar :: TODO
-::   |=  [sut=vase bar=(list [face=term =mark =path])]
-::   ^-  [vase state]
-::   ~|  "uqbuild: cannot import {<mark>} with /*"
-::   ?~  bar  [sut nub]
-::   ?>  =((rear path.i.bar) mark.i.bar)
-::   =/  =vase
-::     ?+  mark.i.bar  !!  :: TODO other marks
-::       %noun  noun+!>((crip ((read-file path.i.bar)) :: TODO I think read-file is wrong here
-::       %jam   jam+!>((read-file path.i.bar))
-::     ==
-::   =.  p.q.cage  [%face face.i.bar p.cage]
-::   $(sut (slop q.vase sut), bar t.bar)
+++  run-tar
+  |=  [sut=vase bar=(list [face=term =mark =path])]
+  ^-  [vase state]
+  ?~  bar  [sut nub]
+  ~|  "uqbuild: cannot import {<mark>} with /*"
+  ?>  =((rear path.i.bar) mark.i.bar)
+  =^  vax=vase  nub
+    ?+  mark.i.bar  !!  :: TODO other marks
+      %noun  (read-file path.i.bar)
+      %jam   (read-file path.i.bar)
+    ==
+  =.  p.vax  [%face face.i.bar p.vax]
+  $(sut (slop vax sut), bar t.bar)
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
 ::
