@@ -315,8 +315,6 @@
     ==
   ::
       %build
-    ::  TODO promote cache here?
-    ::    if we don't then probably will get cache promotion bugs
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
