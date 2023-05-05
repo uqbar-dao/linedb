@@ -266,7 +266,9 @@
       [vase.u.got nub]
     %-  (trace 2 |.("cache {<path.leak>}: creating"))
     =^  pin=pour  nub  (next nub)
-    =/  =vase  ?>(?=(%& -.pin) p.pin)
+    =/  =vase
+      ?:  ?=(%& -.pin)  p.pin
+      ~&  [%build-failed path.leak (turn p.pin |=(=tank ~(ram re tank)))]  !!
     =.  cache.nub  (~(put by cache.nub) leak [1 vase])
     ::  If we're creating a cache entry, add refs to our dependencies
     ::
