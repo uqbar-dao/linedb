@@ -107,6 +107,8 @@
 ::
 ++  pile-rule
   |=  pax=path
+  ::  TODO I believe we can delete a lot of this since we aren't parsing
+  ::    certain ford runes
   %-  full
   %+  ifix
     :_  gay
@@ -114,8 +116,6 @@
     ::
     ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
   |^
-  ::  TODO we can stop parsing runes we don't use
-  ::
   ;~  plug
     %+  cook  (bake zing (list (list taut:clay)))
     %+  rune  hep
