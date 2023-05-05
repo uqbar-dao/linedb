@@ -274,7 +274,7 @@
       :: need to use +live if it has been killed
       =.  pubs  (fork:dub [repo branch ~]:act [repo name ~]:act)
       `state
-    =.  pubs  (copy:dub subs [from %linedb repo from ~]:act [repo name ~]:act)
+    =.  pubs  (copy:dub subs [from %linedb repo branch ~]:act [repo name ~]:act)
     `state
   ::
       %fetch
