@@ -107,8 +107,6 @@
 ::
 ++  pile-rule
   |=  pax=path
-  ::  TODO I believe we can delete a lot of this since we aren't parsing
-  ::    certain ford runes
   %-  full
   %+  ifix
     :_  gay
@@ -128,13 +126,13 @@
     %+  rune  tis
     ;~(plug sym ;~(pfix gap stap))
   ::
-    %+  rune  sig
+    %+  rune  sig                                      ::  could delete /~
     ;~((glue gap) sym wyde:vast stap)
   ::
-    %+  rune  cen
+    %+  rune  cen                                      ::  could delete /%
     ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
   ::
-    %+  rune  buc
+    %+  rune  buc                                      ::  could delete /$
     ;~  (glue gap)
       sym
       ;~(pfix cen sym)
