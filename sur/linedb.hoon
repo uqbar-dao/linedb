@@ -21,19 +21,29 @@
       commits=(map hash commit)
   ==
 ++  sss-paths  ,[@tas @tas ~] :: /repo/branch
+::::::
 ::
 ::  uqbuild structures
 ::
++$  leak                                               ::  cache key
+  ::  This includes all build inputs, transitives included
+  $~  [*path ~]
+  $:  =path
+      deps=(set leak)
+  ==
+::
+::  $flue: per-branch cache
+::     TODO not sure if we actually need the flue
+::
++$  flue  [spill=(set leak) sprig=(map path [=leak =vase])]
++$  flow  (map leak [refs=@ud =vase])                  ::  global cache
++$  pour  (each vase tang)                             ::  build result
+::
+::::::
 +$  poke-src
   $@  ~
   $%  [%app p=@tas]
       [%ted p=@tatid]
-  ==
-::
-+$  build-state
-  $:  =snap
-      cache=(map @ux vase)
-      cycle=(set path)
   ==
 ::
 +$  action

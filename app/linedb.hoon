@@ -9,7 +9,9 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          cache=(map @ux vase)
+          =flow
+          =flue
+          builds=(map [who=@p sss-paths] snap)  ::  to know when to rebuild the cache
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -192,14 +194,14 @@
           @      (get-file:(ba-core:hc who [repo branch ~]) (slav %ux hash) file)
         ==
       ::
-          [%x %build-result @ ~]
-        =*  file-hash=@ux  (slav %ux i.t.t.path)
-        :^  ~  ~  %uqbuild-update
-        !>  ^-  update
-        :-  %build
-        ?^  build=(~(get by cache) file-hash)  [%& u.build]
-        :-  %|
-        ~[leaf+"build not found for file-hash {<file-hash>}"]
+        :: TODO this is wrong - just build the file
+        ::   [%x %build-result @ ~]
+        :: =*  file-hash=@ux  (slav %ux i.t.t.path)
+        :: :^  ~  ~  %uqbuild-update
+        :: !>  ^-  update
+        :: :-  %build
+        :: ?^  build=(~(get by cache) file-hash)  [%& u.build]
+        :: %|^~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
     ::
     ++  on-arvo
@@ -283,9 +285,9 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
-    :_  state
+    =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
+      (build-park from.act [repo branch ~]:act snap repo.act)
+    :_  state(flow fow, flue fue)
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
   ::
@@ -293,9 +295,9 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
-    :_  state
+    =/  [result=(each [@tas yoki:clay rang:clay] @t) fow=^flow fue=^flue]
+      (build-park from.act [repo branch ~]:act snap repo.act)
+    :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
@@ -313,13 +315,20 @@
     ==
   ::
       %build
-    =/  [built-file=(each vase tang) =build-state]
-      %.  file.act
-      %~  build-file  ub
-      :_  [cache ~]
+    =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-    :_  state(cache cache.build-state)
+    =/  [deletes=(set path) changes=(map path wain)]
+      %+  get-changes:di:ldb
+        (~(gut by builds) [from repo branch ~]:act *^snap)
+      snap
+    =/  invalid  (~(uni in deletes) ~(key by changes))
+    =.  flue
+      (promote-uqbuild flue invalid)
+    =.  builds  (~(put by builds) [from repo branch ~]:act snap)
+    =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
+      (build-file:(ub snap 5 flow flue) file.act)
+    :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
     ?-    -.poke-src.act
@@ -338,10 +347,18 @@
   ==
 ::
 ++  build-park
-  |=  $:  =snap
+  |=  $:  who=@p
+          pax=sss-paths
+          =snap
           desk-name=@tas
       ==
-  ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
+  ^-  [(each [@tas yoki:clay rang:clay] @t) ^flow ^flue]
+  =/  [deletes=(set path) changes=(map path wain)]
+    (get-changes:di:ldb (~(gut by builds) [who pax] *^snap) snap)
+  =/  invalid  (~(uni in deletes) ~(key by changes))
+  =.  flue
+    (promote-uqbuild flue invalid)
+  =.  builds  (~(put by builds) [who pax] snap)
   =/  bill=(list dude:gall)
     %+  murn  ~(tap in ~(key by snap))
     |=  p=path
@@ -349,17 +366,17 @@
     ?.  =(%app i.p)        ~
     ?.  =(%hoon (rear p))  ~
     `(rear (snip `path`p))
-  =^  vases=(list [dude:gall (each vase tang)])  cache
+  =/  [vases=(list [dude:gall (each vase tang)]) fow=^flow fue=^flue]
     =|  res=(list [dude:gall (each vase tang)])
     |-
-    ?~  bill  [res cache]
-    =/  [built-file=(each vase tang) =build-state]
-      %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~)
+    ?~  bill  [res flow flue]
+    =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
+      (build-file:(ub snap 5 flow flue) /app/[i.bill]/hoon)
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]
-      cache  cache.build-state
+      flow   fow
+      flue   fue
     ==
   =/  vase-build-error=(unit @t)
     |-
@@ -369,7 +386,7 @@
       `-.i.vases
     $(vases t.vases)
   ?^  vase-build-error
-    :_  cache
+    :_  [fow fue]
     :-  %|
     (cat 3 'linedb: build failed for app ' u.vase-build-error)
   =/  all-files=(list [path %& page])
@@ -387,7 +404,7 @@
     =*  file-atom  (of-wain:format file)
     :+  path  %&
     [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
-  :_  cache
+  :_  [fow fue]
   :^  %&  desk-name
     ^-  yoki:clay
     :+  %&  ~
@@ -408,4 +425,31 @@
         """
     ==
   .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+::
+++  promote-uqbuild
+  |=  [fod=^flue invalid=(set path)]
+  ^-  ^flue
+  =/  old=(list leak)  ~(tap in spill.fod)
+  =|  new=^flue
+  |-  ^-  ^flue
+  ?~  old
+    new
+  =/  invalid
+    |-  ^-  ?
+    ?|  (~(has in invalid) path.i.old)
+    ::
+        =/  deps  ~(tap in deps.i.old)
+        |-  ^-  ?
+        ?~  deps  %|
+        ?|  ^$(i.old i.deps)
+            $(deps t.deps)
+        ==
+    ==
+  =?  new  !invalid
+    :-  (~(put in spill.new) i.old)
+    ?~  got=(~(get by sprig.fod) path.i.old)
+      sprig.new
+    (~(put by sprig.new) path.i.old u.got)
+  $(old t.old)
+::  
 --
