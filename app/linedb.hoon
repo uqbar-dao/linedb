@@ -316,15 +316,20 @@
   ::
       %build
     ::  TODO promote cache here?
+    ::    if we don't then probably will get cache promotion bugs
+    =/  =snap
+      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
+      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =/  [deletes=(set path) changes=(map path wain)]
+      %+  get-changes:di:ldb
+        (~(gut by builds) [from repo branch ~]:act *^snap)
+      snap
+    =/  invalid  (~(uni in deletes) ~(key by changes))
+    =.  flue
+      (promote-uqbuild flue invalid)
+    =.  builds  (~(put by builds) [from repo branch ~]:act snap)
     =/  [built-file=(each vase tang) fow=^flow fue=^flue *]
-      %.  file.act
-      =<  build-file
-      %:  ub
-        ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-        (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
-      ::
-        5  flow  flue
-      ==
+      (build-file:(ub snap 5 flow flue) file.act)
     :_  state(flow fow, flue fue)
     ?~  poke-src.act  ~
     :_  ~
