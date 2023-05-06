@@ -28,6 +28,7 @@ def get_cookie(
 def send_poke(
         cookie,
         poke_json,
+        ship="nec",
         url_base="http://localhost",
 ):
     url = urljoin(url_base, "/~/channel/linedb-load-files-from-directory")
@@ -38,7 +39,7 @@ def send_poke(
     data = [{
         "id": 1,
         "action": "poke",
-        "ship": "nec",
+        "ship": ship,
         "app": "linedb",
         "mark": "linedb-action",
         "json": poke_json,
@@ -96,6 +97,13 @@ def parse_arguments():
             default="http://localhost",
     )
     parser.add_argument(
+            "--ship",
+            help=".",
+            nargs="?",
+            const="nec",
+            default="nec",
+    )
+    parser.add_argument(
             "--password",
             help=".",
             nargs="?",
@@ -117,5 +125,5 @@ if __name__ == '__main__':
     }
 
     cookie = get_cookie(url_base=args.url_base, password=args.password)
-    response = send_poke(cookie, poke_json, url_base=args.url_base)
+    response = send_poke(cookie, poke_json, ship=args.ship, url_base=args.url_base)
     print(response)
