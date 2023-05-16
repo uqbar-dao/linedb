@@ -294,7 +294,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      (build-park snap repo.act [%cx //rang])
     :_  state
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
@@ -304,7 +304,8 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      %^  build-park  snap  repo.act
+      ?~  rang-scry.act  [%cx //rang]  u.rang-scry.act
     :_  state
     ?~  poke-src.act  ~
     :_  ~
@@ -350,6 +351,7 @@
 ++  build-park
   |=  $:  =snap
           desk-name=@tas
+          rang-scry=(pair @tas path)
       ==
   ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
   =/  bill=(list dude:gall)
@@ -417,5 +419,11 @@
         !<(agent:gall built)
         """
     ==
-  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+  :: .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+  ?~  q.rang-scry  *rang:clay
+  .^  rang:clay
+      p.rang-scry
+      %-  weld  :_  t.q.rang-scry
+      /(scot %p our.bowl)/[i.q.rang-scry]/(scot %da now.bowl)
+  ==
 --

@@ -49,7 +49,7 @@
       ::  %uqbuild action
       ::
       [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src]
+      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) rang-scry=(unit [@tas path]) =poke-src]
       $:  %build 
           from=@p
           repo=@tas
