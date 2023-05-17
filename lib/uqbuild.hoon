@@ -21,11 +21,12 @@
   |=  dep=(each [dir=path fil=path] path)
   ^-  [(each [=vase is-hit=?] tang) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-  ~&  bd+start+p
+  ~&  bd+start+p^cycle.bus
+  :: ~&  bd+start+p
   ~|  error-building+p
-  :: ?:  (~(has in cycle.bus) p)
-  ::   ~|(cycle+file+p^cycle.bus !!)
-  :: =.  cycle.bus  (~(put in cycle.bus) p)
+  ?:  (~(has in cycle.bus) p)
+    ~|(cycle+file+p^cycle.bus !!)
+  =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
@@ -48,7 +49,7 @@
   ?:  &(is-hit ?=(^ cax))
     ::  (5)
     ~&  bd+cache-hit+p
-    [%&^u.cax^%.y bus]
+    [%&^u.cax^%.y bus(cycle (~(del in cycle.bus) p))]
   ::  (6)
   =/  =pile:clay  (pile:parse p (trip file-text))
   =/  build-result  (mule |.((slap subject hoon.pile)))
@@ -62,7 +63,7 @@
   =.  cache.bus
     (~(put by cache.bus) file-hash p.build-result)
   ~&  bd+done+p
-  [%&^p.build-result^%.n bus]
+  [%&^p.build-result^%.n bus(cycle (~(del in cycle.bus) p))]
 ::
 ++  build-file-internal
   |=  =path
