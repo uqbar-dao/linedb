@@ -25,7 +25,11 @@
   :: ~&  bd+start+p
   ~|  error-building+p
   ?:  (~(has in cycle.bus) p)
-    ~|(cycle+file+p^cycle.bus !!)
+    ~&  uqbuild+cycle+file+p^cycle.bus
+    :_  bus
+    :-  %|
+    :-  %leaf
+    "encountered cyclic import: {<`path`p>} {<cycle.bus>}"
   =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
@@ -150,7 +154,12 @@
 ++  build-fit
   |=  [pre=@tas pax=@tas]
   ^-  [(each [vase ?] tang) build-state]
-  (build-file-internal (fit-path pre pax))
+  =/  path-result  (mule |.((fit-path pre pax)))
+  ?:  ?=(%| -.path-result)
+    :_  bus
+    :-  %|
+    [%leaf "no files match /{(trip pre)}/{(trip pax)}/hoon"]
+  (build-file-internal p.path-result)
 ::
 ::  +fit-path: find path, maybe converting '-'s to '/'s
 ::
