@@ -21,8 +21,6 @@
   |=  dep=(each [dir=path fil=path] path)
   ^-  [(each [=vase is-hit=?] tang) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
-  ~&  bd+start+p^cycle.bus
-  :: ~&  bd+start+p
   ~|  error-building+p
   ?:  (~(has in cycle.bus) p)
     ~&  uqbuild+cycle+file+p^cycle.bus
@@ -52,7 +50,6 @@
   =/  cax  (~(get by cache.bus) file-hash)
   ?:  &(is-hit ?=(^ cax))
     ::  (5)
-    ~&  bd+cache-hit+p
     [%&^u.cax^%.y bus(cycle (~(del in cycle.bus) p))]
   ::  (6)
   =/  =pile:clay  (pile:parse p (trip file-text))
@@ -66,7 +63,6 @@
     [%|^p.build-result bus]
   =.  cache.bus
     (~(put by cache.bus) file-hash p.build-result)
-  ~&  bd+done+p
   [%&^p.build-result^%.n bus(cycle (~(del in cycle.bus) p))]
 ::
 ++  build-file-internal
