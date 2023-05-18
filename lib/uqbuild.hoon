@@ -140,7 +140,7 @@
 ++  run-tar
   |=  [sut=vase bar=(list [face=term =mark =path])]
   ^-  [(each [vase is-hit=?] tang) build-state]
-  ~|  "uqbuild: cannot import {<mark>} with /*"
+  ~|  "uqbuild: cannot import {<(rear path.i.bar)>} with /*"
   ?~  bar  [%&^sut^%.y bus]
   ?>  =((rear path.i.bar) mark.i.bar)
   ::  TODO: support additional marks?
