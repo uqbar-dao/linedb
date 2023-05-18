@@ -98,7 +98,6 @@
   =^  tar=(each (pair vase ?) tang)  bus
     (run-tar p.p.tis bar.pile)
   ?:  ?=(%| -.tar)  [%|^p.tar bus]
-  ~&  bd+run-prelude+hits+q.p.hep^q.p.lus^q.p.tis^q.p.tar
   [%&^p.p.tar^&(q.p.hep q.p.lus q.p.tis q.p.tar) bus]
 ::
 ++  run-tauts
