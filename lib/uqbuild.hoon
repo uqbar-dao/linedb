@@ -141,7 +141,7 @@
   |=  [sut=vase bar=(list [face=term =mark =path])]
   ^-  [(each [vase is-hit=?] tang) build-state]
   ?~  bar  [%&^sut^%.y bus]
-  ~|  "uqbuild: cannot import {<path>} with mark {<(rear path.i.bar)>} with /*"
+  ~|  "uqbuild: cannot import {<path.i.bar>} with mark {<(rear path.i.bar)>} with /*"
   ?>  =((rear path.i.bar) mark.i.bar)
   ::  TODO: support additional marks?
   ?>  |(?=(%noun mark.i.bar) ?=(%jam mark.i.bar))
