@@ -126,12 +126,12 @@
       ?+    path  (on-peek:def path)
       ::
           [%x ~]                                       ::  list all repos
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-all-repos
         !>  ^-  (list [ship ^path])
         ~(tap by ~(key by all-rocks:hc))
       ::
           [%x @ ~]                                     ::  repos of ship
-        :^  ~  ~  %linedb-all-repos
+        :^  ~  ~  %noun
         !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         %+  murn  ~(tap by all-rocks:hc)
