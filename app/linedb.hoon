@@ -131,7 +131,7 @@
         ~(tap by ~(key by all-rocks:hc))
       ::
           [%x @ ~]                                     ::  repos of ship
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-all-repos
         !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         %+  murn  ~(tap by all-rocks:hc)
@@ -153,7 +153,7 @@
           [%x @ @tas @tas ~]                           ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-log
         !>  ^-  (list ceta)
         log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::

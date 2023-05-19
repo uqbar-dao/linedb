@@ -242,6 +242,36 @@
     --
   --
 ::
+++  enjs
+  =,  enjs:format
+  |%
+  ++  all-repos
+    |=  repos=(list [@p ^path])
+    ^-  json
+    :-  %a
+    %+  turn  repos
+    |=  [repo-host=@p p=^path]
+    ?>  ?=([@ @ ~] p)
+    %-  pairs
+    :^    [%repo-host %s (scot %p repo-host)]
+        [%repo-name %s i.p]
+      [%branch-name %s i.t.p]
+    ~
+  ::
+  ++  log
+    |=  log=(list ceta)
+    ^-  json
+    :-  %a
+    %+  turn  log
+    |=  [commit-hash=@ux parent=@ux author=@p time=@da]
+    %-  pairs
+    :~  [%commit-hash %s (scot %ux commit-hash)]
+        [%parent %s (scot %ux parent)]
+        [%author %s (scot %p author)]
+        [%time (sect time)]
+    ==
+  --
+::
 ++  dejs
   =,  dejs:format
   |%
