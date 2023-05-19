@@ -25,8 +25,7 @@
   ?:  (~(has in cycle.bus) p)
     ~&  uqbuild+cycle+file+p^cycle.bus
     :_  bus
-    :-  %|
-    :-  %leaf
+    :+  %|  %leaf
     "encountered cyclic import: {<`path`p>} {<cycle.bus>}"
   =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
