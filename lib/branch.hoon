@@ -87,12 +87,16 @@
   |=  [hstk=path =file]
   ?.  =(`0 (find nedl hstk))  ~
   `[hstk file]
-++  get-diff
+++  get-file-diff
   |=  [haz=hash hax=hash fil=path]
   ^-  diff
   %+  diff-files:di:ldb
     (~(gut by (get-snap haz)) fil *wain)
   (~(gut by (get-snap hax)) fil *wain)
+++  get-snap-diff
+  |=  [haz=hash hax=hash]
+  ^-  (map path diff)
+  (diff-snaps:di:ldb (get-snap haz) (get-snap hax))
 ::
 ++  hashes  (turn log.branch |=(=ceta hash.ceta))
 --

@@ -177,7 +177,17 @@
         =*  fil            t.t.t.t.t.t.t.path
         :^  ~  ~  %noun
         !>  ^-  (urge:clay cord)
-        (get-diff:(ba-core:hc who repo branch ~) haz hax fil)
+        (get-file-diff:(ba-core:hc who repo branch ~) haz hax fil)
+      ::
+          [%x @ @tas @tas %diff @ @ ~]                 ::  diff two snaps
+        =*  who         `@p`(slav %p i.t.path)
+        =*  repo                   i.t.t.path
+        =*  branch               i.t.t.t.path
+        =*  haz    (slav %ux i.t.t.t.t.t.path)
+        =*  hax  (slav %ux i.t.t.t.t.t.t.path)
+        :^  ~  ~  %noun
+        !>  ^-  (map ^path (urge:clay cord))
+        (get-snap-diff:(ba-core:hc who repo branch ~) haz hax)
       ::
           [%x @ @tas @tas ?(%head @) ^]                ::  read a file
         :^  ~  ~  %noun
