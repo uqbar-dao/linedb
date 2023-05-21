@@ -54,7 +54,7 @@ def read_files_in_directory(directory):
         try:
             with open(file_path, "r", encoding="utf-8") as file:
                 lines = file.readlines()
-                return [line.strip() for line in lines]
+                return [line.rstrip() for line in lines]
         except UnicodeDecodeError:
             with open(file_path, "rb") as file:
                 binary_data = file.read()

@@ -17,7 +17,7 @@
 =|  state-0
 =*  state  -
 =<  %-  agent:dbug
-    %+  verb  &
+    %+  verb  |
     ^-  agent:gall
     |_  =bowl:gall
     +*  this  .
@@ -126,7 +126,7 @@
       ?+    path  (on-peek:def path)
       ::
           [%x ~]                                       ::  list all repos
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-all-repos
         !>  ^-  (list [ship ^path])
         ~(tap by ~(key by all-rocks:hc))
       ::
@@ -153,7 +153,7 @@
           [%x @ @tas @tas ~]                           ::  log of branch
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-log
         !>  ^-  (list ceta)
         log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::

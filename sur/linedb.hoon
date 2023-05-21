@@ -30,6 +30,12 @@
       [%ted p=@tatid]
   ==
 ::
++$  pile-imports
+  $:  sur=(list taut:clay)
+      lib=(list taut:clay)
+      raw=(list [face=term =path])
+      bar=(list [face=term =mark =path])
+  ==
 +$  build-state
   $:  =snap
       cache=(map @ux vase)
