@@ -26,6 +26,15 @@
   |%
   ++  diff-files  |=([old=file new=file] (lusk old new (loss old new)))
   ++  apply-diff  |=([=file =diff] (lurk file diff))
+  ++  apply-diffs
+    |=  [old-snap=snap diffs=(map path diff)]
+    ^-  snap
+    %-  ~(gas by old-snap)
+    %+  turn  ~(tap by diffs)
+    |=  [p=path d=diff]
+    :-  p
+    %-  apply-diff  :_  d
+    (~(gut by old-snap) p *wain)
   ::
   ++  line-mapping
     |=  =diff

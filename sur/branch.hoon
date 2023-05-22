@@ -4,7 +4,7 @@
 ++  name  %branch
 +$  rock  branch
 +$  wave
-  $%  [%commit our=ship now=@da =snap]
+  $%  [%commit our=ship now=@da diffs=(map path diff)]
       [%merge our=ship now=@da =branch]
       [%squash =hash]
       [%reset =hash]
@@ -14,7 +14,7 @@
   |=  [=rock =wave]
   ^+  rock
   ?-  -.wave
-    %commit  (~(add-commit bil rock) [our now snap]:wave)
+    %commit  (~(add-commit-via-diff bil rock) [our now diffs]:wave)
     %merge   (~(merge bil rock) [our now branch]:wave)
     %squash  (~(squash bil rock) hash.wave)
     %reset   (~(reset bil rock) hash.wave)

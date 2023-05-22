@@ -7,6 +7,24 @@
 ::
 ::  write arms
 ::
+++  add-commit-via-diff
+  |=  [author=ship time=@da diffs=(map path diff)]
+  ^+  branch
+  =/  new-ceta=ceta
+    [`@ux`(sham [snap head author time]) head author time]
+  =/  [old-ceta=ceta old-snap=snap]
+    ?~  log.branch  [*ceta *snap]
+    (~(gut by commits.branch) hash.i.log.branch [*ceta *snap])
+  ?.  =(hash.old-ceta parent.new-ceta)
+    ::  TODO: how to do better than just rejecting commit?
+    branch
+  %=    branch
+      log  [new-ceta log.branch]
+      commits
+    %+  ~(put by commits.branch)  hash.new-ceta
+    [new-ceta (apply-diffs:di:ldb old-snap diffs)]
+  ==
+::
 ++  add-commit
   |=  [author=ship time=@da =snap]
   ^+  branch
