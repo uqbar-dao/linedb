@@ -139,9 +139,13 @@
   ?>  =((rear path.i.bar) mark.i.bar)
   ::  TODO: support additional marks?
   ?>  |(?=(%noun mark.i.bar) ?=(%jam mark.i.bar))
-  =/  file-contents=vase  !>(`@`(read-file path.i.bar))
-  =.  p.file-contents  [%face face.i.bar p.file-contents]
-  $(sut (slop file-contents sut), bar t.bar)
+  =/  file-contents=@  (read-file path.i.bar)
+  =/  file-mime=vase
+    !>  :+  /application/x-urb-vase  (met 3 file-contents)
+        file-contents
+  ~&  %uqbuild^%vase-expected-shape^?=([* * @] +.file-mime)
+  =.  p.file-mime  [%face face.i.bar p.file-mime]
+  $(sut (slop file-mime sut), bar t.bar)
 ::
 ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
 ::
