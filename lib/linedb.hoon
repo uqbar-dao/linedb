@@ -80,7 +80,7 @@
       ::  NOTE: if no changes, don't send the diff
       ?:  ?&  =(1 (lent diff))
               ?=(^ diff)
-              =([%& 5] diff)
+              =(%& -.i.diff)
           ==
       ~  `[path diff]
     %+  diff-files
