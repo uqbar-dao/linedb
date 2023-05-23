@@ -27,14 +27,15 @@
   ++  diff-files  |=([old=file new=file] (lusk old new (loss old new)))
   ++  apply-diff  |=([=file =diff] (lurk file diff))
   ++  apply-diffs
-    |=  [old-snap=snap diffs=(map path diff)]
-    ^-  snap
-    %-  ~(gas by old-snap)
+    |=  [=snap diffs=(map path diff)]
+    ^-  ^snap
+    %-  ~(gas by snap)
     %+  turn  ~(tap by diffs)
-    |=  [p=path d=diff]
-    :-  p
-    %-  apply-diff  :_  d
-    (~(gut by old-snap) p *wain)
+    |=  [=path =diff]
+    :-  path
+    %+  apply-diff
+      (~(gut by snap) path *wain)
+    diff
   ::
   ++  line-mapping
     |=  =diff
@@ -72,8 +73,16 @@
   ++  diff-snaps                                       ::  from two snaps
     |=  [old=snap new=snap]
     ^-  (map path diff)
-    %-  ~(urn by (~(uni by old) new))
+    %-  ~(gas by *(map path diff))
+    %+  murn  ~(tap by (~(uni by old) new))
     |=  [=path *]
+    =;  =diff
+      ::  NOTE: if no changes, don't send the diff
+      ?:  ?&  =(1 (lent diff))
+              ?=(^ diff)
+              =(%& -.i.diff)
+          ==
+      ~  `[path diff]
     %+  diff-files
       (~(gut by old) path *file)
     (~(gut by new) path *file)
@@ -268,7 +277,7 @@
     ~
   ::
   ++  log
-    |=  log=(list ceta)
+    |=  log=(list meta)
     ^-  json
     :-  %a
     %+  turn  log
