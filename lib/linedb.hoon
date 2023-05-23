@@ -73,8 +73,12 @@
   ++  diff-snaps                                       ::  from two snaps
     |=  [old=snap new=snap]
     ^-  (map path diff)
-    %-  ~(urn by (~(uni by old) new))
+    %-  ~(gas by *(map path diff))
+    %+  murn  ~(tap by (~(uni by old) new))
     |=  [=path *]
+    =;  =diff
+      ::  NOTE: if no changes, don't send the diff
+      ?:(=(1 (lent diff)) ~ `[path diff])
     %+  diff-files
       (~(gut by old) path *file)
     (~(gut by new) path *file)
@@ -269,7 +273,7 @@
     ~
   ::
   ++  log
-    |=  log=(list ceta)
+    |=  log=(list meta)
     ^-  json
     :-  %a
     %+  turn  log

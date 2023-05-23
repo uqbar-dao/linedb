@@ -154,7 +154,7 @@
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
         :^  ~  ~  %linedb-log
-        !>  ^-  (list ceta)
+        !>  ^-  (list meta)
         log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::
           [%x @ @tas @tas ?(%head @) ~]
