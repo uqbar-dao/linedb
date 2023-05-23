@@ -124,6 +124,11 @@
       %-  mule
       |.
       ?+    path  (on-peek:def path)
+          [%x %cache-size ~]
+        :^  ~  ~  %linedb-cache-size
+        !>  ^-  %+  map  @da
+                [number-cache-entries=@ud total-size=@ud]
+        ~(compute-cache-size-by-day ub ~ cache ~ *@da)
       ::
           [%x ~]                                       ::  list all repos
         :^  ~  ~  %linedb-all-repos

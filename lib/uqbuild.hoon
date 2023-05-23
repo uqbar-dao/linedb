@@ -191,6 +191,17 @@
   =/  date-form=date  (yore time)
   (year date-form(t [d.t.date-form 0 0 0 ~]))
 ::
+++  compute-cache-size-by-day
+  ^-  (map @da [number-cache-entries=@ud total-size=@ud])
+  %-  ~(gas by *(map @da [@ud @ud]))
+  %+  turn  ~(tap by q.cache.bus)
+  |=  [day=@da entries=(set @ux)]
+  :-  day
+  %+  roll  ~(tap in entries)
+  |=  [entry=@ux [number-cache-entries=@ud total-size=@ud]]
+  :-  +(number-cache-entries)
+  (add total-size (met 3 (jam (~(got by p.cache.bus) entry))))
+::
 ++  parse
   |%
   ++  pile-imports
