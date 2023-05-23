@@ -78,7 +78,11 @@
     |=  [=path *]
     =;  =diff
       ::  NOTE: if no changes, don't send the diff
-      ?:(=(1 (lent diff)) ~ `[path diff])
+      ?:  ?&  =(1 (lent diff))
+              ?=(^ diff)
+              =([%& 5] diff)
+          ==
+      ~  `[path diff]
     %+  diff-files
       (~(gut by old) path *file)
     (~(gut by new) path *file)
