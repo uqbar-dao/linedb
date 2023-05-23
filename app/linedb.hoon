@@ -226,6 +226,7 @@
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     dub  =/  du  (du:sss bur sss-paths)
          (du pubs bowl -:!>(*result:du))
+::
 ++  all-rocks
   ^-  (map [ship sss-paths] rock:bur)
   %-  %~  uni  by
@@ -240,11 +241,11 @@
   |=  [[=ship * =sss-paths] * * =rock:bur]
   [[ship sss-paths] rock]
 ::
-++  a-rock
-  |=  =sss-paths
-  ^-  (unit rock:bur)
-  ?~  result=(~(get by read:dub) sss-paths)  ~
-  `rock.u.result
+++  pub-rocks
+  ^-  (map sss-paths rock:bur)
+  %-  ~(gas by *(map sss-paths rock:bur))
+  %+  turn  ~(tap by read:dub)
+  |=([=sss-paths * =rock:bur] [sss-paths rock])
 ::
 ::  see +branch
 ::
@@ -258,26 +259,15 @@
   ^-  (quip card _state)
   ?-    -.act
       %commit
-    =/  =branch
-      (fall (a-rock /[repo.act]/[branch.act]) *branch)
-    ?~  log.branch
-      =^  cards  pubs
-        (give:dub [repo branch ~]:act %first-commit our.bowl now.bowl snap.act)
-      [cards state]
-    =*  head-hash=@ux  hash.i.log.branch
-    =/  head-snap=snap
-      snap:(~(gut by commits.branch) head-hash *commit)
-    ?:  =(head-snap snap.act)  `state
-    =*  dif
-      %-  ~(gas by *(map path diff))
-      %+  murn
-        ~(tap by (diff-snaps:di:ldb head-snap snap.act))
-      |=  [p=path d=diff]
-      ::  file without diff has one entry that looks like
-      ::   [%.y @ud], with @ud the final line of the wain
-      ?:  =(1 (lent d))  ~  `[p d]
+    =/  hed
+      =<  head-snap
+      =;  ban  bil(branch ban)
+      (~(gut by pub-rocks) [repo branch ~]:act *branch)
+    ?:  =(hed snap.act)  `state
     =^  cards  pubs
-      (give:dub [repo branch ~]:act %commit our.bowl now.bowl dif)
+      %+  give:dub  [repo branch ~]:act
+      :^  %commit  our.bowl  now.bowl
+      (diff-snaps:di:ldb hed snap.act)
     [cards state]
   ::
       %merge
