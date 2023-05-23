@@ -264,7 +264,14 @@
     =/  head-snap=snap
       snap:(~(gut by commits.branch) head-hash *commit)
     ?:  =(head-snap snap.act)  `state
-    =*  dif  (diff-snaps:di:ldb head-snap snap.act)
+    =*  dif
+      %-  ~(gas by *(map path diff))
+      %+  murn
+        ~(tap by (diff-snaps:di:ldb head-snap snap.act))
+      |=  [p=path d=diff]
+      ::  file without diff has one entry that looks like
+      ::   [%.y @ud], with @ud the final line of the wain
+      ?:  =(1 (lent d))  ~  `[p d]
     =^  cards  pubs
       (give:dub [repo branch ~]:act %commit our.bowl now.bowl dif)
     [cards state]
