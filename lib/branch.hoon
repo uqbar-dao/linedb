@@ -10,8 +10,7 @@
 ++  add-commit
   |=  [author=ship time=@da diffs=(map path diff)]
   ^+  branch
-  =/  =ceta
-    [`@ux`(sham [snap head author time]) head author time]
+  =/  =ceta  [`@ux`(sham snap) head author time]
   %=    branch
       log  [ceta log.branch]
       commits
