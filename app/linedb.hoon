@@ -9,7 +9,7 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          cache=(map @ux vase)
+          cache=build-cache
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -207,7 +207,7 @@
         :^  ~  ~  %uqbuild-update
         !>  ^-  update
         :-  %build
-        ?^  build=(~(get by cache) file-hash)  [%& u.build]
+        ?^  build=(~(get by p.cache) file-hash)  [%& u.build]
         :-  %|
         ~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
@@ -350,7 +350,7 @@
     =/  [built-file=(each vase tang) =build-state]
       %.  file.act
       %~  build-file  ub
-      :_  [cache ~]
+      :_  [cache ~ (da-to-today:ub now.bowl)]
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     :_  state(cache cache.build-state)
@@ -389,7 +389,7 @@
     ?~  bill  [res cache]
     =/  [built-file=(each vase tang) =build-state]
       %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~)
+      ~(build-file ub snap cache ~ (da-to-today:ub now.bowl))
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]
