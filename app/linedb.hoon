@@ -374,6 +374,31 @@
       :+  p.poke-src.act  %linedb-update
       !>(`update`[%build built-file])
     ==
+  ::
+      %clear-cache
+    =/  date-hash-map=(list (pair @da (set @ux)))
+      ~(tap by q.cache)
+    =|  entries-to-delete=(map @ux vase)
+    =^  entries-to-delete=(map @ux vase)  q.cache
+      |-
+      ?~  date-hash-map  [entries-to-delete q.cache]
+      =*  day      p.i.date-hash-map
+      =*  entries  q.i.date-hash-map
+      =*  entries-map
+        %-  ~(gas by *(map @ux vase))
+        (turn ~(tap in entries) |=(h=@ux [h *vase]))
+      %=  $
+          date-hash-map  t.date-hash-map
+      ::
+          entries-to-delete
+        (~(uni by entries-to-delete) entries-map)
+      ::
+          q.cache
+        ?:  (lte before.act day)  q.cache
+        (~(del by q.cache) day)
+      ==
+    =.  p.cache  (~(dif by p.cache) entries-to-delete)
+    `state
   ==
 ::
 ++  build-park

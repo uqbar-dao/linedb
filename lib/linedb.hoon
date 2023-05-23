@@ -305,6 +305,7 @@
         [%merge merge]
         [%branch branch]
         [%fetch fetch]
+        [%clear-cache (ot [%before (se %da)]~)]
     ==
   ::
   ++  commit

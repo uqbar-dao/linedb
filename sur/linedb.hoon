@@ -67,6 +67,7 @@
           file=path
           =poke-src
       ==
+      [%clear-cache before=@da]
   ==
 +$  update
   $@  ~
