@@ -260,7 +260,11 @@
       %commit
     =/  =branch
       (fall (a-rock /[repo.act]/[branch.act]) *branch)
-    =/  head-hash=@ux  ?~(log.branch 0x0 hash.i.log.branch)
+    ?~  log.branch
+      =^  cards  pubs
+        (give:dub [repo branch ~]:act %first-commit our.bowl now.bowl snap.act)
+      [cards state]
+    =*  head-hash=@ux  hash.i.log.branch
     =/  head-snap=snap
       snap:(~(gut by commits.branch) head-hash *commit)
     ?:  =(head-snap snap.act)  `state
