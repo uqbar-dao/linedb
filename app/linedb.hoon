@@ -9,7 +9,7 @@
       $:  %0
           subs=_(mk-subs:sss bur sss-paths)
           pubs=_(mk-pubs:sss bur sss-paths)
-          cache=(map @ux vase)
+          cache=build-cache
       ==
     +$  card  $+(card card:agent:gall)
     --
@@ -124,6 +124,11 @@
       %-  mule
       |.
       ?+    path  (on-peek:def path)
+          [%x %cache-size ~]
+        :^  ~  ~  %linedb-cache-size
+        !>  ^-  %+  map  @da
+                [number-cache-entries=@ud total-size=@ud]
+        ~(compute-cache-size-by-day ub ~ cache ~ *@da)
       ::
           [%x ~]                                       ::  list all repos
         :^  ~  ~  %linedb-all-repos
@@ -207,7 +212,7 @@
         :^  ~  ~  %uqbuild-update
         !>  ^-  update
         :-  %build
-        ?^  build=(~(get by cache) file-hash)  [%& u.build]
+        ?^  build=(~(get by p.cache) file-hash)  [%& u.build]
         :-  %|
         ~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
@@ -340,7 +345,7 @@
     =/  [built-file=(each vase tang) =build-state]
       %.  file.act
       %~  build-file  ub
-      :_  [cache ~]
+      :_  [cache ~ (da-to-today:ub now.bowl)]
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     :_  state(cache cache.build-state)
@@ -359,6 +364,31 @@
       :+  p.poke-src.act  %linedb-update
       !>(`update`[%build built-file])
     ==
+  ::
+      %clear-cache
+    =/  date-hash-map=(list (pair @da (set @ux)))
+      ~(tap by q.cache)
+    =|  entries-to-delete=(map @ux vase)
+    =^  entries-to-delete=(map @ux vase)  q.cache
+      |-
+      ?~  date-hash-map  [entries-to-delete q.cache]
+      =*  day      p.i.date-hash-map
+      =*  entries  q.i.date-hash-map
+      =*  entries-map
+        %-  ~(gas by *(map @ux vase))
+        (turn ~(tap in entries) |=(h=@ux [h *vase]))
+      %=  $
+          date-hash-map  t.date-hash-map
+      ::
+          entries-to-delete
+        (~(uni by entries-to-delete) entries-map)
+      ::
+          q.cache
+        ?:  (lte before.act day)  q.cache
+        (~(del by q.cache) day)
+      ==
+    =.  p.cache  (~(dif by p.cache) entries-to-delete)
+    `state
   ==
 ::
 ++  build-park
@@ -379,7 +409,7 @@
     ?~  bill  [res cache]
     =/  [built-file=(each vase tang) =build-state]
       %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~)
+      ~(build-file ub snap cache ~ (da-to-today:ub now.bowl))
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]

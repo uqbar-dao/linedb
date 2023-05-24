@@ -11,7 +11,7 @@
 ::    (2) surface whether the dependencies built
 ::        were result of a cache hit (is-hit=%.y)
 ::        or not
-::    (3) if =(%.y is-hit), we need to re-build here
+::    (3) if =(%.n is-hit), we need to re-build here
 ::        as well, since dependencies changed
 ::    (4) else, check if we have cached build
 ::    (5) if have cache: return cache hit
@@ -46,10 +46,17 @@
   =*  subject  subject.p.prelude-result
   =*  is-hit   is-hit.p.prelude-result
   ::  (3) & (4)
-  =/  cax  (~(get by cache.bus) file-hash)
+  =/  cax  (~(get by p.cache.bus) file-hash)
   ?:  &(is-hit ?=(^ cax))
     ::  (5)
-    [%&^u.cax^%.y bus(cycle (~(del in cycle.bus) p))]
+    :-  %&^u.cax^%.y
+    %=  bus
+        cycle  (~(del in cycle.bus) p)
+        q.cache
+      %.  [today.bus file-hash]
+      %~  del  ju
+      (~(put ju q.cache.bus) today.bus file-hash)
+    ==
   ::  (6)
   =/  =pile:clay  (pile:parse p (trip file-text))
   =/  build-result  (mule |.((slap subject hoon.pile)))
@@ -61,7 +68,8 @@
     ~&  bd+slap-fail+error-message
     [%|^p.build-result bus]
   =.  cache.bus
-    (~(put by cache.bus) file-hash p.build-result)
+    :-  (~(put by p.cache.bus) file-hash p.build-result)
+    (~(put ju q.cache.bus) today.bus file-hash)
   [%&^p.build-result^%.n bus(cycle (~(del in cycle.bus) p))]
 ::
 ++  build-file-internal
@@ -176,6 +184,23 @@
   ?:  (~(has by snap.bus) pux)
     pux
   $(paz t.paz)
+::
+++  da-to-today
+  |=  time=@da
+  ^-  @da
+  =/  date-form=date  (yore time)
+  (year date-form(t [d.t.date-form 0 0 0 ~]))
+::
+++  compute-cache-size-by-day
+  ^-  (map @da [number-cache-entries=@ud total-size=@ud])
+  %-  ~(gas by *(map @da [@ud @ud]))
+  %+  turn  ~(tap by q.cache.bus)
+  |=  [day=@da entries=(set @ux)]
+  :-  day
+  %+  roll  ~(tap in entries)
+  |=  [entry=@ux [number-cache-entries=@ud total-size=@ud]]
+  :-  +(number-cache-entries)
+  (add total-size (met 3 (jam (~(got by p.cache.bus) entry))))
 ::
 ++  parse
   |%

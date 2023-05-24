@@ -38,9 +38,12 @@
   ==
 +$  build-state
   $:  =snap
-      cache=(map @ux vase)
+      cache=build-cache
       cycle=(set path)
+      today=@da
   ==
++$  build-cache
+  (pair (map @ux vase) (jug @da @ux))
 ::
 +$  action
   $%  ::  %linedb actions
@@ -64,6 +67,7 @@
           file=path
           =poke-src
       ==
+      [%clear-cache before=@da]
   ==
 +$  update
   $@  ~

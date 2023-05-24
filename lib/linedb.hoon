@@ -288,6 +288,18 @@
         [%author %s (scot %p author)]
         [%time (sect time)]
     ==
+  ::
+  ++  cache-size
+    |=  cache-size=(map @da [@ud @ud])
+    ^-  json
+    %-  pairs
+    %+  turn  ~(tap by cache-size)
+    |=  [day=@da number-cache-entries=@ud total-size=@ud]
+    :-  (@t +:(sect day))
+    %-  pairs
+    :+  [%number-cache-entries (numb number-cache-entries)]
+      [%total-size (numb total-size)]
+    ~
   --
 ::
 ++  dejs
@@ -302,6 +314,7 @@
         [%merge merge]
         [%branch branch]
         [%fetch fetch]
+        [%clear-cache (ot [%before (se %da)]~)]
     ==
   ::
   ++  commit
