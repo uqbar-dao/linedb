@@ -8,12 +8,17 @@
 ::  write arms
 ::
 ++  add-commit
-  |=  [author=ship time=@da =snap]
+  |=  [author=ship time=@da diffs=(map path diff)]
   ^+  branch
-  =/  =ceta  [`@ux`(sham snap) head author time]
-  %=  branch
-    log      [ceta log.branch]
-    commits  (~(put by commits.branch) hash.ceta [ceta snap])
+  =/  =meta  [`@ux`(sham head author time snap) head author time]
+  %=    branch
+      log  [meta log.branch]
+      commits
+    %+  ~(put by commits.branch)  hash.meta
+    :-  meta
+    %+  apply-diffs:di:ldb
+      snap:(~(gut by commits.branch) parent.meta *commit)
+    diffs
   ==
 ::
 ++  squash
@@ -21,8 +26,9 @@
   ^+  branch
   =/  hed=commit  head-commit
   =.  branch  (reset:ba-core hash)
-  =.  parent.ceta.hed  ~(head ba-core branch)
-  (add-commit:ba-core [author.ceta time.ceta snap]:hed)
+  =.  parent.meta.hed  ~(head ba-core branch)
+  %^  add-commit:ba-core  author.meta.hed  time.meta.hed
+  (diff-snaps:di:ldb head-snap snap:hed)
 ::
 ++  merge
   |=  [author=@p time=@da bab=^branch]
@@ -51,13 +57,7 @@
     %+  three-way-merge:di:ldb
       [%current (~(gut by ali-diffs) path *diff)]
     [%incoming (~(gut by bob-diffs) path *diff)]
-  =/  new-snap=snap
-    ?~  log.branch  *snap
-    %-  ~(urn by snap:(~(got by commits.branch) head:ali))
-    |=  [=path =file]
-    =+  dif=(~(got by diffs) path)
-    (apply-diff:di:ldb file dif)
-  (add-commit:ba-core author time new-snap)
+  (add-commit:ba-core author time diffs)
 ::
 ++  reset
   |=  =hash
@@ -98,5 +98,5 @@
   ^-  (map path diff)
   (diff-snaps:di:ldb (get-snap haz) (get-snap hax))
 ::
-++  hashes  (turn log.branch |=(=ceta hash.ceta))
+++  hashes  (turn log.branch |=(=meta hash.meta))
 --

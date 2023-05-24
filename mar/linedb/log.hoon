@@ -1,10 +1,10 @@
 /-  ldb=linedb
 /+  linedb
 ::
-|_  log=(list ceta:ldb)
+|_  log=(list meta:ldb)
 ++  grab
   |%
-  ++  noun  (list ceta:ldb)
+  ++  noun  (list meta:ldb)
   --
 ::
 ++  grow

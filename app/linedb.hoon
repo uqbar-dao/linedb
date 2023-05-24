@@ -154,7 +154,7 @@
         =*  who  (slav %p i.t.path)
         =*  sss  t.t.path
         :^  ~  ~  %linedb-log
-        !>  ^-  (list ceta)
+        !>  ^-  (list meta)
         log:(~(gut by all-rocks:hc) [who sss] *branch)
       ::
           [%x @ @tas @tas ?(%head @) ~]
@@ -226,6 +226,7 @@
          (da subs bowl -:!>(*result:da) -:!>(*from:da) -:!>(*fail:da))
     dub  =/  du  (du:sss bur sss-paths)
          (du pubs bowl -:!>(*result:du))
+::
 ++  all-rocks
   ^-  (map [ship sss-paths] rock:bur)
   %-  %~  uni  by
@@ -240,6 +241,12 @@
   |=  [[=ship * =sss-paths] * * =rock:bur]
   [[ship sss-paths] rock]
 ::
+++  pub-rocks
+  ^-  (map sss-paths rock:bur)
+  %-  ~(gas by *(map sss-paths rock:bur))
+  %+  turn  ~(tap by read:dub)
+  |=([=sss-paths * =rock:bur] [sss-paths rock])
+::
 ::  see +branch
 ::
 ++  ba-core
@@ -252,8 +259,15 @@
   ^-  (quip card _state)
   ?-    -.act
       %commit
+    =/  hed
+      =<  head-snap
+      =;  ban  bil(branch ban)
+      (~(gut by pub-rocks) [repo branch ~]:act *branch)
+    ?:  =(hed snap.act)  `state
     =^  cards  pubs
-      (give:dub [repo branch ~]:act %commit our.bowl now.bowl snap.act)
+      %+  give:dub  [repo branch ~]:act
+      :^  %commit  our.bowl  now.bowl
+      (diff-snaps:di:ldb hed snap.act)
     [cards state]
   ::
       %merge
