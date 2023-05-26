@@ -302,7 +302,7 @@
     ~
   ::
   ++  list-branches
-    |=  pafs=(list ^path)  ::  this line
+    |=  pafs=(list ^path)
     ^-  json
     :-  %a
     %+  turn  pafs
