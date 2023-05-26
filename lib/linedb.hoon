@@ -300,6 +300,13 @@
     :+  [%number-cache-entries (numb number-cache-entries)]
       [%total-size (numb total-size)]
     ~
+  ::
+  ++  list-branches
+    |=  pafs=(list ^path)  ::  this line
+    ^-  json
+    :-  %a
+    %+  turn  pafs
+    |=  =^path  s+(spat path)
   --
 ::
 ++  dejs

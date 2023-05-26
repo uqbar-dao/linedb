@@ -147,7 +147,7 @@
         :: TODO this is not easy the way we have it set up with +ba
         ::   makes me think maybe we should do a refactor to make
         ::   repos "real"?
-        :^  ~  ~  %noun
+        :^  ~  ~  %linedb-list-branches
         !>  ^-  (list ^path)
         =/  who  (slav %p i.t.path)
         =*  repo  i.t.t.path
