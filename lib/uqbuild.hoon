@@ -5,6 +5,7 @@
   |=  =path
   (of-wain:format (~(got by snap.bus) path))
 ::
+::  TODO: rewrite this
 ::  +build-dependency
 ::    (1) parse the imports and recursively call
 ::        +build-dependency on them,
@@ -19,6 +20,7 @@
 ::
 ++  build-dependency
   |=  dep=(each [dir=path fil=path] path)
+  ~&  %bd^%bus^~(wyt by snap.bus)^~(wyt by p.cache.bus)^~(wyt by cycle.bus)^?=(~ byob.bus)
   ^-  [(each [=vase is-hit=?] tang) build-state]
   =/  p=path  ?:(?=(%| -.dep) p.dep fil.p.dep)
   ~|  error-building+p
@@ -31,20 +33,28 @@
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
+  =/  build-system=byob
+    ?^  byob.bus  byob.bus  `[!>(parse) !>(run-prelude)]
+  ?>  ?=(^ build-system)
   ::  (1) & (2)
-  =/  =pile-imports  (pile-imports:parse p (trip file-text))
-  =^    prelude-result=(each [subject=vase is-hit=?] tang)
+  =/  parsed-imports=vase
+    %+  slym  (slap parse.u.build-system (ream %imports))
+    [p (trip file-text)]
+  =/  build-subject-result-vase=vase
+    (slam build-subject.u.build-system parsed-imports)
+  =^    build-subject-result=(each (pair vase ?) tang)
       bus
-    (run-prelude pile-imports)
-  ?:  ?=(%| -.prelude-result)
+    !<  [(each [vase ?] tang) build-state]
+    build-subject-result-vase
+  ?:  ?=(%| -.build-subject-result)
     =*  error-message
       %-  of-wain:format
-      %+  turn  p.prelude-result
+      %+  turn  p.build-subject-result
       |=(=tank (crip ~(ram re tank)))
-    ~&  bd+prelude-fail+error-message
-    [%|^p.prelude-result bus]
-  =*  subject  subject.p.prelude-result
-  =*  is-hit   is-hit.p.prelude-result
+    ~&  bd+build-subject-fail+error-message
+    [%|^p.build-subject-result bus]
+  =*  subject  p.p.build-subject-result
+  =*  is-hit   q.p.build-subject-result
   ::  (3) & (4)
   =/  cax  (~(get by p.cache.bus) file-hash)
   ?:  &(is-hit ?=(^ cax))
@@ -58,8 +68,11 @@
       (~(put ju q.cache.bus) today.bus file-hash)
     ==
   ::  (6)
-  =/  =pile:clay  (pile:parse p (trip file-text))
-  =/  build-result  (mule |.((slap subject hoon.pile)))
+  =/  parsed-hoon-vase=vase
+    %+  slym  (slap parse.u.build-system (ream %hoon))
+    [p (trip file-text)]
+  =+  !<(parsed-hoon=hoon parsed-hoon-vase)
+  =/  build-result  (mule |.((slap subject parsed-hoon)))
   ?:  ?=(%| -.build-result)
     =*  error-message
       %-  of-wain:format
@@ -204,11 +217,11 @@
 ::
 ++  parse
   |%
-  ++  pile-imports
+  ++  imports
     |=  [pax=path tex=tape]
-    ^-  ^pile-imports
-    =/  [=hair res=(unit [pile=^pile-imports =nail])]
-      ((pile-imports-rule pax) [1 1] tex)
+    ^-  pile-imports
+    =/  [=hair res=(unit [pile=pile-imports =nail])]
+      ((imports-rule pax) [1 1] tex)
     ?^  res  pile.u.res
     %-  mean  %-  flop
     =/  lyn  p.hair
@@ -224,7 +237,7 @@
         leaf+(runt [(dec col) '-'] "^")
     ==
   ::
-  ++  pile-imports-rule
+  ++  imports-rule
     |=  pax=path
     %+  ifix
       :_  gay
@@ -251,10 +264,16 @@
       ==
     ==
   ::
-  ++  pile
+  ++  hoon
+    |=  [pax=path tex=tape]
+    ^-  ^hoon
+    hoon:(full-file pax tex)
+  ::
+  ++  full-file
     |=  [pax=path tex=tape]
     ^-  pile:clay
-    =/  [=hair res=(unit [=pile:clay =nail])]  ((pile-rule pax) [1 1] tex)
+    =/  [=hair res=(unit [=pile:clay =nail])]
+      ((full-file-rule pax) [1 1] tex)
     ?^  res  pile.u.res
     %-  mean  %-  flop
     =/  lyn  p.hair
@@ -270,7 +289,7 @@
         leaf+(runt [(dec col) '-'] "^")
     ==
   ::
-  ++  pile-rule
+  ++  full-file-rule
     |=  pax=path
     ::  TODO I believe we can delete a lot of this since we aren't parsing
     ::    certain ford runes

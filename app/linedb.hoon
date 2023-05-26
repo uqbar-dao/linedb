@@ -128,7 +128,7 @@
         :^  ~  ~  %linedb-cache-size
         !>  ^-  %+  map  @da
                 [number-cache-entries=@ud total-size=@ud]
-        ~(compute-cache-size-by-day ub ~ cache ~ *@da)
+        ~(compute-cache-size-by-day ub ~ cache ~ *@da ~)
       ::
           [%x ~]                                       ::  list all repos
         :^  ~  ~  %linedb-all-repos
@@ -313,7 +313,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      (build-park snap [repo byob]:act)
     :_  state
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
@@ -323,7 +323,7 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      (build-park snap [repo byob]:act)
     :_  state
     ?~  poke-src.act  ~
     :_  ~
@@ -345,7 +345,7 @@
     =/  [built-file=(each vase tang) =build-state]
       %.  file.act
       %~  build-file  ub
-      :_  [cache ~ (da-to-today:ub now.bowl)]
+      :_  [cache ~ (da-to-today:ub now.bowl) byob.act]
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     :_  state(cache cache.build-state)
@@ -394,6 +394,7 @@
 ++  build-park
   |=  $:  =snap
           desk-name=@tas
+          =byob
       ==
   ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
   =/  bill=(list dude:gall)
@@ -409,7 +410,8 @@
     ?~  bill  [res cache]
     =/  [built-file=(each vase tang) =build-state]
       %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~ (da-to-today:ub now.bowl))
+      %~  build-file  ub
+      [snap cache ~ (da-to-today:ub now.bowl) byob]
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]
