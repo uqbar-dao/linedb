@@ -34,14 +34,16 @@
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
   =/  build-system=byob
-    ?^  byob.bus  byob.bus  `[!>(parse) !>(run-prelude)]
+    ?^  byob.bus  byob.bus  `!>(builder)
   ?>  ?=(^ build-system)
+  =.  build-system  build-system(+6.q.u bus)
   ::  (1) & (2)
   =/  parsed-imports=vase
-    %+  slym  (slap parse.u.build-system (ream %imports))
+    %+  slym  (slap u.build-system (ream %imports))
     [p (trip file-text)]
   =/  build-subject-result-vase=vase
-    (slam build-subject.u.build-system parsed-imports)
+    %+  slam  (slap u.build-system (ream %build-subject))
+    parsed-imports
   =^    build-subject-result=(each (pair vase ?) tang)
       bus
     !<  [(each [vase ?] tang) build-state]
@@ -69,7 +71,7 @@
     ==
   ::  (6)
   =/  parsed-hoon-vase=vase
-    %+  slym  (slap parse.u.build-system (ream %hoon))
+    %+  slym  (slap u.build-system (ream %hoon))
     [p (trip file-text)]
   =+  !<(parsed-hoon=hoon parsed-hoon-vase)
   =/  build-result  (mule |.((slap subject parsed-hoon)))
@@ -215,8 +217,13 @@
   :-  +(number-cache-entries)
   (add total-size (met 3 (jam (~(got by p.cache.bus) entry))))
 ::
-++  parse
-  |%
+++  builder
+  |_  bus=build-state
+  ++  build-subject
+    |=  imports=pile-imports
+    ^-  [(each [subject=vase is-hit=?] tang) build-state]
+    (run-prelude imports)
+  ::
   ++  imports
     |=  [pax=path tex=tape]
     ^-  pile-imports

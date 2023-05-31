@@ -45,7 +45,7 @@
   ==
 +$  build-cache  (pair (map @ux vase) (jug @da @ux))
 ::  $bring-your-own-build(system)
-+$  byob  (unit [parse=vase build-subject=vase])
++$  byob  (unit vase)
 ::
 +$  action
   $%  ::  %linedb actions
