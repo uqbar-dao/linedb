@@ -33,16 +33,19 @@
   ?>  =(%hoon (rear p))
   =/  file-text=@t   (read-file p)
   =/  file-hash=@ux  (shax file-text)
-  =/  build-system=byob
-    ?^  byob.bus  byob.bus  `!>(builder)
-  ?>  ?=(^ build-system)
-  =.  build-system  build-system(+6.q.u bus)
+  =/  =build-system
+    ?^  byob.bus  u.byob.bus
+    [!>(build-vanilla-hoon) !>(build-vanilla-hoon-top-level)]
+  =.  byob.bus
+    ?~  byob.bus  byob.bus
+    `[build.u.byob.bus !>(build-vanilla-hoon-top-level)]
+  =.  build.build-system  build.build-system(+6.q bus)
   ::  (1) & (2)
   =/  parsed-imports=vase
-    %+  slym  (slap u.build-system (ream %imports))
+    %+  slym  (slap build.build-system (ream %imports))
     [p (trip file-text)]
   =/  build-subject-result-vase=vase
-    %+  slam  (slap u.build-system (ream %build-subject))
+    %+  slam  (slap build.build-system (ream %build-subject))
     parsed-imports
   =^    build-subject-result=(each (pair vase ?) tang)
       bus
@@ -71,10 +74,14 @@
     ==
   ::  (6)
   =/  parsed-hoon-vase=vase
-    %+  slym  (slap u.build-system (ream %hoon))
+    %+  slym  (slap build.build-system (ream %hoon))
     [p (trip file-text)]
   =+  !<(parsed-hoon=hoon parsed-hoon-vase)
-  =/  build-result  (mule |.((slap subject parsed-hoon)))
+  :: =/  build-result  (mule |.((slap subject parsed-hoon)))
+  =/  build-result
+    %-  mule  |.
+    !<  vase
+    (slym top-level.build-system [subject parsed-hoon])
   ?:  ?=(%| -.build-result)
     =*  error-message
       %-  of-wain:format
@@ -217,7 +224,12 @@
   :-  +(number-cache-entries)
   (add total-size (met 3 (jam (~(got by p.cache.bus) entry))))
 ::
-++  builder
+++  build-vanilla-hoon-top-level
+  |=  [subject=vase formula=hoon]
+  ^-  vase
+  (slap subject formula)
+::
+++  build-vanilla-hoon
   |_  bus=build-state
   ++  build-subject
     |=  imports=pile-imports

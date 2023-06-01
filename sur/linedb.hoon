@@ -45,7 +45,8 @@
   ==
 +$  build-cache  (pair (map @ux vase) (jug @da @ux))
 ::  $bring-your-own-build(system)
-+$  byob  (unit vase)
++$  byob  (unit build-system)
++$  build-system  [build=vase top-level=vase]
 ::
 +$  action
   $%  ::  %linedb actions
