@@ -41,9 +41,12 @@
       cache=build-cache
       cycle=(set path)
       today=@da
+      =byob
   ==
-+$  build-cache
-  (pair (map @ux vase) (jug @da @ux))
++$  build-cache  (pair (map @ux vase) (jug @da @ux))
+::  $bring-your-own-build(system)
++$  byob  (unit build-system)
++$  build-system  [build=vase top-level=vase]
 ::
 +$  action
   $%  ::  %linedb actions
@@ -57,8 +60,8 @@
       [%fetch from=@p repo=@tas branch=@tas]
       ::  %uqbuild action
       ::
-      [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src]
+      [%install from=@p repo=@tas branch=@tas hash=(unit hash) =byob] :: put into clay
+      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src =byob]
       $:  %build 
           from=@p
           repo=@tas
@@ -66,6 +69,7 @@
           hash=(unit hash)
           file=path
           =poke-src
+          =byob
       ==
       [%clear-cache before=@da]
   ==
