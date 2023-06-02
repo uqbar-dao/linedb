@@ -212,7 +212,7 @@
         :^  ~  ~  %uqbuild-update
         !>  ^-  update
         :-  %build
-        ?^  build=(~(get by p.cache) file-hash)  [%& u.build]
+        ?^  build=(~(get by p.cache) file-hash)  [%& p.u.build]
         :-  %|
         ~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
@@ -368,15 +368,15 @@
       %clear-cache
     =/  date-hash-map=(list (pair @da (set @ux)))
       ~(tap by q.cache)
-    =|  entries-to-delete=(map @ux vase)
-    =^  entries-to-delete=(map @ux vase)  q.cache
+    =|  entries-to-delete=(map @ux [vase @da])
+    =^  entries-to-delete=(map @ux [vase @da])  q.cache
       |-
       ?~  date-hash-map  [entries-to-delete q.cache]
       =*  day      p.i.date-hash-map
       =*  entries  q.i.date-hash-map
       =*  entries-map
-        %-  ~(gas by *(map @ux vase))
-        (turn ~(tap in entries) |=(h=@ux [h *vase]))
+        %-  ~(gas by *(map @ux [vase @da]))
+        (turn ~(tap in entries) |=(h=@ux [h *vase *@da]))
       %=  $
           date-hash-map  t.date-hash-map
       ::

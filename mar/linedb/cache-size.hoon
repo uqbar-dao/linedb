@@ -9,7 +9,7 @@
 ++  grow
   |%
   ++  noun  cache-size
-  ++  json  cache-size:enjs:linedb
+  ++  json  (cache-size:enjs:linedb cache-size)
   --
 ::
 ++  grad  %noun

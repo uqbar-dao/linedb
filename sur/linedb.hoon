@@ -43,7 +43,8 @@
       today=@da
       =byob
   ==
-+$  build-cache  (pair (map @ux vase) (jug @da @ux))
++$  build-cache
+  (pair (map @ux (pair vase @da)) (jug @da @ux))
 ::  $bring-your-own-build(system)
 +$  byob  (unit build-system)
 +$  build-system  [build=vase top-level=vase]

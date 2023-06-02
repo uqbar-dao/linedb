@@ -64,13 +64,17 @@
   =/  cax  (~(get by p.cache.bus) file-hash)
   ?:  &(is-hit ?=(^ cax))
     ::  (5)
-    :-  %&^u.cax^%.y
+    :-  %&^p.u.cax^%.y
     %=  bus
         cycle  (~(del in cycle.bus) p)
+        p.cache
+      %+  ~(jab by p.cache.bus)  file-hash
+      |=([entry=vase date=@da] [entry today.bus])
+    ::
         q.cache
       %.  [today.bus file-hash]
-      %~  del  ju
-      (~(put ju q.cache.bus) today.bus file-hash)
+      %~  put  ju
+      (~(del ju q.cache.bus) q.u.cax file-hash)
     ==
   ::  (6)
   =/  parsed-hoon-vase=vase
@@ -90,8 +94,9 @@
     ~&  bd+slap-fail+error-message
     [%|^p.build-result bus]
   =.  cache.bus
-    :-  (~(put by p.cache.bus) file-hash p.build-result)
-    (~(put ju q.cache.bus) today.bus file-hash)
+    :_  (~(put ju q.cache.bus) today.bus file-hash)
+    %+  ~(put by p.cache.bus)  file-hash
+    [p.build-result today.bus]
   [%&^p.build-result^%.n bus(cycle (~(del in cycle.bus) p))]
 ::
 ++  build-file-internal
@@ -222,7 +227,8 @@
   %+  roll  ~(tap in entries)
   |=  [entry=@ux [number-cache-entries=@ud total-size=@ud]]
   :-  +(number-cache-entries)
-  (add total-size (met 3 (jam (~(got by p.cache.bus) entry))))
+  %+  add  total-size
+  (met 3 (jam p:(~(got by p.cache.bus) entry)))
 ::
 ++  build-vanilla-hoon-top-level
   |=  [subject=vase formula=hoon]
