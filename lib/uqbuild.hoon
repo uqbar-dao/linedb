@@ -31,21 +31,17 @@
     "encountered cyclic import: {<`path`p>} {<cycle.bus>}"
   =.  cycle.bus  (~(put in cycle.bus) p)
   ?>  =(%hoon (rear p))
-  =/  file-text=@t   (read-file p)
-  =/  file-hash=@ux  (shax file-text)
-  =/  =build-system
-    ?^  byob.bus  u.byob.bus
-    [!>(build-vanilla-hoon) !>(build-vanilla-hoon-top-level)]
-  =.  byob.bus
-    ?~  byob.bus  byob.bus
-    `[build.u.byob.bus !>(build-vanilla-hoon-top-level)]
-  =.  build.build-system  build.build-system(+6.q bus)
+  =/  build-system=vase
+    ?^  byob.bus  u.byob.bus  !>(build-vanilla-hoon)
+  =.  build-system  build-system(+6.q bus)
+  =/  file-text=@t    (read-file p)
+  =/  build-hash=@ux  (sham [file-text q.build-system])  ::  TODO: if slow, profile this
   ::  (1) & (2)
   =/  parsed-imports=vase
-    %+  slym  (slap build.build-system (ream %imports))
+    %+  slym  (slap build-system (ream %parse-imports))
     [p (trip file-text)]
   =/  build-subject-result-vase=vase
-    %+  slam  (slap build.build-system (ream %build-subject))
+    %+  slam  (slap build-system (ream %build-subject))
     parsed-imports
   =^    build-subject-result=(each (pair vase ?) tang)
       bus
@@ -78,14 +74,15 @@
     ==
   ::  (6)
   =/  parsed-hoon-vase=vase
-    %+  slym  (slap build.build-system (ream %hoon))
+    %+  slym  (slap build-system (ream %parse-hoon))
     [p (trip file-text)]
   =+  !<(parsed-hoon=hoon parsed-hoon-vase)
   :: =/  build-result  (mule |.((slap subject parsed-hoon)))
   =/  build-result
     %-  mule  |.
     !<  vase
-    (slym top-level.build-system [subject parsed-hoon])
+    %+  slym  (slap build-system (ream %build))
+    [subject parsed-hoon]
   ?:  ?=(%| -.build-result)
     =*  error-message
       %-  of-wain:format
@@ -230,19 +227,19 @@
   %+  add  total-size
   (met 3 (jam p:(~(got by p.cache.bus) entry)))
 ::
-++  build-vanilla-hoon-top-level
-  |=  [subject=vase formula=hoon]
-  ^-  vase
-  (slap subject formula)
-::
 ++  build-vanilla-hoon
   |_  bus=build-state
+  ++  build
+    |=  [subject=vase formula=hoon]
+    ^-  vase
+    (slap subject formula)
+  ::
   ++  build-subject
     |=  imports=pile-imports
     ^-  [(each [subject=vase is-hit=?] tang) build-state]
     (run-prelude imports)
   ::
-  ++  imports
+  ++  parse-imports
     |=  [pax=path tex=tape]
     ^-  pile-imports
     =/  [=hair res=(unit [pile=pile-imports =nail])]
@@ -261,6 +258,11 @@
       ::
         leaf+(runt [(dec col) '-'] "^")
     ==
+  ::
+  ++  parse-hoon
+    |=  [pax=path tex=tape]
+    ^-  ^hoon
+    hoon:(parse-full-file pax tex)
   ::
   ++  imports-rule
     |=  pax=path
@@ -289,12 +291,7 @@
       ==
     ==
   ::
-  ++  hoon
-    |=  [pax=path tex=tape]
-    ^-  ^hoon
-    hoon:(full-file pax tex)
-  ::
-  ++  full-file
+  ++  parse-full-file
     |=  [pax=path tex=tape]
     ^-  pile:clay
     =/  [=hair res=(unit [=pile:clay =nail])]
