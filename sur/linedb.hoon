@@ -43,9 +43,11 @@
       today=@da
   ==
 +$  build-cache
+  $+  linedb-build-cache
   (pair (map @ux vase) (jug @da @ux))
 ::
 +$  action
+  $+  linedb-action
   $%  ::  %linedb actions
       ::
       [%commit repo=@tas branch=@tas =snap]
@@ -70,6 +72,7 @@
       [%clear-cache before=@da]
   ==
 +$  update
+  $+  linedb-update
   $@  ~
   $%  [%build result=(each vase tang)]
       [%make-install-args result=(each [@tas yoki:clay rang:clay] @t)]
