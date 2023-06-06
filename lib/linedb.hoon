@@ -348,13 +348,12 @@
     ~
   ::
   ++  merge
-    ^-  $-(json [@p @tas @tas @p @tas])
+    ^-  $-(json [@tas @tas @p @tas])
     %-  ot
-    :-  [%from (se %p)]
     :~  [%repo (se %tas)]
         [%branch (se %tas)]
-        [%host (se %p)]
-        [%incoming (se %tas)]
+        [%incoming-host (se %p)]
+        [%incoming-branch (se %tas)]
     ==
   ::
   ++  branch

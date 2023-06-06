@@ -279,7 +279,7 @@
     =^  cards  pubs
       %+  give:dub  [repo branch ~]:act
       :^  %merge  our.bowl  now.bowl
-      (~(got by all-rocks) [host repo incoming ~]:act)
+      (~(got by all-rocks) [incoming-host repo incoming-branch ~]:act)
     [cards state]
   ::
       %squash
