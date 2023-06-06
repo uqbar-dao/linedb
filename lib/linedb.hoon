@@ -37,6 +37,44 @@
       (~(gut by snap) path *wain)
     diff
   ::
+  ++  print-diff
+    |=  diffs=(urge:clay @t)
+    ^-  wain
+    =|  result=wain
+    =/  old-line-number=@ud  1  ::  file line number starts at 1
+    =/  new-line-number=@ud  1
+    |-
+    ?~  diffs  (flop result)
+    =/  maybe-diff=(each @ud (pair wain wain))  i.diffs
+    ?:  ?=(%& -.maybe-diff)
+      %=  $
+        diffs            t.diffs
+        old-line-number  (add old-line-number p.maybe-diff)
+        new-line-number  (add new-line-number p.maybe-diff)
+      ==
+    %=  $
+        diffs  t.diffs
+    ::
+        old-line-number
+      ?~(p.p.maybe-diff old-line-number +(old-line-number))
+    ::
+        new-line-number
+      ?~(q.p.maybe-diff new-line-number +(new-line-number))
+    ::
+        result
+      %-  weld  :_  result
+      =*  lines
+        [(crip "{<old-line-number>}, {<new-line-number>}") ~]
+      ?~  p.p.maybe-diff
+        ?~  q.p.maybe-diff  ['' lines]
+        [(cat 3 '+  ' -.q.p.maybe-diff) lines]
+      ?~  q.p.maybe-diff
+        [(cat 3 '-  ' -.p.p.maybe-diff) lines]
+      :+  (cat 3 '-  ' -.p.p.maybe-diff)
+        (cat 3 '+  ' -.q.p.maybe-diff)
+      lines
+    ==
+  ::
   ++  line-mapping
     |=  =diff
     ^-  (map @ud @ud)
