@@ -57,6 +57,7 @@
       [%reset repo=@tas branch=@tas =hash]
       [%branch from=@p repo=@tas branch=@tas name=@tas]
       [%fetch from=@p repo=@tas branch=@tas]
+      [%clone repo=@tas branch=@tas new-repo=@tas]
       ::  %uqbuild action
       ::
       [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay

@@ -308,6 +308,10 @@
     =^  cards  subs  (surf:dab from.act dap.bowl [repo branch ~]:act)
     [cards state]
   ::
+      %clone
+    =.  pubs  (fork:dub [repo branch ~]:act [new-repo branch ~]:act)
+    `state
+  ::
       %install
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)

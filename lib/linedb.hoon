@@ -359,6 +359,7 @@
         [%merge merge]
         [%branch branch]
         [%fetch fetch]
+        [%clone clone]
         [%clear-cache (ot [%before (se %da)]~)]
     ==
   ::
@@ -409,6 +410,14 @@
     :^    [%from (se %p)]
         [%repo (se %tas)]
       [%branch (se %tas)]
+    ~
+  ::
+  ++  clone
+    ^-  $-(json [@tas @tas @tas])
+    %-  ot
+    :^    [%repo (se %tas)]
+        [%branch (se %tas)]
+      [%new-repo (se %tas)]
     ~
   ::
   ++  snap
