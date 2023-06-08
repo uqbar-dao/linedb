@@ -359,7 +359,7 @@
         [%merge merge]
         [%branch branch]
         [%fetch fetch]
-        [%clone clone]
+        [%fork fork]
         [%clear-cache (ot [%before (se %da)]~)]
     ==
   ::
@@ -412,7 +412,7 @@
       [%branch (se %tas)]
     ~
   ::
-  ++  clone
+  ++  fork
     ^-  $-(json [@tas @tas @tas])
     %-  ot
     :^    [%repo (se %tas)]

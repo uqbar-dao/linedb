@@ -308,7 +308,7 @@
     =^  cards  subs  (surf:dab from.act dap.bowl [repo branch ~]:act)
     [cards state]
   ::
-      %clone
+      %fork
     =.  pubs  (fork:dub [repo branch ~]:act [new-repo branch ~]:act)
     `state
   ::
