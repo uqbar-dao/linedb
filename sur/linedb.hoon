@@ -61,7 +61,14 @@
       ::  %uqbuild action
       ::
       [%install from=@p repo=@tas branch=@tas hash=(unit hash)] :: put into clay
-      [%make-install-args from=@p repo=@tas branch=@tas hash=(unit hash) =poke-src]
+      $:  %make-install-args
+          from=@p
+          repo=@tas
+          branch=@tas
+          hash=(unit hash)
+          =poke-src
+          clay-info=(unit [yaki:clay rang:clay])
+      ==
       $:  %build 
           from=@p
           repo=@tas
