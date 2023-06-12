@@ -488,10 +488,9 @@
         """
       ~
     |=  [=path =page]
-    =*  file-atom  q.page
     ?~  head-hash=(~(get by q:head-yaki) path)      [path %& page]
     ?~  head-page=(~(get by lat.rang) u.head-hash)  [path %& page]
-    ?.  ?|  =(file-atom q.u.head-page)
+    ?.  ?|  =(q.page q.u.head-page)
             &(?=(%mime p.page) =(+.+.q.page q.u.head-page))
         ==
       =*  our  (scot %p our.bowl)
@@ -500,7 +499,7 @@
         [path %& page]
       =*  dais  .^(dais:clay %cb /[our]/base/[now]/[p.u.head-page])
       =*  tube  .^(tube:clay %cc /[our]/base/[now]/[p.u.head-page]/mime)
-      ?.  =(+.+.file-atom +.+.q:(tube (vale:dais q.u.head-page)))
+      ?.  =(+.+.q.page +.+.q:(tube (vale:dais q.u.head-page)))
         [path %& page]
       [path %| u.head-hash]
     [path %| u.head-hash]
