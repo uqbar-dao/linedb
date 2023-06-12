@@ -490,18 +490,18 @@
     |=  [=path =page]
     ?~  head-hash=(~(get by q:head-yaki) path)      [path %& page]
     ?~  head-page=(~(get by lat.rang) u.head-hash)  [path %& page]
-    ?.  ?|  =(q.page q.u.head-page)
+    ?:  ?|  =(q.page q.u.head-page)
             &(?=(%mime p.page) =(+.+.q.page q.u.head-page))
         ==
-      =*  our  (scot %p our.bowl)
-      =*  now  (scot %da now.bowl)
-      ?.  .^(? %cu /[our]/base/[now]/mar/[p.u.head-page]/hoon)
-        [path %& page]
-      =*  dais  .^(dais:clay %cb /[our]/base/[now]/[p.u.head-page])
-      =*  tube  .^(tube:clay %cc /[our]/base/[now]/[p.u.head-page]/mime)
-      ?.  =(+.+.q.page +.+.q:(tube (vale:dais q.u.head-page)))
-        [path %& page]
       [path %| u.head-hash]
+    =*  our  (scot %p our.bowl)
+    =*  now  (scot %da now.bowl)
+    ?.  .^(? %cu /[our]/base/[now]/mar/[p.u.head-page]/hoon)
+      [path %& page]
+    =*  dais  .^(dais:clay %cb /[our]/base/[now]/[p.u.head-page])
+    =*  tube  .^(tube:clay %cc /[our]/base/[now]/[p.u.head-page]/mime)
+    ?.  =(+.+.q.page +.+.q:(tube (vale:dais q.u.head-page)))
+      [path %& page]
     [path %| u.head-hash]
   :_  cache
   :^  %&  desk-name
