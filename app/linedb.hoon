@@ -316,8 +316,15 @@
     =/  =snap
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+    =*  our  (scot %p our.bowl)
+    =*  now  (scot %da now.bowl)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      %-  build-park
+      :^  snap  repo.act
+        =+  .^(=domo:clay %cv /[our]/[repo.act]/[now])
+        =*  head  (scot %uv (~(got by hit.domo) let.domo))
+        .^(yaki:clay %cs /[our]/[repo.act]/[now]/yaki/[head])
+      .^(rang:clay %cx /[our]//[now]/rang)
     :_  state
     ?:  ?=(%| -.result)  ~
     [%pass / %arvo %c %park p.result]~
@@ -327,7 +334,14 @@
       ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
       (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
     =^  result=(each [@tas yoki:clay rang:clay] @t)  cache
-      (build-park snap repo.act)
+      %^  build-park  snap  repo.act
+      ?^  clay-info.act  u.clay-info.act
+      =*  our  (scot %p our.bowl)
+      =*  now  (scot %da now.bowl)
+      :_  .^(rang:clay %cx /[our]//[now]/rang)
+      =+  .^(=domo:clay %cv /[our]/[repo.act]/[now])
+      =*  head  (scot %uv (~(got by hit.domo) let.domo))
+      .^(yaki:clay %cs /[our]/[repo.act]/[now]/yaki/[head])
     :_  state
     ?~  poke-src.act  ~
     :_  ~
@@ -398,6 +412,8 @@
 ++  build-park
   |=  $:  =snap
           desk-name=@tas
+          head-yaki=yaki:clay
+          =rang:clay
       ==
   ^-  [(each [@tas yoki:clay rang:clay] @t) _cache]
   =/  bill=(list dude:gall)
@@ -430,40 +446,68 @@
     :_  cache
     :-  %|
     (cat 3 'linedb: build failed for app ' u.vase-build-error)
-  =/  all-files=(list [path %& page])
-    :-  [/mar/vase/hoon %& %hoon vase-mark:ldb]
-    %+  turn  ~(tap by snap)
-    |=  [=path =file]
-    ::  files are stored as `wain`s, and transformed here into atoms.
-    ::   binary files are stored as a length-1 list of the atom's bytes,
-    ::   which is effectively just a %mime, but without the mime-type
-    ::   and file length.
-    ::   here, we just read the file contents from %linedb into `%mime`s
-    ::   and let clay handle the markification:
-    ::   this requires that the files have marks to convert from
-    ::   `%mime` to the respective type
-    =*  file-atom  (of-wain:format file)
-    :+  path  %&
-    [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
-  :_  cache
-  :^  %&  desk-name
-    ^-  yoki:clay
-    :+  %&  ~
-    %-  ~(gas by *(map path (each page lobe:clay)))
-    ^-  (list [path %& page])
-    %+  weld  all-files
-    ^-  (list [path %& page])
-    %-  zing
-    %+  turn  vases
-    |=  [=dude:gall vaz=(each vase tang)]
-    ?>  =(%& -.vaz)
-    :~  [/app/[dude]/vase %& %vase p.vaz]
-        :^  /app/[dude]/hoon  %&  %hoon
+  ::  replace full app files with vases/vase-based app files
+  =.  snap
+    |-
+    ?~  bill  snap
+    %=  $
+      bill  t.bill
+      snap  (~(del by snap) /app/[i.bill]/hoon)
+    ==
+  ::  files are stored as `wain`s, and transformed here into atoms.
+  ::   binary files are stored as a length-1 list of the atom's bytes,
+  ::   which is effectively just a %mime, but without the mime-type
+  ::   and file length.
+  ::   here, we just read the file contents from %linedb into `%mime`s
+  ::   to let clay handle the markification where necessary.
+  ::   however, every new file we pass in increases the commit time
+  ::   so we check which files have changed since the current clay head.
+  ::   when a file has not changed, we pass in a lobe rather than a page
+  ::   --  that is, a hash in reference to an existing entry in the
+  ::       rang cache, rather than a duplicate content which adds time
+  =/  changed-files=(list [path (each page lobe:clay)])
+    %+  turn
+      ^-  (list [path page])
+      :-  [/mar/vase/hoon %hoon vase-mark:ldb]
+      %+  welp
+        %+  turn  ~(tap by snap)
+        |=  [=path =file]
+        =*  file-atom  (of-wain:format file)
+        :-  path
+        [%mime /application/x-urb-unknown (as-octs:mimes:html file-atom)]
+      %-  zing
+      %+  turn  vases
+      |=  [=dude:gall vaz=(each vase tang)]
+      ?>  =(%& -.vaz)
+      :+  [/app/[dude]/vase %vase p.vaz]
+        :+  /app/[dude]/hoon  %hoon
         %-  crip
         """
         /*  built  %vase  {<`path`/app/[dude]/vase>}
         !<(agent:gall built)
         """
-    ==
-  .^(rang:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/rang)
+      ~
+    |=  [=path =page]
+    ?~  head-hash=(~(get by q:head-yaki) path)      [path %& page]
+    ?~  head-page=(~(get by lat.rang) u.head-hash)  [path %& page]
+    ?:  ?|  =(q.page q.u.head-page)
+            &(?=(%mime p.page) =(+.+.q.page q.u.head-page))
+        ==
+      [path %| u.head-hash]
+    =*  our  (scot %p our.bowl)
+    =*  now  (scot %da now.bowl)
+    ?.  .^(? %cu /[our]/base/[now]/mar/[p.u.head-page]/hoon)
+      [path %& page]
+    =*  dais  .^(dais:clay %cb /[our]/base/[now]/[p.u.head-page])
+    =*  tube  .^(tube:clay %cc /[our]/base/[now]/[p.u.head-page]/mime)
+    ?.  =(+.+.q.page +.+.q:(tube (vale:dais q.u.head-page)))
+      [path %& page]
+    [path %| u.head-hash]
+  :_  cache
+  :^  %&  desk-name
+    ^-  yoki:clay
+    :+  %&  ~
+    %-  ~(gas by *(map path (each page lobe:clay)))
+    changed-files
+  rang
 --
