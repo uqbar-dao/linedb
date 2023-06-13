@@ -352,8 +352,8 @@
     %-  ot
     :~  [%repo (se %tas)]
         [%branch (se %tas)]
-        [%incoming-host (se %p)]
-        [%incoming-branch (se %tas)]
+        [%host (se %p)]
+        [%incoming (se %tas)]
     ==
   ::
   ++  branch
