@@ -49,7 +49,7 @@
   $%  ::  %linedb actions
       ::
       [%commit repo=@tas branch=@tas =snap]
-      [%merge from=@p repo=@tas branch=@tas host=@p incoming=@tas]
+      [%merge repo=@tas branch=@tas host=@p incoming=@tas]
       [%squash from=@p repo=@tas branch=@tas =hash]
       [%delete repo=@tas branch=@tas]
       [%reset repo=@tas branch=@tas =hash]
