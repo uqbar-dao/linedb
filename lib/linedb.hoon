@@ -345,6 +345,20 @@
     :-  %a
     %+  turn  pafs
     |=  =^path  s+(spat path)
+  ::
+  ++  update
+    |=  =^update
+    ^-  json
+    ?~  update  ~
+    %-  pairs
+    ^-  (list [@t json])
+    :-  [%type %s `@tas`-.update]
+    ?-    -.update
+        %build              ~
+        %make-install-args  ~
+        %new-data
+      [%path (path path.update)]~
+    ==
   --
 ::
 ++  dejs
