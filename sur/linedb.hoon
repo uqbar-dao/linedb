@@ -37,7 +37,7 @@
       bar=(list [face=term =mark =path])
   ==
 +$  build-state
-  $:  =snap
+  $:  snaps=(list snap)
       cache=build-cache
       cycle=(set path)
       today=@da
@@ -70,10 +70,7 @@
           clay-info=(unit [yaki:clay rang:clay])
       ==
       $:  %build 
-          from=@p
-          repo=@tas
-          branch=@tas
-          hash=(unit hash)
+          repos=(list [from=@p repo=@tas branch=@tas hash=(unit hash)])
           file=path
           =poke-src
       ==
