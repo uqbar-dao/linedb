@@ -130,6 +130,15 @@
                 [number-cache-entries=@ud total-size=@ud]
         ~(compute-cache-size-by-day ub ~ cache ~ *@da)
       ::
+          [%x %build-result @ ~]
+        =*  file-hash=@ux  (slav %ux i.t.t.path)
+        :^  ~  ~  %linedb-update
+        !>  ^-  update
+        :-  %build
+        ?^  build=(~(get by p.cache) file-hash)  [%& u.build]
+        :-  %|
+        ~[leaf+"build not found for file-hash {<file-hash>}"]
+      ::
           [%x ~]                                       ::  list all repos
         :^  ~  ~  %linedb-all-repos
         !>  ^-  (list [ship ^path])
@@ -206,15 +215,6 @@
           %head  (head-file:(ba-core:hc who [repo branch ~]) file)
           @      (get-file:(ba-core:hc who [repo branch ~]) (slav %ux hash) file)
         ==
-      ::
-          [%x %build-result @ ~]
-        =*  file-hash=@ux  (slav %ux i.t.t.path)
-        :^  ~  ~  %uqbuild-update
-        !>  ^-  update
-        :-  %build
-        ?^  build=(~(get by p.cache) file-hash)  [%& u.build]
-        :-  %|
-        ~[leaf+"build not found for file-hash {<file-hash>}"]
       ==
     ::
     ++  on-arvo
