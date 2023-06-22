@@ -364,8 +364,10 @@
       %.  file.act
       %~  build-file  ub
       :_  [cache ~ (da-to-today:ub now.bowl)]
-      ?~  hash.act  head-snap:(ba-core [from repo branch ~]:act)
-      (get-snap:(ba-core [from repo branch ~]:act) u.hash.act)
+      %+  turn  repos.act
+      |=  [from=@p repo=@tas branch=@tas hash=(unit hash)]
+      ?~  hash  head-snap:(ba-core from repo branch ~)
+      (get-snap:(ba-core from repo branch ~) u.hash)
     :_  state(cache cache.build-state)
     ?~  poke-src.act  ~
     :_  ~
@@ -429,7 +431,7 @@
     ?~  bill  [res cache]
     =/  [built-file=(each vase tang) =build-state]
       %.  /app/[i.bill]/hoon
-      ~(build-file ub snap cache ~ (da-to-today:ub now.bowl))
+      ~(build-file ub [snap]~ cache ~ (da-to-today:ub now.bowl))
     %=  $
       bill   t.bill
       res    [[i.bill built-file] res]

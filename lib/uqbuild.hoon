@@ -3,7 +3,11 @@
 |_  bus=build-state
 ++  read-file
   |=  =path
-  (of-wain:format (~(got by snap.bus) path))
+  %-  of-wain:format
+  |-
+  ?~  snaps.bus  !!
+  ?^  contents=(~(get by i.snaps.bus) path)  u.contents
+  $(snaps.bus t.snaps.bus)
 ::
 ::  +build-dependency
 ::    (1) parse the imports and recursively call
@@ -181,8 +185,12 @@
     ~&  "no files match /{(trip pre)}/{(trip pax)}/hoon"
     !!
   =/  pux=path  pre^(snoc i.paz %hoon)
-  ?:  (~(has by snap.bus) pux)
-    pux
+  =/  has=?
+    |-
+    ?~  snaps.bus                    %.n
+    ?:  (~(has by i.snaps.bus) pux)  %.y
+    $(snaps.bus t.snaps.bus)
+  ?:  has  pux
   $(paz t.paz)
 ::
 ++  da-to-today
